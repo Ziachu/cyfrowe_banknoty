@@ -11,7 +11,7 @@ import support.Command;
 
 public class Bank {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
 		int port = 4444;
 		String server_address = "localhost";
 		
@@ -21,24 +21,20 @@ public class Bank {
 		BufferedReader socket_in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintWriter socket_out = new PrintWriter(socket.getOutputStream(), true);
 		
+		new ListenerThread(socket_in).start();
+		
 		String user_input, user_role;
 		Command cmd;
 		
 		while (true) {
-			if (socket_in.ready())
-			{
-				log("Reading from socket: ", false);
-				log(socket_in.readLine() + "\n", false);
-				continue;
-			} else {
-				log(">>>", false);
-				user_input = user_in.nextLine();
-			}
+			Thread.sleep(100);
+			log(">>>", false);
+			user_input = user_in.nextLine();
 				
 			try {
 				cmd = Command.valueOf(user_input);
 				socket_out.println(cmd);
-			} catch (NullPointerException e) {
+			} catch (IllegalArgumentException e) {
 				log("Wrong command.", true);
 				continue;
 			}
@@ -52,13 +48,12 @@ public class Bank {
 				
 				break;
 			case usr:
-				int no_users = Integer.parseInt(socket_in.readLine());
-				
-				log("(" + Integer.toString(no_users) + ")", false);
-				for (int i = 0; i < no_users; i++) {
-					log(socket_in.readLine(), false);
-				}
-				
+//				int no_users = Integer.parseInt(socket_in.readLine());
+//				
+//				log("(" + Integer.toString(no_users) + ")", false);
+//				for (int i = 0; i < no_users; i++) {
+//					log(socket_in.readLine(), false);
+//				}
 				
 				break;
 			case exit:
@@ -81,5 +76,27 @@ public class Bank {
 		else
 			System.out.print(msg + " ");
 	}
-
+	
+	private static class ListenerThread extends Thread {
+		BufferedReader socket_in;
+		
+		ListenerThread(BufferedReader socket_in) {
+			this.socket_in = socket_in;
+		}
+		
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					if (socket_in.ready()) {
+						log("[msg]", false);
+						log(socket_in.readLine() + "\n", false);
+					}
+				} catch (IOException e) {
+					log("ERROR: IO problem: Bank in ListenerThread's run() method", true);
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }
