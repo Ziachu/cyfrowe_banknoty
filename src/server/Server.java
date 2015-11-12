@@ -9,8 +9,8 @@ import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import vendor.Command;
-import vendor.Pair;
+import support.Command;
+import support.Pair;
 
 public class Server {
 	private static int port = 4444;
@@ -67,6 +67,7 @@ public class Server {
 						users.put(user_role, io_pair);
 
 						log(user_role + " logged in.");
+						transferSeries(user_role, "hello You!");
 
 						break;
 					// wylistowanie użytkownikami wszystkich zalogowanych
@@ -111,6 +112,11 @@ public class Server {
 			}
 		}
 
+		private void transferSeries(String receiver, String msg) {
+			PrintWriter temp_socket_out = users.get(receiver).getY();
+			temp_socket_out.println(msg);
+		}
+		
 		private void log(String msg) {
 			System.out.println(msg);
 		}

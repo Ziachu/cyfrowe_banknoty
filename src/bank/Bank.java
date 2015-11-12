@@ -7,8 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-import vendor.Command;
-import vendor.Pair;
+import support.Command;
 
 public class Bank {
 
@@ -26,8 +25,16 @@ public class Bank {
 		Command cmd;
 		
 		while (true) {
-			user_input = user_in.nextLine();
-			
+			if (socket_in.ready())
+			{
+				log("Reading from socket: ", false);
+				log(socket_in.readLine() + "\n", false);
+				continue;
+			} else {
+				log(">>>", false);
+				user_input = user_in.nextLine();
+			}
+				
 			try {
 				cmd = Command.valueOf(user_input);
 				socket_out.println(cmd);

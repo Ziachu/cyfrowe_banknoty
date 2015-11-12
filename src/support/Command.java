@@ -1,4 +1,4 @@
-package vendor;
+package support;
 
 public enum Command {
 	role,
