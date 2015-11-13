@@ -1,0 +1,122 @@
+[--] wyodrębniony serwer (przekazujący jedynie w tle komunikaty) od aplikacji użytkownika (wybór roli, spełnianie określonych dla danej roli funkcji (buttons + input), wyświetlanie komunikatów) 
+[--] logując się do aplikacji można wybrać rolę jaką dane urządzenie ma pełnić w sieci
+	*-----------------------------------------------*
+	|	rola: __________________________	|
+	|	adres IP: ______________________	|
+	|	port: __________________________	|
+	*-----------------------------------------------*
+[--] baza danych w tle? dla banku, żeby pamiętał kto brał banknoty, kto kupował, oszukiwał itp.
+[--] role: Bank/Alice/Sprzedawca(Bob/Dave)
+[--] funkcje Banku:
+	1) losowanie j (numeru banknotu, który nie zostanie przez Alice odkryty)
+	2) udostępnianie klucza publicznego (M, SIG)						[SRV]
+	3) odbieranie zakrytych banknotów od Alice 						[SRV]
+		2.1) odbieranie Y
+	4) sprawdzanie poprawności banknotów
+		3.1) odbieranie ciągów 								[SRV]
+		3.2) sprawdzanie, czy wszystkie banknoty mają tę samą kwotę Y
+		3.3) sprawdzanie, czy wszystkie banknoty mają różne identyfikatory X
+		3.4) obliczanie funkcji hash'ującej (SHA)
+		3.5) porównywanie otrzymanych wyników, z zawartymi w banknotac
+		3.6) obliczanie ciągów identyfikujących Alice, I
+		3.7) sprawdzanie, czy ciągi I faktycznie identyfikują Alice
+	5) podpisywanie banknotów (RSA)
+		4.1) obliczanie V = Y^D mod N
+		4.2) wysyłanie V do Alice 							[SRV]
+	6) wysyłanie podpisanych banknotów 							[SRV]
+	------------------------
+	7) odbieranie banknotu od sprzedawcy							[SRV]
+	8) weryfikacja podpisu pod banknotem
+		8.1) obliczanie SIG2 = M^{E} mod N
+		8.2) porównywanie SIG2 z SIG na banknocie
+	9) sprawdzenie ważności banknotu
+		9.1) prowadzenie księgowości (historii otrzymywanych, generowanych banknotów)
+		9.2) sprawdzanie, czy banknot o identyfikatorze X nie został już użyty
+		9.3) odnotowanie faktu wykorzystania banknotu o identyfikatorze X i ciągach identyfikujących Alice otrzymanych od sprzedawcy
+[--] funkcje Alice:
+	1) generowanie banknotów
+		1.1) ustalanie kwoty Y
+		1.2) losowanie identyfikatora banknotu X o określonej # bitów
+		1.3) tworzenie ciągów identyfikujących Alice I_{i,j} o ustalonej # bitów
+			1.3.1) losowanie ciągu o ustalonej # bitów (I, R, L, T, C, S, B)
+			1.3.2) obliczanie działania XOR na bitach
+			1.3.3) obliczanie funkcji hash'ującej (SHA)
+	2) zakrywanie banknotów
+		2.1) pobieranie klucza publicznego Banku (K = [E, N])				[SRV]
+		2.2) losowanie Z, takiego że (Z, N) = 1
+		2.3) obliczanie Y = M*Z^e mod N
+	3) wysyłanie zakrytych banknotów 							[SRV]
+	4) odkrywanie banknotów (odkrywanie zobowiązań bitowych)
+		4.1) wysyłanie ciągów 								[SRV]
+	5) odbieranie ślepych podpisów banku V 							[SRV]
+	6) finalizowanie tworzenia banknotu
+		5.1) obliczanie SIG = V * Z^{-1} mod N 	-> (M, SIG) = banknot gotowy do użycia
+		5.2) należy przy banknocie trzymać również jego ciągi: B, L, C, R, T, W, S, U oraz kwotę Y i identyfikator X
+	------------------------
+	7) odbieranie ciągu losowych bitów od sprzedawcy 					[SRV]
+	8) ujawnianie zobowiązań bitowych lewej, lub prawej strony ciągów identyfikujących Alice w zależności od bitów w ciągu otrzymanym od sprzedawcy
+		8.1) b_i = 1 --> ujawnianie lewej strony
+			8.1.1) wysyłanie do sprzedawcy ciągów S, B, L				[SRV]
+		8.2) b_1 = 0 --> ujawnianie prawej strony
+			8.2.1) wysyłanie do sprzedawcy ciągów T, C, R				[SRV]
+	------------------------
+	9) 
+[--] funkcje sprzedawcy:
+	1) weryfikowanie podpisu banku
+		1.1) pobieranie klucza publicznego banku K = [E, N] 				[SRV]
+		1.2) tworzenie podpisu SIG2 = M^{E} mod N
+		1.3) porównywanie utworzonego podpisu SIG2 z SIG na banknocie
+	2) generowanie ciągu losowych bitów długości 100
+	3) wysyłanie ciągu losowych bitów 							[SRV]
+	4) dalsza weryfikacja banknotu				
+		4.1) pobieranie ciągów								[SRV]
+		4.2) obliczanie funkcji hash'ującej (SHA)
+		4.3) porównywanie otrzymanych wyników (hash'a) z tymi na banknocie
+	5) akceptacja/odrzucenie płatności
+	------------------------
+	6) wysyłanie do banku banknotu i ciągów identyfikujących Alice				[SRV]
+[--] potrzebne struktury danych
+	[++] banknot
+	*----------------------------------------*
+	|		BANKNOT			|
+	*---------------------------------------*
+	|	kwota Y				|
+	|	identyfikator X			|
+	|	ciągi T_1, ..., T_100		|
+	|	ciągi W_1, ..., W_100		|
+	|	ciągi S_1, ..., S_100		|
+	|	ciągi U_1, ..., U_100		|
+	*---------------------------------------*
+	[++] ciąg
+	*-------------------------------*
+	|		CIĄG		|
+	*-------------------------------*
+	|	# bitów			|
+	|	tablica bitów		|
+	*-------------------------------*
+	[++] "baza danych" banku, z informacjami o wykorzytsanych banknotach
+	*---------------------------------------*
+	|		DATABASE		|
+	*---------------------------------------*
+	|	data transakcji			|
+	|	identyfikator banknotu		|
+	|	ciągi L_i, ..., L_j		|
+	|	ciągi R_k, ..., R_l		|
+	*---------------------------------------*
+[--] ...
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
