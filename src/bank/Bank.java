@@ -8,6 +8,8 @@ import java.net.Socket;
 import java.util.Scanner;
 
 import support.Command;
+import support.Log;
+import support.Series;
 
 public class Bank {
 
@@ -23,62 +25,69 @@ public class Bank {
 		
 		new ListenerThread(socket_in).start();
 		
-		String user_input, user_role;
+		String user_input;
+		String user_role = "";
 		Command cmd;
 		
 		while (true) {
 			Thread.sleep(100);
-			log(">>>", false);
+			Log.inp();
 			user_input = user_in.nextLine();
 				
 			try {
 				cmd = Command.valueOf(user_input);
 				socket_out.println(cmd);
 			} catch (IllegalArgumentException e) {
-				log("Wrong command.", true);
+				Log.log("Wrong command.", true);
 				continue;
 			}
 			
 			switch(cmd) {
 			case role:
-				log("Enter your role: ", false);
-				user_role = user_in.nextLine();
-				
-				socket_out.println(user_role);
+				if (user_role.isEmpty()) {
+					Log.inp("Enter your role:");
+					user_role = user_in.nextLine();
+					
+					socket_out.println(user_role);
+				} else {
+					//wysyłam pustą linijkę, żeby serwer nie rejestrował kolejnego użytkownika z tego samego gniazdka
+					socket_out.println("");
+				}
 				
 				break;
 			case usr:
-//				int no_users = Integer.parseInt(socket_in.readLine());
-//				
-//				log("(" + Integer.toString(no_users) + ")", false);
-//				for (int i = 0; i < no_users; i++) {
-//					log(socket_in.readLine(), false);
-//				}
+				// stąd jedynie wysyłam polecnie do serwera, inny wątek nasłuchuje odpowiedzi
 				
 				break;
 			case exit:
-				log("Shutting down the connection.", true);
+				Log.log("Shutting down the connection.", true);
 				socket.close();
 				user_in.close();
 				System.exit(-1);
 				
 				break;
+			case series:
+				socket_out.println("Bob");
+				
+				Series series = new Series(50);
+				series.sendSeries(socket_out);
+				series.visualizeSeries();
+				
+				break;
+			case banknote:
+				
+				break;
 			default:
-				log("Wrong command, try again.", true);	
+				Log.log("Wrong command, try again.", true);	
 				break;
 			}
 		}
 	}
 	
-	private static void log(String msg, boolean new_line) {
-		if (new_line)
-			System.out.println(">>> " + msg);
-		else
-			System.out.print(msg + " ");
-	}
-	
 	private static class ListenerThread extends Thread {
 		BufferedReader socket_in;
+		Command cmd;
+		String user_input;
 		
 		ListenerThread(BufferedReader socket_in) {
 			this.socket_in = socket_in;
@@ -89,11 +98,46 @@ public class Bank {
 			while (true) {
 				try {
 					if (socket_in.ready()) {
-						log("[msg]", false);
-						log(socket_in.readLine() + "\n", false);
+						user_input = socket_in.readLine();
+						
+						try {
+							cmd = Command.valueOf(user_input);
+							
+							switch(cmd) {
+							case usr:
+								int no_users = Integer.parseInt(socket_in.readLine());
+								
+								Log.log("(" + Integer.toString(no_users) + ") ", false);
+								for (int i = 0; i < no_users; i++) {
+									Log.app(socket_in.readLine());
+								}
+								
+								Log.log();
+								
+								break;
+							case series:								
+								Series series = new Series();
+								series.receiveSeries(socket_in);
+								
+								Log.log("Series came from server:");
+								series.visualizeSeries();
+								
+								break;
+							default:
+								Log.err("Wrong command.");
+								break;
+							}
+						} catch (IllegalArgumentException e) {
+							try {
+								Thread.sleep(100);
+							} catch (InterruptedException e1) {}
+							
+							Log.log(user_input);
+							continue;
+						}
 					}
 				} catch (IOException e) {
-					log("ERROR: IO problem: Bank in ListenerThread's run() method", true);
+					Log.log("IO problem: Bank in ListenerThread's run() method", true);
 					e.printStackTrace();
 				}
 			}

@@ -3,5 +3,7 @@ package support;
 public enum Command {
 	role,
 	usr,
-	exit
+	exit,
+	series,
+	banknote,
 }

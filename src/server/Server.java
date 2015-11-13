@@ -4,13 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
 
-import support.Command;
-import support.Pair;
+import support.*;
 
 public class Server {
 	private static int port = 4444;
@@ -46,7 +46,7 @@ public class Server {
 		@Override
 		public void run() {
 			try {
-				log("Connection established with " + socket.getInetAddress() + ".");
+				Log.log("Connection established with " + socket.getInetAddress() + ".");
 
 				socket_in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				socket_out = new PrintWriter(socket.getOutputStream(), true);
@@ -57,37 +57,68 @@ public class Server {
 
 				while (!socket.isClosed()) {
 					user_input = socket_in.readLine();
-					cmd = Command.valueOf(user_input);
-
+					
+					try {
+						cmd = Command.valueOf(user_input);
+					} catch (NullPointerException e) {
+						socket.close();
+						Log.err("Wrong command - shutting down connection.");
+						continue;
+					}
+						
 					switch (cmd) {
 					// logowanie użytkownika (przypisanie użytkownikowi roli)
 					case role:
-						user_role = socket_in.readLine();
+						user_input = socket_in.readLine();
 
-						users.put(user_role, io_pair);
-
-						log(user_role + " logged in.");
-						transferSeries(user_role, "hello You!");
-
+						if (user_input.isEmpty())
+							break;
+						else {
+							user_role = user_input;
+							users.put(user_role, io_pair);
+							Log.log(user_role + " logged in.");
+						}
+						
 						break;
 					// wylistowanie użytkownikami wszystkich zalogowanych
 					case usr:
+						// najpierw komenda "usr" żeby poinformować klienta czego ma się spodziewać
+						socket_out.println("usr");
 						socket_out.println(users.size());
 
 						for (Map.Entry<String, Pair<BufferedReader, PrintWriter>> user : users.entrySet()) {
 							socket_out.println(user.getKey());
 						}
 
+						Log.log(user_role + " printing users.");
+						
 						break;
 					case exit:
 						users.remove(user_role);
 						
 						if (users.containsKey(user_role)) {
-							log("ERROR.005: " + user_role + " still logged in; server run() switch case statement.");
+							Log.err(user_role + " still logged in; server run() switch case statement.");
 						} else {
-							log(user_role + " logged out.");
+							Log.log(user_role + " logged out.");
 							socket.close();
 						}
+						
+						break;
+					case series:
+						// TODO: receive Series
+						String receiver = socket_in.readLine();
+						Log.log(user_role + " sends series to " + receiver);
+						
+						Series series = new Series();
+						series.receiveSeries(socket_in);
+						series.visualizeSeries();
+						
+						// TODO: send length, then values
+						transferSeries(receiver, series);
+						
+						break;
+					case banknote:
+						// TODO: send amount, id, then series
 						
 						break;
 					default:
@@ -98,27 +129,30 @@ public class Server {
 				}
 
 			} catch (IOException e) {
-				log("ERROR.001: in&out problem; BackgroundServer run() method.");
+				Log.err("in&out problem; BackgroundServer run() method.");
 				e.printStackTrace();
 			} finally {
 				try {
 					socket.close();
 				} catch (IOException e) {
-					log("ERROR.002: couldn't close socket; BackgroundServer run() method.");
+					Log.err("couldn't close socket; BackgroundServer run() method.");
 				}
 
-				log("Connection with " + socket.getInetAddress()
+				Log.log("Connection with " + socket.getInetAddress()
 						+ " shut down.");
 			}
 		}
 
-		private void transferSeries(String receiver, String msg) {
-			PrintWriter temp_socket_out = users.get(receiver).getY();
-			temp_socket_out.println(msg);
-		}
-		
-		private void log(String msg) {
-			System.out.println(msg);
+		private void transferSeries(String receiver, Series series) throws UnsupportedEncodingException {
+			
+			if (users.containsKey(receiver)) {
+				PrintWriter temp_socket_out = users.get(receiver).getY();
+				
+				temp_socket_out.println("series");
+				series.sendSeries(temp_socket_out);
+			} else {
+				Log.err("there's not receiver with given name (" + receiver + "); Server in transferSeries() method.");
+			}
 		}
 	}
 }
