@@ -118,7 +118,7 @@ public class Server extends Thread {
 					// logowanie użytkownika (przypisanie użytkownikowi roli)
 					case role:
 						user_input = socket_in.readLine();
-							if (user_input.isEmpty())
+						if (user_input.isEmpty())
 							break;
 						else {
 							user_role = user_input;

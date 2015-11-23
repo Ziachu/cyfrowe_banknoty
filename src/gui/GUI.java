@@ -10,9 +10,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 
+import bank.Bank;
+
 import listeners.CommandListener;
 import listeners.LoginEvent;
 import listeners.LoginListener;
+import listeners.UserInputEvent;
+import listeners.UserInputListener;
 
 import server.Server;
 
@@ -25,7 +29,9 @@ public class GUI extends JFrame{
 	private Toolbar toolbar;
 	private LoginPanel login_panel;
 	
+	private String app_role;
 	private Server server;
+	private Bank bank;
 	
 	public GUI() {
 
@@ -51,7 +57,7 @@ public class GUI extends JFrame{
 		setTitle("Cyfrowe Pieniądze");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
-		setSize(600, 400);
+		setSize(700, 400);
 		setVisible(true);
 	}
 
@@ -70,7 +76,8 @@ public class GUI extends JFrame{
 				String port = e.getPort();
 				
 				host = host.equals("") ? "localhost" : host;
-				//cmd_panel.appendText(">>> " + role + " is connecting to (" + host + ":" + port + ").");
+				
+				app_role = role;
 				
 				switch(role) {
 				case "Server":
@@ -82,18 +89,35 @@ public class GUI extends JFrame{
 						}
 					});
 						
-					server.start();
-
-					cmd_panel.appendText(">>> Server is up and runnig.");
-					
+					server.start();					
 					break;
 				case "Bank":
+					bank = new Bank(host, Integer.parseInt(port));
+					bank.setCommandListener(new CommandListener() {
+						
+						public void CommandEmitted(String cmd) {
+							cmd_panel.appendText(cmd);
+						}
+					});
 					
+					bank.start();
 					break;
 				default:
 					cmd_panel.appendText(">>> Role undefined.");
 				}
 				
+			}
+		});
+		
+		cmd_panel.setUserInputListener(new UserInputListener() {
+			
+			// w zależności od tego, jaki "aktor" uruchomił aplikację, temu przekazywane są polecenia użytkownika
+			public void userWrites(UserInputEvent e) {
+				switch(app_role) {
+					case "Bank":
+						bank.manageUserInput(e.getUserIn());
+						break;
+				}
 			}
 		});
 		
