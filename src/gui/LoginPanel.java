@@ -13,47 +13,41 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
-public class LoginPanel extends JPanel {
+import listeners.LoginEvent;
+import listeners.LoginListener;
+
+
+public class LoginPanel extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 4493531797921885789L;
-	private JLabel roleLabel;
-	private JLabel hostLabel;
-	private JLabel portLabel;
-	private JTextField roleField;
-	private JTextField hostField;
-	private JTextField portField;
-	private JButton loginBtn;
-	private LoginListener loginListener;
+	private JLabel role_label;
+	private JLabel host_label;
+	private JLabel port_label;
+	private JTextField role_field;
+	private JTextField host_field;
+	private JTextField port_field;
+	private JButton login_btn;
+	
+	private LoginListener login_listener;
 	
 	public LoginPanel() {
 		Dimension dim = getPreferredSize();
 		dim.width = 250;
 		setPreferredSize(dim);
 		
-		roleLabel = new JLabel("Role: ");
-		hostLabel = new JLabel("Host: ");
-		portLabel = new JLabel("Port: ");
+		role_label = new JLabel("Role: ");
+		host_label = new JLabel("Host: ");
+		port_label = new JLabel("Port: ");
 		
-		roleField = new JTextField(10);
-		hostField = new JTextField(10);
-		portField = new JTextField(10);
+		role_field = new JTextField(10);
+		host_field = new JTextField(10);
+		port_field = new JTextField(10);
 		
-		loginBtn = new JButton("Login");
-		loginBtn.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String role = roleField.getText();
-				String host = hostField.getText();
-				String port = portField.getText();
-				
-				LoginEvent ev = new LoginEvent(this, role, host, port);
-				
-				if (loginListener != null) 
-					loginListener.loginEventOccured(ev);
-			}
-		});
+		login_btn = new JButton("Login");
+		login_btn.addActionListener(this);
 		
-		Border innerBorder = BorderFactory.createTitledBorder("Log In");
-		Border outerBorder = BorderFactory.createEmptyBorder(5, 5, 5, 5);
-		setBorder(BorderFactory.createCompoundBorder(outerBorder, innerBorder));
+		Border inner_border = BorderFactory.createTitledBorder("Log In");
+		Border outer_border = BorderFactory.createEmptyBorder(5, 5, 5, 5);
+		setBorder(BorderFactory.createCompoundBorder(outer_border, inner_border));
 		
 		setLayout(new GridBagLayout());
 		
@@ -67,12 +61,12 @@ public class LoginPanel extends JPanel {
 		gc.gridx = 0;
 		gc.gridy = 0;
 		gc.anchor = GridBagConstraints.LINE_END;
-		add(roleLabel, gc);
+		add(role_label, gc);
 		
 		gc.gridx = 1;
 		gc.gridy = 0;
 		gc.anchor = GridBagConstraints.LINE_START;
-		add(roleField, gc);
+		add(role_field, gc);
 		
 		///////////////// SECOND ROW //////////////////////////
 		
@@ -82,12 +76,12 @@ public class LoginPanel extends JPanel {
 		gc.gridx = 0;
 		gc.gridy = 1;
 		gc.anchor = GridBagConstraints.LINE_END;
-		add(hostLabel, gc);
+		add(host_label, gc);
 		
 		gc.gridx = 1;
 		gc.gridy = 1;
 		gc.anchor = GridBagConstraints.LINE_START;
-		add(hostField, gc);
+		add(host_field, gc);
 		
 		///////////////// THIRD ROW //////////////////////////
 		
@@ -97,12 +91,12 @@ public class LoginPanel extends JPanel {
 		gc.gridx = 0;
 		gc.gridy = 2;
 		gc.anchor = GridBagConstraints.LINE_END;
-		add(portLabel, gc);
+		add(port_label, gc);
 		
 		gc.gridx = 1;
 		gc.gridy = 2;
 		gc.anchor = GridBagConstraints.LINE_START;
-		add(portField, gc);
+		add(port_field, gc);
 		
 		///////////////// FOURTH ROW //////////////////////////
 		
@@ -112,10 +106,25 @@ public class LoginPanel extends JPanel {
 		gc.gridx = 1;
 		gc.gridy = 3;
 		gc.anchor = GridBagConstraints.FIRST_LINE_START;
-		add(loginBtn, gc);
+		add(login_btn, gc);
 	}
 	
 	public void setLoginListener(LoginListener listener) {
-		this.loginListener = listener;
+		this.login_listener = listener;
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		JButton clicked = (JButton) e.getSource();
+		
+		if (clicked == login_btn) {
+			String role = role_field.getText();
+			String host = host_field.getText();
+			String port = port_field.getText();
+			
+			LoginEvent ev = new LoginEvent(this, role, host, port);
+			
+			if (login_listener != null) 
+				login_listener.loginEventOccured(ev);
+		}
 	}
 }

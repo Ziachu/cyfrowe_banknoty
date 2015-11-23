@@ -1,9 +1,10 @@
-package gui;
+package listeners;
 
 import java.util.EventObject;
 
 public class LoginEvent extends EventObject {
 
+	private static final long serialVersionUID = -2366580694592211061L;
 	private String role;
 	private String host;
 	private String port;

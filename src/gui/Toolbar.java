@@ -9,13 +9,15 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
+import listeners.CommandListener;
+
 public class Toolbar extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = -8572905636384948856L;
 	private JButton helloBtn;
 	private JButton goodbyeBtn;
 	
-	private StringListener textListener;
+	private CommandListener cmd_listener;
 	
 	public Toolbar() {
 		helloBtn = new JButton("Hello");
@@ -34,19 +36,19 @@ public class Toolbar extends JPanel implements ActionListener{
 		add(goodbyeBtn);	
 	}
 	
-	public void setStrigListener(StringListener listener) {
-		this.textListener = listener;
+	public void setCommandListener(CommandListener listener) {
+		this.cmd_listener = listener;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		JButton clicked = (JButton) e.getSource();
 		
 		if (clicked == helloBtn) {
-			if (textListener != null)
-				textListener.textEmitted("Hello\n");
+			if (cmd_listener != null)
+				cmd_listener.CommandEmitted("Hello");
 		} else if (clicked == goodbyeBtn) {
-			if (textListener != null)
-				textListener.textEmitted("Goodbye\n");
+			if (cmd_listener != null)
+				cmd_listener.CommandEmitted("Goodbye");
 		}
 	}
 }

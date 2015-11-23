@@ -3,7 +3,6 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Insets;
-
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,6 +21,7 @@ public class CommandPanel extends JPanel {
 		textArea.setLineWrap(true);
 		textArea.setCaretColor(Color.WHITE);
 		textArea.setMargin(new Insets(0, 2, 0, 2));
+		textArea.setEditable(false);
 		
 		scrollArea = new JScrollPane(textArea);
 		scrollArea.setBackground(Color.BLACK);
@@ -37,6 +37,10 @@ public class CommandPanel extends JPanel {
 	}
 	
 	public void appendText(String text) {
-		textArea.append(text);
+		textArea.append(text + "\n");
+	}
+	
+	public void appendError(String msg) {
+		textArea.append("[!] Error: " + msg + "\n");
 	}
 }

@@ -5,16 +5,48 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import sun.tools.jar.CommandLine;
 import support.Command;
 import support.Log;
 import support.Series;
 
 public class Bank {
-
+	/*private final int port;
+	private final String server_address;
+	private CommandLine cmd_line;
+	
+	private Socket socket;
+	
+	private final BufferedReader socket_in;
+	private final PrintWriter socket_out;
+	
+	public Bank(String server_address, int port, CommandLine cmd_line) {
+		this.port = port;
+		this.server_address = server_address;
+		this.cmd_line = cmd_line;
+		
+		RunBank();
+	}
+	
+	private void RunBank() {
+		
+		try {
+			this.socket = new Socket(this.server_address, this.port);
+			
+			BufferedReader socket_in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			PrintWriter socket_out = new PrintWriter(socket.getOutputStream(), true);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}*/
+	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		int port = 4444;
+		int port = 1234;
 		String server_address = "localhost";
 		
 		Socket socket = new Socket(server_address, port);
