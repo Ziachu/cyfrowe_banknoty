@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Random;
 
+import listeners.CommandListener;
+
 public class Series {
 	private int length;
 	private byte[] values;
@@ -77,14 +79,14 @@ public class Series {
 		}
 	}
 	
-	public void visualizeSeries() {
+	public void visualizeSeries(CommandListener cmd_listener) {
 		for (int i = 0; i < this.length; i++) {
 			if (i > 0 && i % 10 == 0)
-				System.out.println();
+				cmd_listener.CommandEmitted("", true);
 			
-			System.out.print(" " + this.values[i] + " ");
+			cmd_listener.CommandEmitted(" " + this.values[i] + " ", false);
 		}
 		
-		System.out.println();
+		cmd_listener.CommandEmitted("", true);
 	}
 }

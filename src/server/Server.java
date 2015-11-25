@@ -13,7 +13,7 @@ import java.util.Map;
 
 import listeners.CommandListener;
 
-import support.Command;
+import support.Commands;
 import support.Pair;
 import support.Series;
 
@@ -21,28 +21,6 @@ public class Server extends Thread {
 	private int port;
 	private static HashMap<String, Pair<BufferedReader, PrintWriter>> users;
 	private CommandListener cmd_listener;
-
-/*	// tworzy listener'a i odrębne wątki do obsługi każdego użytkownika
-	public static void main(String[] args) throws IOException {
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new GUI();
-			}
-		});
-		ServerSocket listener = new ServerSocket(port);
-		users = new HashMap<String, Pair<BufferedReader, PrintWriter>>();
-
-		System.out.println("Listening at: " + listener.getInetAddress());
-
-		try {
-			while (true) {
-				new BackgroundServer(listener.accept()).start();
-			}
-		} finally {
-			listener.close();
-		}
-	}*/
 
 	public Server(int port) {
 
@@ -62,7 +40,7 @@ public class Server extends Thread {
 				ServerSocket listener = new ServerSocket(this.port);
 				users = new HashMap<String, Pair<BufferedReader, PrintWriter>>();
 				
-				cmd_listener.CommandEmitted("[srv] Listening at: " + listener.getInetAddress() + ".");
+				cmd_listener.CommandEmitted("[srv] Listening at: " + listener.getInetAddress() + ".", true);
 				
 				try {
 					while (true) {
@@ -70,7 +48,7 @@ public class Server extends Thread {
 					}
 				} finally {
 					listener.close();
-					cmd_listener.CommandEmitted("[srv] [!] Server shutted down!");
+					cmd_listener.CommandEmitted("[srv] [!] Server shutted down!", true);
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -94,23 +72,23 @@ public class Server extends Thread {
 
 		public void run() {
 			try {
-				cmd_listener.CommandEmitted("[srv] Connection established with " + socket.getInetAddress() + ".");
+				cmd_listener.CommandEmitted("[srv] Connection established with " + socket.getInetAddress() + ".", true);
 						
 				socket_in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				socket_out = new PrintWriter(socket.getOutputStream(), true);
 				io_pair = new Pair<BufferedReader, PrintWriter>(socket_in, socket_out);
 
 				String user_input;
-				Command cmd;
+				Commands cmd;
 
 				while (!socket.isClosed()) {
 					user_input = socket_in.readLine();
 					
 					try {
-						cmd = Command.valueOf(user_input);
+						cmd = Commands.valueOf(user_input);
 					} catch (NullPointerException e) {
 						socket.close();
-						cmd_listener.CommandEmitted("[srv] Wrong command - shutting down connection.");
+						cmd_listener.CommandEmitted("[srv] Wrong command - shutting down connection.", true);
 						continue;
 					}
 								
@@ -123,7 +101,7 @@ public class Server extends Thread {
 						else {
 							user_role = user_input;
 							users.put(user_role, io_pair);
-							cmd_listener.CommandEmitted("[srv] " + user_role + " logged in.");
+							cmd_listener.CommandEmitted("[srv] " + user_role + " logged in.", true);
 						}
 						
 						break;
@@ -136,27 +114,27 @@ public class Server extends Thread {
 							socket_out.println(user.getKey());
 						}
 
-						cmd_listener.CommandEmitted("[srv] " + user_role + " printing users.");
+						cmd_listener.CommandEmitted("[srv] " + user_role + " printing users.", true);
 						
 						break;
 					case exit:
 						users.remove(user_role);
 								
 						if (users.containsKey(user_role)) {
-							cmd_listener.CommandEmitted("[srv] " + user_role + " still logged in; server run() switch case statement.");
+							cmd_listener.CommandEmitted("[srv] " + user_role + " still logged in; server run() switch case statement.", true);
 						} else {
-							cmd_listener.CommandEmitted("[srv] " + user_role + " logged out.");
+							cmd_listener.CommandEmitted("[srv] " + user_role + " logged out.", true);
 							socket.close();
 						}
 								
 						break;
 					case series:
 						String receiver = socket_in.readLine();
-						cmd_listener.CommandEmitted("[srv] " + user_role + " sends series to " + receiver + ".");
+						cmd_listener.CommandEmitted("[srv] " + user_role + " sends series to " + receiver + ".", true);
 							
 						Series series = new Series();
 						series.receiveSeries(socket_in);
-						series.visualizeSeries();
+						series.visualizeSeries(cmd_listener);
 								
 						transferSeries(receiver, series);
 								
@@ -173,16 +151,16 @@ public class Server extends Thread {
 				}
 
 			} catch (IOException e) {
-				cmd_listener.CommandEmitted("[srv] in&out problem; BackgroundServer run() method.");
+				cmd_listener.CommandEmitted("[srv] in&out problem; BackgroundServer run() method.", true);
 				e.printStackTrace();
 			} finally {
 				try {
 					socket.close();
 				} catch (IOException e) {
-					cmd_listener.CommandEmitted("[srv] Couldn't close socket; BackgroundServer run() method.");
+					cmd_listener.CommandEmitted("[srv] Couldn't close socket; BackgroundServer run() method.", true);
 				}
 				
-				cmd_listener.CommandEmitted("[srv] Connection with " + socket.getInetAddress() + " shut down.");
+				cmd_listener.CommandEmitted("[srv] Connection with " + socket.getInetAddress() + " shut down.", true);
 			}
 		}
 
@@ -194,7 +172,7 @@ public class Server extends Thread {
 				temp_socket_out.println("series");
 				series.sendSeries(temp_socket_out);
 			} else {
-				cmd_listener.CommandEmitted("[srv] There's not receiver with given name (" + receiver + "); Server in transferSeries() method.");
+				cmd_listener.CommandEmitted("[srv] There's not receiver with given name (" + receiver + "); Server in transferSeries() method.", true);
 			}
 		}
 	}

@@ -8,17 +8,19 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
 
-import bank.Bank;
+import javax.swing.JFrame;
 
 import listeners.CommandListener;
 import listeners.LoginEvent;
 import listeners.LoginListener;
 import listeners.UserInputEvent;
 import listeners.UserInputListener;
-
 import server.Server;
+import support.Roles;
+import vendor.Vendor;
+import alice.Alice;
+import bank.Bank;
 
 public class GUI extends JFrame{
 	
@@ -29,9 +31,11 @@ public class GUI extends JFrame{
 	private Toolbar toolbar;
 	private LoginPanel login_panel;
 	
-	private String app_role;
+	private Roles app_role;
 	private Server server;
 	private Bank bank;
+	private Vendor vendor;
+	private Alice alice;
 	
 	public GUI() {
 
@@ -64,8 +68,11 @@ public class GUI extends JFrame{
 	private void initListeners() {
 		
 		toolbar.setCommandListener(new CommandListener(){
-			public void CommandEmitted(String cmd) {
-				cmd_panel.appendText(cmd);
+			public void CommandEmitted(String cmd, boolean nl) {
+				if (nl)
+					cmd_panel.appendLine(cmd);
+				else
+					cmd_panel.appendText(cmd);
 			}
 		});
 		
@@ -73,37 +80,75 @@ public class GUI extends JFrame{
 			public void loginEventOccured(LoginEvent e) {
 				String role = e.getRole();
 				String host = e.getHost();
-				String port = e.getPort();
+				int port = Integer.parseInt(e.getPort());
 				
 				host = host.equals("") ? "localhost" : host;
 				
-				app_role = role;
+				try {
+					app_role = Roles.valueOf(role);
+				} catch (IllegalArgumentException err) { 
+					app_role = Roles.Vendor;
+				}
 				
-				switch(role) {
-				case "Server":
-					server = new Server(Integer.parseInt(port));
+				switch(app_role) {
+				case Server:
+					setTitle(getTitle() + " - Server");
+					server = new Server(port);
 					server.setCommandListener(new CommandListener() {
-							
-						public void CommandEmitted(String cmd) {
-							cmd_panel.appendText(cmd);
+						public void CommandEmitted(String cmd, boolean nl) {
+							if (nl)
+								cmd_panel.appendLine(cmd);
+							else
+								cmd_panel.appendText(cmd);
 						}
 					});
 						
 					server.start();					
 					break;
-				case "Bank":
-					bank = new Bank(host, Integer.parseInt(port));
+				case Bank:
+					setTitle(getTitle() + " - Bank");
+					bank = new Bank(host, port);
 					bank.setCommandListener(new CommandListener() {
-						
-						public void CommandEmitted(String cmd) {
-							cmd_panel.appendText(cmd);
+						public void CommandEmitted(String cmd, boolean nl) {
+							if (nl)
+								cmd_panel.appendLine(cmd);
+							else
+								cmd_panel.appendText(cmd);
 						}
 					});
 					
 					bank.start();
 					break;
+				case Alice:
+					setTitle(getTitle() + " - Alice");
+					alice = new Alice(host, port);
+					alice.setCommandListener(new CommandListener() {
+						public void CommandEmitted(String cmd, boolean nl) {
+							if (nl)
+								cmd_panel.appendLine(cmd);
+							else
+								cmd_panel.appendText(cmd);
+						}
+					});
+					
+					alice.start();
+					break;
 				default:
-					cmd_panel.appendText(">>> Role undefined.");
+					cmd_panel.appendLine(">>> " + app_role + " will be a Vendor.");
+
+					setTitle(getTitle() + " - Vendor (" + app_role + ")");
+					vendor = new Vendor(host, port);
+					vendor.setCommandListener(new CommandListener() {
+						public void CommandEmitted(String cmd, boolean nl) {
+							if (nl)
+								cmd_panel.appendLine(cmd);
+							else
+								cmd_panel.appendText(cmd);
+						}
+					});
+					
+					vendor.start();
+					break;
 				}
 				
 			}
@@ -114,9 +159,19 @@ public class GUI extends JFrame{
 			// w zależności od tego, jaki "aktor" uruchomił aplikację, temu przekazywane są polecenia użytkownika
 			public void userWrites(UserInputEvent e) {
 				switch(app_role) {
-					case "Bank":
-						bank.manageUserInput(e.getUserIn());
-						break;
+				case Bank:
+					bank.manageUserInput(e.getUserIn());
+					break;
+				case Vendor:
+					vendor.manageUserInput(e.getUserIn());
+					break;
+				case Alice:
+					alice.manageUserInput(e.getUserIn());
+					break;
+				case Server:
+					break;
+				default:
+					break;
 				}
 			}
 		});

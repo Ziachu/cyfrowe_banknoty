@@ -1,17 +1,19 @@
-package bank;
+package alice;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+
 import listeners.CommandListener;
+
 import support.CommonCommandsManager;
 
-public class Bank extends Thread {
+public class Alice extends Thread {
 	private int port;
 	private String server_address;
-	private final String user_role = "Bank";
+	private final String user_role = "Alice";
 	
 	private Socket socket;
 	
@@ -21,7 +23,7 @@ public class Bank extends Thread {
 	
 	private CommonCommandsManager cc_manager;
 	
-	public Bank(String server_address, int port) {
+	public Alice(String server_address, int port) {
 		
 		this.port = port;
 		this.server_address = server_address;
@@ -32,21 +34,20 @@ public class Bank extends Thread {
 	}
 	
 	public void run() {
-		
 		try {
 			this.socket = new Socket(this.server_address, this.port);
 			
 			socket_in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			socket_out = new PrintWriter(socket.getOutputStream(), true);
-			
+		
 			cc_manager = new CommonCommandsManager(user_role, cmd_listener, socket, socket_in, socket_out);
 			cc_manager.AnnounceStart();
-			
+		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void manageUserInput(String user_input) {
 		cc_manager.ManageUserInput(user_input);
 	}

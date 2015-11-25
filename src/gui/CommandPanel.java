@@ -60,8 +60,12 @@ public class CommandPanel extends JPanel implements ActionListener{
 		this.user_in_listener = listener;
 	}
 	
-	public void appendText(String text) {
+	public void appendLine(String text) {
 		textArea.append(text + "\n");
+	}
+	
+	public void appendText(String text) {
+		textArea.append(text);
 	}
 	
 	public void appendError(String msg) {
@@ -70,7 +74,7 @@ public class CommandPanel extends JPanel implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 		user_in = textField.getText();
-		appendText("[usr] " + user_in);
+		appendLine("[usr] " + user_in);
 		textField.setText("");
 		
 		UserInputEvent ev = new UserInputEvent(this, user_in);

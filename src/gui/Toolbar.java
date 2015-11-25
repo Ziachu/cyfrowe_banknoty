@@ -45,10 +45,10 @@ public class Toolbar extends JPanel implements ActionListener{
 		
 		if (clicked == helloBtn) {
 			if (cmd_listener != null)
-				cmd_listener.CommandEmitted("Hello");
+				cmd_listener.CommandEmitted("Hello", true);
 		} else if (clicked == goodbyeBtn) {
 			if (cmd_listener != null)
-				cmd_listener.CommandEmitted("Goodbye");
+				cmd_listener.CommandEmitted("Goodbye", true);
 		}
 	}
 }
