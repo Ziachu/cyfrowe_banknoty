@@ -3,6 +3,7 @@
 DBPI (*Bezpieczeństwo protokołów i systemów informatycznych*) project, 5th semester at UAM.
 
 # System roles:
-- Alice (creating banknotes, buying sth)
+- Server (working in background, forwards messages)
 - Bank (signing banknotes, accepting transactions)
-- Seller a.k.a. Bob (selling sth to Alice, asking Bank to deposit money)
+- Alice (creating banknotes, buying sth)
+- Vendor a.k.a. Bob (selling sth to Alice, asking Bank to deposit money)
