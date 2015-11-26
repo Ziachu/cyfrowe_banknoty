@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
 import listeners.CommandListener;
 
@@ -49,6 +50,12 @@ public class Alice extends Thread {
 	}
 	
 	public void manageUserInput(String user_input) {
-		cc_manager.ManageUserInput(user_input);
+		if (Arrays.asList(cc_manager.common_commands).contains(user_input)) {
+			cc_manager.ManageUserInput(user_input);
+		}
+		else {
+			//musimy stworzyc managera
+		}
+		}
 	}
 }

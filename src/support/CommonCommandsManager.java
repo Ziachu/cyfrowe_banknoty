@@ -21,6 +21,7 @@ public class CommonCommandsManager {
 	
 	private boolean waiting_for_next_input;
 	private Commands last_command;
+	public String[] common_commands;
 
 	public CommonCommandsManager(String role, CommandListener cmd_listener,
 			Socket socket, BufferedReader socket_in, PrintWriter socket_out) {
@@ -49,6 +50,8 @@ public class CommonCommandsManager {
 		this.socket = socket;
 		this.socket_in = socket_in;
 		this.socket_out = socket_out;
+
+		common_commands = new String[] {"usr", "exit", "series", "banknote"};
 
 		listener_thread = new ListenerThread(this.socket_in, this.cmd_listener);
 		
