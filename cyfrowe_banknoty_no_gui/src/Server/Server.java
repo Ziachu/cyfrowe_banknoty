@@ -20,7 +20,7 @@ public class Server {
 	
 	public static void main(String args[]) {
 		
-		Loger.println("cześć Damian!");
+		Loger.println("cześć Michał!");
 		
 		port = 4444;
 
