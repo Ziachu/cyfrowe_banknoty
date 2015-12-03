@@ -20,9 +20,13 @@ public class AliceCommandManager implements CommandManager {
 			switch(cmd) {
 			case role:
 				respondToRoleCommand();
+				
+				break;
+			case exit:
+				
 				break;
 			default:
-					
+				
 				break;
 			}
 		} catch (NullPointerException e) {
