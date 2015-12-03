@@ -84,7 +84,12 @@ public class Server {
 					continue;
 				} catch (IOException e) {
 					Loger.println("[err] Couldn't read from socket.\n\t" + e.getMessage());
-				}
+                    try {
+                        socket.close();
+                    } catch (IOException e1) {
+                        Loger.println("[err] Socket closed.\n\t");
+                    }
+                }
 							
 //				switch (cmd) {
 //				case role:
