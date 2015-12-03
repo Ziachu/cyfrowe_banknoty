@@ -20,8 +20,10 @@ public class Server {
 	
 	public static void main(String args[]) {
 		
-		port = 4444;
+		Loger.println("cześć Damian!");
 		
+		port = 4444;
+
 		try {
 			server_socket_listener = new ServerSocket(port);
 			users = new HashMap<String, Pair<BufferedReader, PrintWriter>>();
