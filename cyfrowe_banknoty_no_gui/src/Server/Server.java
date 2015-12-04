@@ -11,6 +11,7 @@ import java.util.Map;
 import Support.Command;
 import Support.Loger;
 import Support.Pair;
+import Support.Series;
 
 public class Server {
 
@@ -79,6 +80,61 @@ public class Server {
 					user_input = socket_in.readLine();				
 					cmd = Command.valueOf(user_input);
 					
+					switch (cmd) {
+					case role:
+						user_input = socket_in.readLine();
+						if (user_input.isEmpty())
+							break;
+						else {
+							user_role = user_input;
+							users.put(user_role, io_pair);
+						}
+						
+						break;
+						// wylistowanie użytkownikami wszystkich zalogowanych
+					case usr:
+						// najpierw komenda "usr" żeby poinformować klienta czego ma się spodziewać
+						socket_out.println("usr");
+						socket_out.println(users.size());
+						
+						for (Map.Entry<String, Pair<BufferedReader, PrintWriter>> user : users.entrySet()) {
+							socket_out.println(user.getKey());
+						}
+						
+//					cmd_listener.CommandEmitted("[srv] " + user_role + " printing users.", true);
+						
+						break;
+					case exit:
+						users.remove(user_role);
+						
+						if (users.containsKey(user_role)) {
+						Loger.println("[srv] " + user_role + " still logged in; server run() switch case statement.");
+						} else {
+							Loger.println("[srv] " + user_role + " logged out.");
+							socket.close();
+						}
+						
+						break;
+					case series:
+						String receiver = socket_in.readLine();
+						Loger.println("[srv] " + user_role + " sends series to " + receiver + ".");
+						
+						Series series = new Series();
+						series.receiveSeries(socket_in);
+						series.visualizeSeries();
+						
+//						transferSeries(receiver, series);
+						
+						break;
+					case banknote:
+						// TODO: send amount, id, then series
+						
+						break;
+					default:
+						socket.close();
+						
+						break;
+					}
 				} catch (NullPointerException e) {
 					Loger.println("[err] Unknown command from " + user_role + ".");
 					continue;
@@ -91,60 +147,6 @@ public class Server {
                     }
                 }
 							
-//				switch (cmd) {
-//				case role:
-//					user_input = socket_in.readLine();
-//					if (user_input.isEmpty())
-//						break;
-//					else {
-//						user_role = user_input;
-//						users.put(user_role, io_pair);
-//					}
-//					
-//					break;
-//				// wylistowanie użytkownikami wszystkich zalogowanych
-//				case usr:
-//					// najpierw komenda "usr" żeby poinformować klienta czego ma się spodziewać
-//					socket_out.println("usr");
-//					socket_out.println(users.size());
-//					for (Map.Entry<String, Pair<BufferedReader, PrintWriter>> user : users.entrySet()) {
-//						socket_out.println(user.getKey());
-//					}
-//
-//					cmd_listener.CommandEmitted("[srv] " + user_role + " printing users.", true);
-//					
-//					break;
-//				case exit:
-//					users.remove(user_role);
-//							
-//					if (users.containsKey(user_role)) {
-//						cmd_listener.CommandEmitted("[srv] " + user_role + " still logged in; server run() switch case statement.", true);
-//					} else {
-//						cmd_listener.CommandEmitted("[srv] " + user_role + " logged out.", true);
-//						socket.close();
-//					}
-//							
-//					break;
-//				case series:
-//					String receiver = socket_in.readLine();
-//					cmd_listener.CommandEmitted("[srv] " + user_role + " sends series to " + receiver + ".", true);
-//						
-//					Series series = new Series();
-//					series.receiveSeries(socket_in);
-//					series.visualizeSeries(cmd_listener);
-//							
-//					transferSeries(receiver, series);
-//							
-//					break;
-//				case banknote:
-//					// TODO: send amount, id, then series
-//				
-//					break;
-//				default:
-//					socket.close();
-//
-//					break;
-//				}
 			}
 			
 		}

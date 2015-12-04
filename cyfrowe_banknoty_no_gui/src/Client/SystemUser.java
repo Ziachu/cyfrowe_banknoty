@@ -60,7 +60,7 @@ public class SystemUser {
 	}
 	
 	private static void managerUserInput() {
-		Loger.print(">>>");
+		Loger.print("[usr] ");
 		String cmd = user_in.nextLine();
 		manager.respondToCommand(cmd);
 	}
