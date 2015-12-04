@@ -59,7 +59,31 @@ public class BankCommandManager implements CommandManager {
 					
 					// Wysyła polecenie do serwera. Inny wątek nasłuchuje odpowiedzi
 					break;
-				// TODO: dodać kolejne obsługiwane przez Alice komendy
+				/* TODO: dodać kolejne obsługiwane przez Bank komendy (case):
+					- losowanie j (numeru bankotu do podpisu)
+					- udostępnianie klucza publicznego
+					- odbieranie zakrytych banknotów od Alice
+					- sprawdzanie poprawności banknotów:
+						- odbieranie ciągów potrzebnych do hash'u
+						- sprawdzanie kwoty na banknotach
+						- sprawdzanie czy każde ID jest inne
+						- obliczanie hash'y
+						- porównywanie has'y (swoich z tymi na banknocie)
+						- obliczanie ciągów id_alice
+						- sprawdzanie czy ciągi identyfikując Alice
+					- podpisywanie banknotów (RSA)
+						- obliczanie V = Y^d (mod n)
+						- wysyłanie V do Alice
+					- wysyłanie podpisanych banknotów
+					- odbieranie banknotow od sprzedawcy
+					- weryfikacja podpisu pod banknotem
+						- obliczanie sig = M^e (mod n)
+						- porównywanie sig z tym na banknocie
+					- sprawdzanie ważności banknotu
+						- prowadzenie księgowości (historia banknotów otrzymanych)
+						- sprawdzanie, czy ID_banknotu już się pojawiło
+						- odnotowanie ID oraz ciągów id_alice
+				*/	
 				default:
 					
 					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");

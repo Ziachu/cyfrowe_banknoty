@@ -59,7 +59,21 @@ public class VendorCommandManager implements CommandManager {
 					
 					// Wysyła polecenie do serwera. Inny wątek nasłuchuje odpowiedzi
 					break;
-				// TODO: dodać kolejne obsługiwane przez Alice komendy
+				/* TODO: dodać kolejne obsługiwane przez Sprzedawcę komendy (case)
+					- weryfikowanie podpisu:
+						- pobieranie klucza publicznego Banku
+						- tworzenie podpisu
+						- porównywanie podpisu z podpisem na banknocie
+					- generowanie ciągu losowych bitów (długości 100)
+					- wysyłanie ciągu losowych bitów
+					- dalsza weryfikacja podpisu:
+						- pobieranie ciągów z banknotu
+						- obliczanie hash'u
+						- porównywanie hash'y (swoich z tymi na banknocie)
+					- akceptacja/ odrzucanie płatności
+					- wysyłanie do banku banknotu i ciagów identyfikujących Alice
+				
+				*/
 				default:
 					
 					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");

@@ -59,7 +59,29 @@ public class AliceCommandManager implements CommandManager {
 					
 					// Wysyła polecenie do serwera. Inny wątek nasłuchuje odpowiedzi
 					break;
-				// TODO: dodać kolejne obsługiwane przez Alice komendy
+				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
+					- generowanie bankotów
+						- ustalanie kwoty Y
+						- losowanie ID banknotu (o określonej # bitów)
+						- tworzenie ciągów id_alice (o ustalonej # bitów):
+								- losowanie ciągu (I, R, L, T, C, S, B)
+								- obliczanie XOR'a na bitach
+								- obliczanie hash'a
+					- zakrywanie banknotów
+						- pobieranie klucza publicznego banku
+						- losowanie Z takiego, że (Z, n) = 1
+						- obliczanie Y = M * Z^e (mod n)
+					- wysyłanie zakrytych banknotów
+					- odkrywanie banknotów
+						- wysyłanie ciągów potrzebnych do stworzenia hash'a, których nie ma na banknocie
+					- odbieranie ślepych podpisów
+					- finalizowanie tworzenia bankotów
+						- obliczanie SIG = V * Z^{-1} (mod n)
+						- przechowywanie jakoś bankotu z podpisem
+						- trzymanie przy bankocie ciągów potrzebnych do odkrycia zobowiązań
+					- odiberanie ciągów losowych bitów od sprzedawcy
+					- ujawnianie zobowiązań odpowiednio lewej/prawe strony ciągu id_alice
+				*/
 				default:
 					
 					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");
