@@ -88,12 +88,12 @@ public class Series {
 	}
 
     public static Series xorSeries (Series I, Series R){
-
         Series L = new Series(I.length);
 
-        for (int i=0; i < I.length; i++) {
+        for (int i = 0; i < I.length; i++) {
             L.values[i] = I.values[i] ^= R.values[i];
         }
+        
         return L;
     }
 

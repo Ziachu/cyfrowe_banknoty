@@ -9,14 +9,12 @@ import java.util.Random;
  ALICE PODAJE Y i CIAGI IDENTYFIKUJACE(sama sobie je generuje z series zeby miec swoj komplet)
  */
 public class Banknote {
-    private static int amount;
-    private static int banknote_id;
-    private static Series s_series;
-    private static Series u_series;
-    private static Series t_series;
-    private static Series w_series;
-
-    public Banknote () {}
+    private int amount;
+    private int banknote_id;
+    private Series s_series;
+    private Series u_series;
+    private Series t_series;
+    private Series w_series;
 
     public Banknote (int amount, int banknote_id, Series s_series, Series u_series, Series t_series, Series w_series) {
         this.amount = amount;
@@ -25,15 +23,13 @@ public class Banknote {
         this.u_series = u_series;
         this.t_series = t_series;
         this.w_series = w_series;
-
     }
 
 //    public Banknote generateBanknote(){
-        //todox tu beda getTseries itd zeby moc ustalic
-        //Banknote banknote = new Banknote(int amount, int banknote_id, Series s_series, Series u_series, Series t_series, Series w_series)
+//        todox tu beda getTseries itd zeby moc ustalic
+//        Banknote banknote = new Banknote(int amount, int banknote_id, Series s_series, Series u_series, Series t_series, Series w_series)
 //        getBanknote_id();
 //        setBanknote_id();
-
 
 //        return banknote;
 //    }
@@ -42,29 +38,27 @@ public class Banknote {
         return Banknote.t_series[];
     } */
 
-    public int getBanknote_id(){
-        return generateBanknoteId();
-    }
-
-    public void setBanknote_id(){
-        int id = getBanknote_id();
-        this.banknote_id = id;
-    }
-
-    public int get_amount(int am){
-        this.amount = am;
-        return am;
-    }
-    public void setAmount(int cash){
-        this.amount = cash;
-    }
-
-
-    public static int generateBanknoteId(){
-
-        Random rand = new Random();
-        int banknote_id = rand.nextInt(Integer.MAX_VALUE);
+    public int getBanknoteId(){
         return banknote_id;
+    }
+
+    public void setBanknoteId(int id){
+        banknote_id = id;
+    }
+
+    public int getAmount(){
+        return amount;
+    }
+    
+    public void setAmount(int cash){
+       amount = cash;
+    }
+
+    public void generateBanknoteId(){
+        Random rand = new Random();
+        int id = rand.nextInt(Integer.MAX_VALUE);
+       
+        this.banknote_id = id; 
     }
 
 
