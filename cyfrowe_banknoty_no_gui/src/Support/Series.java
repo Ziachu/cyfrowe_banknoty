@@ -27,7 +27,7 @@ public class Series {
 		this.length = series.length;
 		this.values = series.values;
 	}
-	
+
 	public void generateRandomSeries(int length) {
 		// TODO: create series of given length with random values
 		Random rand = new Random();
@@ -86,4 +86,15 @@ public class Series {
 		
 		Loger.println("");
 	}
+
+    public static Series xorSeries (Series I, Series R){
+
+        Series L = new Series(I.length);
+
+        for (int i=0; i < I.length; i++) {
+            L.values[i] = I.values[i] ^= R.values[i];
+        }
+        return L;
+    }
+
 }

@@ -1,5 +1,7 @@
 package Support;
 
+import java.util.Random;
+
 /**
  TODO: musi miec miejsca na IDBanknotu, Kwotę, 4 listy T-W, S-U po 100 obiektow typu series
  Generate_banknote(Y-to podaje ALICE, Xi-losowe(z series), I-liste 100 obiektow typu series(identyfikujacych) - otrzymuje po 1 elemencie
@@ -26,9 +28,45 @@ public class Banknote {
 
     }
 
-    public void generateBanknote(int amount, int banknote_id, Series s_series, Series u_series, Series t_series, Series w_series){
-        //todo
+//    public Banknote generateBanknote(){
+        //todox tu beda getTseries itd zeby moc ustalic
+        //Banknote banknote = new Banknote(int amount, int banknote_id, Series s_series, Series u_series, Series t_series, Series w_series)
+//        getBanknote_id();
+//        setBanknote_id();
+
+
+//        return banknote;
+//    }
+
+   /* public byte[] getTSeries(BanknoteGenerator.GenerateTSeries()) {
+        return Banknote.t_series[];
+    } */
+
+    public int getBanknote_id(){
+        return generateBanknoteId();
     }
+
+    public void setBanknote_id(){
+        int id = getBanknote_id();
+        this.banknote_id = id;
+    }
+
+    public int get_amount(int am){
+        this.amount = am;
+        return am;
+    }
+    public void setAmount(int cash){
+        this.amount = cash;
+    }
+
+
+    public static int generateBanknoteId(){
+
+        Random rand = new Random();
+        int banknote_id = rand.nextInt(Integer.MAX_VALUE);
+        return banknote_id;
+    }
+
 
 
 
