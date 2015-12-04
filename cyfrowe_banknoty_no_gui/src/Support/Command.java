@@ -6,4 +6,5 @@ public enum Command {
 	exit,
 	series,
 	banknote,
+	commands,
 }

@@ -4,10 +4,10 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 
 import Support.Command;
-import Support.CommandManager;
+import Support.CommonCommandManager;
 import Support.Loger;
 
-public class VendorCommandManager implements CommandManager {
+public class VendorCommandManager extends CommonCommandManager {
 
 //	private BufferedReader socket_in;
 	private PrintWriter socket_out;
@@ -24,13 +24,12 @@ public class VendorCommandManager implements CommandManager {
 	// Umożliwia ręczne wywołanie odpowiedzi na komendę
 	public void setCommand(Command cmd) {
 		this.cmd = cmd;
-		respondToCommand(this.cmd.toString());
 	}
 	
 	// Ustawia kanały komunikacyjne, tak żeby manager mógł przekazywać komunikaty do serwera
 	public void setCommandLine(BufferedReader socket_in, PrintWriter socket_out) {
-//		this.socket_in = socket_in;
 		this.socket_out = socket_out;
+		super.setCommandLine(socket_in, socket_out);
 	}
 
 	// Spełnia główne zadanie CommandManager'a, zarządza wprowadzonymi komendami
@@ -45,20 +44,7 @@ public class VendorCommandManager implements CommandManager {
 				socket_out.println(cmd);
 				
 				switch(cmd) {
-				case role:
-					
-					last_cmd = cmd;
-					this.waiting_for_next_input = true;
-					
-					break;
-				case exit:
-					
-					respondToExitCommand();
-					break;
-				case usr:
-					
-					// Wysyła polecenie do serwera. Inny wątek nasłuchuje odpowiedzi
-					break;
+				
 				/* TODO: dodać kolejne obsługiwane przez Sprzedawcę komendy (case)
 					- weryfikowanie podpisu:
 						- pobieranie klucza publicznego Banku
@@ -85,26 +71,11 @@ public class VendorCommandManager implements CommandManager {
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
 			switch(last_cmd) {
-			case role:
-				
-				respondToRoleCommand(user_input);
-				this.waiting_for_next_input = false;
-				
-				break;
 			default:
 				
 				Loger.println("\t[err] Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
 				break;
-				
-			}
-			
+			}		
 		}		
-	}
-	private void respondToRoleCommand(String user_input) {
-		socket_out.println(user_input);
-	}
-	
-	private void respondToExitCommand() {
-		System.exit(0);
 	}
 }

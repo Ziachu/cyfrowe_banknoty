@@ -6,12 +6,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import Alice.AliceCommandManager;
 import Bank.BankCommandManager;
 import Support.Command;
-import Support.CommandManager;
+import Support.CommonCommandManager;
 import Support.Loger;
 import Support.Role;
 import Support.Series;
@@ -29,7 +30,7 @@ public class SystemUser {
 	private static PrintWriter socket_out;
 	
 	private static ServerResponseListener server_response_listener;
-	private static CommandManager manager;
+	private static CommonCommandManager manager;
 	
 	public static void main(String args[]) {
 		
@@ -67,7 +68,17 @@ public class SystemUser {
 		
 		Loger.print("[usr] ");
 		String cmd = user_in.nextLine();
-		manager.respondToCommand(cmd);
+		
+		String common_commands[] = new String[] {"role", "exit", "usr"};
+		
+		if (Arrays.asList(common_commands).contains(cmd)) {
+			Loger.println("\t[debug] CommonCommand.");
+			manager.respondToCommonCommand(cmd);
+		} else {
+			Loger.println("\t[debug] UncommonCommand!");
+			manager.respondToCommand(cmd);
+		}
+		
 	}
 
 	private static void setCommandManager() {
@@ -95,8 +106,8 @@ public class SystemUser {
 		
 		manager.setCommandLine(socket_in, socket_out);
 		
-		manager.setCommand(Command.role);
-		manager.respondToCommand(user_role.toString());
+		manager.respondToCommonCommand(Command.role.toString());
+		manager.respondToCommonCommand(user_role.toString());
 	}
 
 	public static void getUserRole() {
