@@ -1,5 +1,6 @@
 package Support;
 
+
 import java.util.Random;
 
 /**
@@ -46,6 +47,22 @@ public class Banknote {
         banknote_id = id;
     }
 
+    public Series getS_series() {return s_series;}
+
+    public void setS_series(Series ser) { u_series = ser; }
+
+    public Series getU_series() {return u_series;}
+
+    public void setU_series(Series ser) { t_series = ser; }
+
+    public Series getT_series() {return t_series;}
+
+    public void setT_series(Series ser) { s_series = ser; }
+
+    public Series getW_series() {return s_series;}
+
+    public void setW_series(Series ser) { s_series = ser; }
+
     public int getAmount(){
         return amount;
     }
@@ -60,8 +77,6 @@ public class Banknote {
        
         this.banknote_id = id; 
     }
-
-
 
 
 
