@@ -12,7 +12,6 @@ import Support.Command;
 import Support.Loger;
 import Support.Pair;
 import Support.Role;
-import Support.Series;
 
 public class Server {
 
@@ -89,7 +88,7 @@ public class Server {
 						else {
 							user_role = Role.valueOf(user_input);
 							users.put(user_role, io_pair);
-							Loger.println("[srv] Alice has logged in.");
+							Loger.println("[srv] " + user_role + " has logged in.");
 						}
 						
 						break;

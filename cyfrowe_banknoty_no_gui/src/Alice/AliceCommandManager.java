@@ -9,7 +9,7 @@ import Support.Loger;
 
 public class AliceCommandManager implements CommandManager {
 
-	private BufferedReader socket_in;
+//	private BufferedReader socket_in;
 	private PrintWriter socket_out;
 	 
 	private Command cmd;
@@ -29,7 +29,7 @@ public class AliceCommandManager implements CommandManager {
 	
 	// Ustawia kanały komunikacyjne, tak żeby manager mógł przekazywać komunikaty do serwera
 	public void setCommandLine(BufferedReader socket_in, PrintWriter socket_out) {
-		this.socket_in = socket_in;
+//		this.socket_in = socket_in;
 		this.socket_out = socket_out;
 	}
 

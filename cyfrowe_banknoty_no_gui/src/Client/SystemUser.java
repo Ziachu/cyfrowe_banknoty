@@ -9,11 +9,13 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import Alice.AliceCommandManager;
+import Bank.BankCommandManager;
 import Support.Command;
 import Support.CommandManager;
 import Support.Loger;
 import Support.Role;
 import Support.Series;
+import Vendor.VendorCommandManager;
 
 public class SystemUser {
 
@@ -57,6 +59,12 @@ public class SystemUser {
 	}
 	
 	private static void managerUserInput() {
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			Loger.println("\t[err] Troubles with Thread.sleep() function.");
+		}
+		
 		Loger.print("[usr] ");
 		String cmd = user_in.nextLine();
 		manager.respondToCommand(cmd);
@@ -69,16 +77,26 @@ public class SystemUser {
 		
 		switch(user_role) {
 		case Alice:
-			manager = new AliceCommandManager();
-			manager.setCommandLine(socket_in, socket_out);
 			
-			manager.setCommand(Command.role);
-			manager.respondToCommand(user_role.toString());
+			manager = new AliceCommandManager();			
+			break;
+		case Bank:
+			
+			manager = new BankCommandManager();
+			break;
+		case Vendor:
+			
+			manager = new VendorCommandManager();
 			break;
 		default:
 			Loger.println("\t[err] This error shouldn't occur, what's wrong with " + user_role + " role?");
 			break;
 		}
+		
+		manager.setCommandLine(socket_in, socket_out);
+		
+		manager.setCommand(Command.role);
+		manager.respondToCommand(user_role.toString());
 	}
 
 	public static void getUserRole() {
@@ -87,6 +105,7 @@ public class SystemUser {
 			try {
 				Loger.print("Enter Your role: ");
 				user_role = Role.valueOf(user_in.nextLine());
+				Loger.println("\t[debug] " + user_role);
 				
 				user_role_applied = true;
 			} catch (IllegalArgumentException e) {
@@ -141,9 +160,9 @@ class ServerResponseListener extends Thread {
 							break;
 						}
 					} catch (IllegalArgumentException e) {
-						try {
+						/*try {
 							Thread.sleep(100);
-						} catch (InterruptedException e1) {}
+						} catch (InterruptedException e1) {}*/
 							
 						continue;
 					}
