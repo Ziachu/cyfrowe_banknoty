@@ -11,23 +11,22 @@ import java.util.Map;
 import Support.Command;
 import Support.Loger;
 import Support.Pair;
+import Support.Role;
 import Support.Series;
 
 public class Server {
 
 	private static int port;
-	private static HashMap<String, Pair<BufferedReader, PrintWriter>> users;
+	private static HashMap<Role, Pair<BufferedReader, PrintWriter>> users;
 	private static ServerSocket server_socket_listener;
 	
 	public static void main(String args[]) {
-		
-		Loger.println("cześć Michał!");
 		
 		port = 4444;
 
 		try {
 			server_socket_listener = new ServerSocket(port);
-			users = new HashMap<String, Pair<BufferedReader, PrintWriter>>();
+			users = new HashMap<Role, Pair<BufferedReader, PrintWriter>>();
 			
 			Loger.println("[info] Listening at " + port + "...");			
 
@@ -52,7 +51,7 @@ public class Server {
 		private PrintWriter socket_out;
 		private Pair<BufferedReader, PrintWriter> io_pair;
 		
-		private String user_role;
+		private Role user_role;
 		
 		public BackgroundServer(Socket socket) {
 			this.socket = socket;
@@ -77,45 +76,48 @@ public class Server {
 			while (!socket.isClosed()) {
 
 				try {
-					user_input = socket_in.readLine();				
+					user_input = socket_in.readLine();	
+//					Loger.println("[srv] from user: " + user_input + ".");
 					cmd = Command.valueOf(user_input);
 					
 					switch (cmd) {
 					case role:
+						
 						user_input = socket_in.readLine();
 						if (user_input.isEmpty())
 							break;
 						else {
-							user_role = user_input;
+							user_role = Role.valueOf(user_input);
 							users.put(user_role, io_pair);
+							Loger.println("[srv] Alice has logged in.");
 						}
 						
 						break;
-						// wylistowanie użytkownikami wszystkich zalogowanych
 					case usr:
-						// najpierw komenda "usr" żeby poinformować klienta czego ma się spodziewać
+						
+						// najpierw komenda "usr" żeby poinformować ServerResponseListenera czego ma się spodziewać
 						socket_out.println("usr");
 						socket_out.println(users.size());
 						
-						for (Map.Entry<String, Pair<BufferedReader, PrintWriter>> user : users.entrySet()) {
-							socket_out.println(user.getKey());
+						for (Map.Entry<Role, Pair<BufferedReader, PrintWriter>> user : users.entrySet()) {
+							socket_out.println(user.getKey().toString());
 						}
 						
-//					cmd_listener.CommandEmitted("[srv] " + user_role + " printing users.", true);
+						Loger.println("[srv] " + user_role + " printing users.");
 						
 						break;
 					case exit:
 						users.remove(user_role);
 						
 						if (users.containsKey(user_role)) {
-						Loger.println("[srv] " + user_role + " still logged in; server run() switch case statement.");
+							Loger.println("[srv] " + user_role + " still logged in. Couldn't remove him from HashMap.");
 						} else {
 							Loger.println("[srv] " + user_role + " logged out.");
 							socket.close();
 						}
 						
 						break;
-					case series:
+					/*case series:
 						String receiver = socket_in.readLine();
 						Loger.println("[srv] " + user_role + " sends series to " + receiver + ".");
 						
@@ -123,21 +125,24 @@ public class Server {
 						series.receiveSeries(socket_in);
 						series.visualizeSeries();
 						
-//						transferSeries(receiver, series);
+						transferSeries(receiver, series);
 						
-						break;
-					case banknote:
+						break;*/
+					/*case banknote:
 						// TODO: send amount, id, then series
 						
-						break;
+						break;*/
 					default:
-						socket.close();
 						
+						Loger.println("[srv] Such command (" + cmd.toString() + ") isnt' supported.");
 						break;
 					}
 				} catch (NullPointerException e) {
 					Loger.println("[err] Unknown command from " + user_role + ".");
-					continue;
+					Loger.println("[err] Shutting down connection, \"no_command_loop\".");
+					try {
+						socket.close();
+					} catch (IOException e1) { }
 				} catch (IOException e) {
 					Loger.println("[err] Couldn't read from socket.\n\t" + e.getMessage());
                     try {
@@ -146,11 +151,8 @@ public class Server {
                         Loger.println("[err] Socket closed.\n\t");
                     }
                 }
-							
 			}
-			
 		}
 	}
-	
 }
 

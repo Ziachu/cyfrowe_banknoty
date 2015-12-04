@@ -9,9 +9,11 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import Alice.AliceCommandManager;
+import Support.Command;
 import Support.CommandManager;
 import Support.Loger;
 import Support.Role;
+import Support.Series;
 
 public class SystemUser {
 
@@ -24,13 +26,8 @@ public class SystemUser {
 	private static BufferedReader socket_in;
 	private static PrintWriter socket_out;
 	
+	private static ServerResponseListener server_response_listener;
 	private static CommandManager manager;
-	
-//	public Alice(String server_address, int port) {
-//		
-//		this.port = port;
-//		this.server_address = server_address;
-//	}
 	
 	public static void main(String args[]) {
 		
@@ -53,9 +50,9 @@ public class SystemUser {
 			}
 			
 		} catch (UnknownHostException e) {
-			Loger.println("[err] Unknown server address.\n\t" + e.getMessage());
+			Loger.println("\t[err] Unknown server address.\n\t" + e.getMessage());
 		} catch (IOException e) {
-			Loger.println("[err] Couldn't establish connection.\n\t" + e.getMessage());
+			Loger.println("\t[err] Couldn't establish connection.\n\t" + e.getMessage());
 		}
 	}
 	
@@ -66,12 +63,20 @@ public class SystemUser {
 	}
 
 	private static void setCommandManager() {
+		
+		server_response_listener = new ServerResponseListener(socket_in);
+		server_response_listener.start();
+		
 		switch(user_role) {
 		case Alice:
 			manager = new AliceCommandManager();
+			manager.setCommandLine(socket_in, socket_out);
+			
+			manager.setCommand(Command.role);
+			manager.respondToCommand(user_role.toString());
 			break;
 		default:
-			Loger.println("[err] This error shouldn't occur, what's wrong with " + user_role + " role?");
+			Loger.println("\t[err] This error shouldn't occur, what's wrong with " + user_role + " role?");
 			break;
 		}
 	}
@@ -85,9 +90,87 @@ public class SystemUser {
 				
 				user_role_applied = true;
 			} catch (IllegalArgumentException e) {
-				Loger.println("[err] Wrong role applied.");
+				Loger.println("\t[err] Wrong role applied.");
 			}			
 		}
 	}
-	
+}
+
+
+// ServerResponseListener to wątek działajacy w tle, nasłuchujący "niespodziewanych"
+// wiadomości ze strony serwera. Przykładowa sytuacja:
+// 		Bob przesyła ciąg do Alice
+// 		Alice w danym momencie wykonuje inne zadanie
+//		Dzięki działającemu w tle ServerResponseListener serwer po prostu
+//		przesyła otrzymany od Bob'a ciąg 
+//		A u Alice jest on wypisywany ;)
+
+
+class ServerResponseListener extends Thread {
+	BufferedReader socket_in;
+	Command cmd;
+	String user_input;
+		
+	ServerResponseListener(BufferedReader socket_in) {
+		this.socket_in = socket_in;
+	}
+		
+	public void run() {
+		while (true) {
+			try {
+				if (socket_in.ready()) {
+					user_input = socket_in.readLine();
+						
+					try {
+						cmd = Command.valueOf(user_input);
+							
+						switch(cmd) {
+						case usr:
+							
+							displayServerResponseToUsrCommand();
+								
+							break;
+						case series:								
+							
+							displayServerResponseToSeriesCommand();
+								
+							break;
+						default:
+							
+							Loger.println("[srv] Wrong command.");
+							break;
+						}
+					} catch (IllegalArgumentException e) {
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e1) {}
+							
+						continue;
+					}
+				}
+			} catch (IOException e) {
+				Loger.println("[srv] IO problem: SystemUser in ListenerThread's run() method");
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void displayServerResponseToSeriesCommand() {
+		Series series = new Series();
+		series.receiveSeries(socket_in);
+			
+		Loger.println("[srv] Series came from server:");
+		series.visualizeSeries();
+	}
+
+	private void displayServerResponseToUsrCommand() throws NumberFormatException, IOException {
+		int no_users = Integer.parseInt(socket_in.readLine());
+		
+		String response = "(" + Integer.toString(no_users) + ") ";
+		for (int i = 0; i < no_users; i++) {
+			response += socket_in.readLine() + " ";
+		}
+			
+		Loger.println("[srv] " + response);
+	}
 }
