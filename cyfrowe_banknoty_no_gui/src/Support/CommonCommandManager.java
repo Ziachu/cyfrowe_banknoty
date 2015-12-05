@@ -6,6 +6,16 @@ import java.io.UnsupportedEncodingException;
 
 public class CommonCommandManager{
 
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_BLACK = "\u001B[30m";
+	public static final String ANSI_RED = "\u001B[31m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_YELLOW = "\u001B[33m";
+	public static final String ANSI_BLUE = "\u001B[34m";
+	public static final String ANSI_PURPLE = "\u001B[35m";
+	public static final String ANSI_CYAN = "\u001B[36m";
+	public static final String ANSI_WHITE = "\u001B[37m";
+	
 	private PrintWriter socket_out;
 	
 	private Command cmd;
@@ -54,10 +64,7 @@ public class CommonCommandManager{
 					break;
 				case commands:
 					
-					Loger.println("[cmd] Available commands:");
-					for (Command cmd : Command.values()) {
-						Loger.println("\t" + cmd);
-					}
+					respondToCommandsCommand();
 					break;
 				default:
 					
@@ -89,6 +96,13 @@ public class CommonCommandManager{
 				Loger.println("\t[err] Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
 				break;
 			}
+		}
+	}
+
+	private void respondToCommandsCommand() {
+		Loger.println("[cmd] Available commands:");
+		for (Command cmd : Command.values()) {
+			Loger.println("\t" + ANSI_RED + cmd + ANSI_RESET);
 		}
 	}
 
