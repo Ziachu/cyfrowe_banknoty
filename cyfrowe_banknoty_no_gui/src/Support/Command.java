@@ -6,4 +6,6 @@ public enum Command {
 	exit,
 	series,
 	commands,
+	example_series,
+	tst_ali,
 }

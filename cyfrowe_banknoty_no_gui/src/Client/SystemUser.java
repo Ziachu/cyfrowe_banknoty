@@ -81,12 +81,12 @@ public class SystemUser {
 		// Jeżeli to komenda unikatowa dla danego użytkownika, lub "kolejny input" 
 		} else {
 			// Jeżeli poprzednia komenda była wspólna
-			if (Arrays.asList(common_commands).contains(last_user_input)) {
-				manager.respondToCommonCommand(user_input);
+//			if (Arrays.asList(common_commands).contains(last_user_input)) {
+//				manager.respondToCommonCommand(user_input);
 			// Jeżeli to jednak unikatowa komenda, lub "kolejny input"
-			} else {
+//			} else {
 				manager.respondToCommand(user_input);
-			}
+//			}
 		}
 		
 		last_user_input = user_input;

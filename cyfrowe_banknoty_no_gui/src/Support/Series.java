@@ -54,11 +54,7 @@ public class Series {
 	}
 	
 	public void sendSeries(PrintWriter out) throws UnsupportedEncodingException {
-//		TODO: send receiver
-//		out.println(receiver);
-//		TODO: send length to server
 		out.println(this.length);
-//		TODO: send values to server
 		out.println(new String(this.values, "utf-8"));
 	}
 	
@@ -78,7 +74,7 @@ public class Series {
 	
 	public void visualizeSeries() {
 		for (int i = 0; i < this.length; i++) {
-			if (i > 0 && i % 10 == 0)
+			if (i > 0 && i % 20 == 0)
 				Loger.println("");
 			
 			Loger.print(" " + this.values[i] + " ");
@@ -88,24 +84,35 @@ public class Series {
 	}
 
     public static Series[] xorSeries (Series[] I, Series[] R){
-        Series[] L = new Series[100];
-
-		for (int j=0; j< 100; j++) {
-			for (int i = 0; i < I.length; i++) {
-				L[j].values[i] = I[j].values[i] ^= R[j].values[i];
+    	if (I.length == R.length) {
+        	int length = I.length;
+        	Series[] xor_result = new Series[length];
+        	        	
+        	// Iteruję po każdym ciągu
+			for (int j = 0; j < length; j++) {
+				xor_result[j] = new Series(I[j].length);
+				// Iteruję po każdym elemencie w ciągu
+				for (int i = 0; i < I[j].length; i++) {
+					xor_result[j].values[i] = (byte)(I[j].values[i] ^ R[j].values[i]);
+				}				
 			}
-		}
-        
-        return L;
+        	
+        	return xor_result;
+        	
+        } else {
+        	Loger.println("[err] Couldn't XOR two series (two different lengths.");
+        	throw new IllegalArgumentException();
+        }
     }
 
-	public static Series[] seriesTable (int length){
-		Series[] L = new Series[100];
+	public static Series[] createSeriesTable (int no_series, int length_of_series){
+		Series[] series_table = new Series[no_series];
 
-		for (int i=0; i<100; i++){
-			L[i] = new Series(100);
+		for (int i = 0; i < no_series; i++){
+			series_table[i] = new Series(length_of_series);
 		}
-		return L;
+		
+		return series_table;
 	}
 
 }

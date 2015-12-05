@@ -70,8 +70,8 @@ public class Server {
 		public void run() {
 			Loger.println("[info] Connection with " + socket.getInetAddress() + ":" + socket.getPort() + " established.");
 		
-			String user_input;
 			Command cmd;
+			String user_input;
 
 			while (!socket.isClosed()) {
 
@@ -145,9 +145,11 @@ public class Server {
 						break;*/
 					default:
 						
-						Loger.println("[srv] Such command (" + cmd.toString() + ") isnt' supported.");
+						Loger.println("[srv] Such command (" + cmd.toString() + ") isn't supported.");
 						break;
 					}
+				} catch (IllegalArgumentException e) {
+					Loger.println("[err] Unknown command from " + user_role + ".");
 				} catch (NullPointerException e) {
 					Loger.println("[err] Unknown command from " + user_role + ".");
 					Loger.println("[err] Shutting down connection, \"no_command_loop\".");

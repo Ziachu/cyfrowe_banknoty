@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import Support.Command;
 import Support.CommonCommandManager;
 import Support.Loger;
+import Support.Series;
 
 public class AliceCommandManager extends CommonCommandManager {
 
@@ -42,6 +43,30 @@ public class AliceCommandManager extends CommonCommandManager {
 				socket_out.println(cmd);
 				
 				switch(cmd) {
+				case example_series:
+					
+					respondToExampleSeriesCommand();
+					break;
+				case tst_ali:
+				
+					Alice alice = new Alice(5, 10);
+					
+					Loger.println("\nAlice's identification series:");
+					for (int i = 0; i < alice.no_identification_series; i++) {
+						Loger.print("no. " + i + ".:");
+						alice.i_series[i].visualizeSeries();
+						Loger.print("\tL: ");
+						alice.l_series[i].visualizeSeries();
+						Loger.print("\tR: ");
+						alice.r_series[i].visualizeSeries();
+						Loger.println("\tHashes:");
+						Loger.print("\tU: ");
+						alice.u_series[i].visualizeSeries();
+						Loger.print("\tW: ");
+						alice.w_series[i].visualizeSeries();
+					}
+						
+					break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
 					- generowanie bankotów
 						- ustalanie kwoty Y
@@ -70,8 +95,10 @@ public class AliceCommandManager extends CommonCommandManager {
 					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");
 					break;
 				}
-			} catch (NullPointerException | IllegalArgumentException e) {
+			} catch (IllegalArgumentException e) {
 				Loger.println("\t[err] Wrong command: " + msg + ".");
+			} catch (NullPointerException e) {
+				Loger.println("\t[err] Null value somewhere.");
 			}
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
@@ -82,5 +109,22 @@ public class AliceCommandManager extends CommonCommandManager {
 				break;
 			}	
 		}	
+	}
+
+	private void respondToExampleSeriesCommand() {
+		Series example1 = new Series(10);
+		Loger.println("\nRandom series of length: " + example1.getLength() + ".");
+		example1.visualizeSeries();
+		
+		Loger.println("Byte format: #" + example1.getValues().toString() + "#");
+		
+		Series example2 = new Series(10);
+		Loger.println("Another random series of length: " + example2.getLength() + ".");
+		example2.visualizeSeries();
+		
+		Loger.println("Byte format: #" + example2.getValues().toString() + "#");
+		
+		Loger.println("Let's try to add them.");
+		Loger.println("Byte format: #" + (example1.getValues().toString() + example2.getValues().toString()).getBytes() + "#");
 	}
 }

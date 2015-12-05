@@ -11,58 +11,89 @@ import Support.Series;
  */
 public class Alice {
 
-    private Series[] i_series;
-    private Series[] r_series;
-    private Series[] l_series;
-    private Series[] t_series;
-    private Series[] s_series;
-    private Series[] c_series;
-    private Series[] b_series;
-    private Series[] w_series;
-    private Series[] u_series;
+	public int no_identification_series; 
+	public int length_of_series;
+	
+	public Series[] i_series;
+	public Series[] r_series;
+	public Series[] l_series;
+	public Series[] t_series;
+	public Series[] s_series;
+	public Series[] c_series;
+	public Series[] b_series;
+	public Series[] w_series;
+	public Series[] u_series;
 
-    public Alice() {
-    	// TODO: Tu tworzysz jeden ciąg identyfikujący, a Alice potrzebuje ich 100. ;)
-        i_series = Series.seriesTable(100);
-    	// TODO: Podobna sytuacja co wyżej.
-        r_series = Series.seriesTable(100);
-        l_series = Series.xorSeries(i_series, r_series);
-        t_series = Series.seriesTable(100);
-        s_series = Series.seriesTable(100);
-        c_series = Series.seriesTable(100);
-        b_series = Series.seriesTable(100);
-        w_series = GenerateWandUSeries(t_series, c_series, r_series);
-        u_series = GenerateWandUSeries(s_series, b_series, l_series);
-    }
+	// Przerobiłem wszystko w taki sposób, że liczba ciągów identyfikujących Alice
+	// oraz długość wszystkich pojedynczych ciągów zależy od tego, co wprowadzi użytkownik
+	
+	public Alice(int no_i_series, int length_of_series) {
+		Loger.println("--- Creating new instance of Alice's class.");
+		
+		no_identification_series = no_i_series;
+		this.length_of_series = length_of_series;
 
-    public byte[] getMD5(byte[] input) {
-        try {
-            String md5 = "MD5";
-            MessageDigest md;
-            md = MessageDigest.getInstance(md5);
-            byte[] thedigest = md.digest(input);
-            return thedigest;
-        } catch (NoSuchAlgorithmException e) {
-        	Loger.println("\t[err] Trouble with md5 hashing.");
-        	throw new RuntimeException(e);
-        }
-    }
+		Loger.println("--- Generating her identification series.");
+		i_series = Series.createSeriesTable(no_i_series, length_of_series);
+		Loger.println("--- Drawing RIGHT part of her id_series.");
+		r_series = Series.createSeriesTable(no_i_series, length_of_series);
+		Loger.println("--- XOR'ing LEFT part of her id_series.");
+		l_series = Series.xorSeries(i_series, r_series);
+		
+		Loger.println("--- Drawing t_series.");
+		t_series = Series.createSeriesTable(no_i_series, length_of_series);
+		Loger.println("--- Drawing s_series.");
+		s_series = Series.createSeriesTable(no_i_series, length_of_series);
+		Loger.println("--- Drawing c_series.");
+		c_series = Series.createSeriesTable(no_i_series, length_of_series);
+		Loger.println("--- Drawing b_series.");
+		b_series = Series.createSeriesTable(no_i_series, length_of_series);
+		
+		Loger.println("--- Hashing t_series and c_series with r_series.");
+		w_series = hashSeries(t_series, c_series, r_series);
+		Loger.println("--- Hashing s_series and b_series with l_series.");
+		u_series = hashSeries(s_series, b_series, l_series);
+		
+	}
 
-    // TODO: Damiano, nazwa metody sugeuje zwracania dwóch ciągów U i W, czemu zwracasz tylko W?
-    // TODO: Czy ta metoda tak w ogóle musi zwracać ten ciąg? Jeżeli klasa Alice ma pole "w_series"
-    // 		 to, czy nie lepiej tam zapisać wynik?
-    public Series[] GenerateWandUSeries (Series[] t_series, Series[] c_series, Series[] r_series){
-        Series[] w_series = new Series[100];
+	public static byte[] getMD5(byte[] input) {
+		try {
+			MessageDigest md;
+			md = MessageDigest.getInstance("MD5");
+			
+			byte[] thedigest = md.digest(input);
+			Loger.println(" = " + thedigest.toString());
 
-        for (int i = 0; i<100; i++) {
-            String sum_help = t_series[i].getValues().toString() + c_series[i].getValues().toString() + r_series[i].getValues().toString();
-            int sum_length = t_series[i].getLength() + c_series[i].getLength() + r_series[i].getLength();
-            w_series[i].setLength(sum_length);
-            byte[] sum_bytes = getMD5(sum_help.getBytes());
-            w_series[i] = new Series(sum_length, sum_bytes);
-        }
+			return thedigest;
+		} catch (NoSuchAlgorithmException e) {
+			Loger.println("\t[err] Trouble with md5 hashing.");
+			throw new RuntimeException(e);
+		}
+	}
 
-        return w_series;
-    }
+	public Series[] hashSeries(Series[] series1, Series[] series2, Series[] series3) {
+		Series[] table_of_hashes = new Series[no_identification_series];
+
+		// Można ewentualnie zsumować je inaczej: 
+		// (series.getValues().toString() + ... + ... ).getBytes()
+		for (int i = 0; i < no_identification_series; i++) {
+			String sum_help = series1[i].getValues().toString() 
+							+ series2[i].getValues().toString()
+							+ series3[i].getValues().toString();
+			
+//			int sum_length = series1[i].getLength() 
+//						   + series2[i].getLength()
+//						   + series3[i].getLength();
+
+			Loger.print("\t--- H(" + series1[i].getValues().toString() + " ," 
+						+ series2[i].getValues().toString() + " ," 
+						+ series3[i].getValues().toString() + ")");
+			
+			byte[] sum_bytes = getMD5(sum_help.getBytes());		
+			table_of_hashes[i] = new Series(sum_bytes.length, sum_bytes);
+		}
+
+		return table_of_hashes;
+	}
 
 }
