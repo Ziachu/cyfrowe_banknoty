@@ -31,45 +31,37 @@ public class Banknote {
 //        Banknote banknote = new Banknote(int amount, int banknote_id, Series s_series, Series u_series, Series t_series, Series w_series)
 //        getBanknote_id();
 //        setBanknote_id();
-
+//
 //        return banknote;
 //    }
 
-   /* public byte[] getTSeries(BanknoteGenerator.GenerateTSeries()) {
-        return Banknote.t_series[];
-    } */
+//    public byte[] getTSeries(BanknoteGenerator.GenerateTSeries()) {
+//        return Banknote.t_series[];
+//    }
 
-    public int getBanknoteId(){
-        return banknote_id;
-    }
+    public int getBanknoteId() { return banknote_id; }
 
-    public void setBanknoteId(int id){
-        banknote_id = id;
-    }
+    public void setBanknoteId(int id) { banknote_id = id; }
 
-    public Series getS_series() {return s_series;}
+    public Series getSseries() { return s_series; }
 
-    public void setS_series(Series ser) { u_series = ser; }
+    public void setSseries(Series series) { u_series = series; }
 
-    public Series getU_series() {return u_series;}
+    public Series getUseries() {return u_series;}
 
-    public void setU_series(Series ser) { t_series = ser; }
+    public void setUseries(Series series) { t_series = series; }
 
-    public Series getT_series() {return t_series;}
+    public Series getTseries() {return t_series;}
 
-    public void setT_series(Series ser) { s_series = ser; }
+    public void setTseries(Series series) { s_series = series; }
 
-    public Series getW_series() {return s_series;}
+    public Series getWseries() {return w_series;}
 
-    public void setW_series(Series ser) { s_series = ser; }
+    public void setWseries(Series series) { w_series = series; }
 
-    public int getAmount(){
-        return amount;
-    }
+    public int getAmount() { return amount; }
     
-    public void setAmount(int cash){
-       amount = cash;
-    }
+    public void setAmount(int cash) { amount = cash; }
 
     public void generateBanknoteId(){
         Random rand = new Random();

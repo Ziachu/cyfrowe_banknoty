@@ -1,9 +1,10 @@
 package Alice;
 
-import Support.Series;
-
-import java.security.*;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import Support.Loger;
+import Support.Series;
 
 /**
  * Created by Damian on 2015-12-04.
@@ -21,7 +22,9 @@ public class Alice {
     private Series u_series;
 
     public Alice() {
-    	i_series = new Series(100);//serie identyfikujace
+    	// TODO: Tu tworzysz jeden ciąg identyfikujący, a Alice potrzebuje ich 100. ;)
+    	i_series = new Series(100); //serie identyfikujace
+    	// TODO: Podobna sytuacja co wyżej.
         r_series = new Series(100);
         l_series = Series.xorSeries(i_series, r_series);
         t_series = new Series(100);
@@ -40,10 +43,14 @@ public class Alice {
             byte[] thedigest = md.digest(input);
             return thedigest;
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+        	Loger.println("\t[err] Trouble with md5 hashing.");
+        	throw new RuntimeException(e);
         }
     }
 
+    // TODO: Damiano, nazwa metody sugeuje zwracania dwóch ciągów U i W, czemu zwracasz tylko W?
+    // TODO: Czy ta metoda tak w ogóle musi zwracać ten ciąg? Jeżeli klasa Alice ma pole "w_series"
+    // 		 to, czy nie lepiej tam zapisać wynik?
     public Series GenerateWandUSeries (Series t_series, Series c_series, Series r_series){
         Series w_series;
 
