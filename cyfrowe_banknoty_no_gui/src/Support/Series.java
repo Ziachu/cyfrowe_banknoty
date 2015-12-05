@@ -87,14 +87,25 @@ public class Series {
 		Loger.println("");
 	}
 
-    public static Series xorSeries (Series I, Series R){
-        Series L = new Series(I.length);
+    public static Series[] xorSeries (Series[] I, Series[] R){
+        Series[] L = new Series[100];
 
-        for (int i = 0; i < I.length; i++) {
-            L.values[i] = I.values[i] ^= R.values[i];
-        }
+		for (int j=0; j< 100; j++) {
+			for (int i = 0; i < I.length; i++) {
+				L[j].values[i] = I[j].values[i] ^= R[j].values[i];
+			}
+		}
         
         return L;
     }
+
+	public static Series[] seriesTable (int length){
+		Series[] L = new Series[100];
+
+		for (int i=0; i<100; i++){
+			L[i] = new Series(100);
+		}
+		return L;
+	}
 
 }
