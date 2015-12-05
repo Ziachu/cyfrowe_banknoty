@@ -54,11 +54,11 @@ public class Series {
 	}
 	
 	public void sendSeries(PrintWriter out) throws UnsupportedEncodingException {
-		// TODO: send receiver
-		out.println("Bob");
-		// TODO: send length to server
+//		TODO: send receiver
+//		out.println(receiver);
+//		TODO: send length to server
 		out.println(this.length);
-		// TODO: send values to server
+//		TODO: send values to server
 		out.println(new String(this.values, "utf-8"));
 	}
 	

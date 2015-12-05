@@ -32,6 +32,9 @@ public class SystemUser {
 	private static ServerResponseListener server_response_listener;
 	private static CommonCommandManager manager;
 	
+	public static String[] common_commands;
+	private static String last_user_input;
+	
 	public static void main(String args[]) {
 		
 		port = 4444;
@@ -60,25 +63,33 @@ public class SystemUser {
 	}
 	
 	private static void managerUserInput() {
+		// Opóźniony prompt o 50ms, żeby nie nakładał się z wątkiem słuchającym
 		try {
-			Thread.sleep(50);
+			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			Loger.println("\t[err] Troubles with Thread.sleep() function.");
 		}
 		
 		Loger.print("[usr] ");
-		String cmd = user_in.nextLine();
+		String user_input = user_in.nextLine();
 		
-		String common_commands[] = new String[] {"role", "exit", "usr"};
+		common_commands = new String[] {"role", "exit", "usr", "series", "commands"};
 		
-		if (Arrays.asList(common_commands).contains(cmd)) {
-			Loger.println("\t[debug] CommonCommand.");
-			manager.respondToCommonCommand(cmd);
+		// Jeżeli to wspólna komenda
+		if (Arrays.asList(common_commands).contains(user_input)) {
+			manager.respondToCommonCommand(user_input);
+		// Jeżeli to komenda unikatowa dla danego użytkownika, lub "kolejny input" 
 		} else {
-			Loger.println("\t[debug] UncommonCommand!");
-			manager.respondToCommand(cmd);
+			// Jeżeli poprzednia komenda była wspólna
+			if (Arrays.asList(common_commands).contains(last_user_input)) {
+				manager.respondToCommonCommand(user_input);
+			// Jeżeli to jednak unikatowa komenda, lub "kolejny input"
+			} else {
+				manager.respondToCommand(user_input);
+			}
 		}
 		
+		last_user_input = user_input;
 	}
 
 	private static void setCommandManager() {
@@ -116,7 +127,6 @@ public class SystemUser {
 			try {
 				Loger.print("Enter Your role: ");
 				user_role = Role.valueOf(user_in.nextLine());
-				Loger.println("\t[debug] " + user_role);
 				
 				user_role_applied = true;
 			} catch (IllegalArgumentException e) {

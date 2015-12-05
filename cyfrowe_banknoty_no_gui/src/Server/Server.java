@@ -12,6 +12,7 @@ import Support.Command;
 import Support.Loger;
 import Support.Pair;
 import Support.Role;
+import Support.Series;
 
 public class Server {
 
@@ -116,17 +117,28 @@ public class Server {
 						}
 						
 						break;
-					/*case series:
-						String receiver = socket_in.readLine();
+					case series:
+						// po stronie klienta jest sprawdzana wartość "receiver" więc tu przyjmuję
+						// że nie będzie problemu z funkcją Role.valueOf()
+						Role receiver = Role.valueOf(socket_in.readLine());
 						Loger.println("[srv] " + user_role + " sends series to " + receiver + ".");
 						
 						Series series = new Series();
 						series.receiveSeries(socket_in);
 						series.visualizeSeries();
 						
-						transferSeries(receiver, series);
+						if (users.containsKey(receiver)) {
+							PrintWriter temp_socket_out = users.get(receiver).getY();
+							
+							temp_socket_out.println("series");
+							series.sendSeries(temp_socket_out);
+						} else {
+							Loger.println("\t[err] There's no receiver with given name (" + receiver + ");");
+						}
 						
-						break;*/
+						//transferSeries(receiver, series);
+						
+						break;
 					/*case banknote:
 						// TODO: send amount, id, then series
 						
