@@ -52,6 +52,13 @@ public class CommonCommandManager{
 					
 					respondToSeriesCommand(true);
 					break;
+				case commands:
+					
+					Loger.println("[cmd] Available commands:");
+					for (Command cmd : Command.values()) {
+						Loger.println("\t" + cmd);
+					}
+					break;
 				default:
 					
 					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");
