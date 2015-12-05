@@ -32,8 +32,8 @@ public class SystemUser {
 	private static ServerResponseListener server_response_listener;
 	private static CommonCommandManager manager;
 	
-	public static String[] common_commands;
-	private static String last_user_input;
+	public static Command[] common_commands;
+	private static Command last_cmd;
 	
 	public static void main(String args[]) {
 		
@@ -72,24 +72,35 @@ public class SystemUser {
 		
 		Loger.print("[usr] ");
 		String user_input = user_in.nextLine();
+
+		common_commands = new Command[] {Command.role, Command.exit, Command.usr, Command.series, Command.commands};
+		Command cmd;
 		
-		common_commands = new String[] {"role", "exit", "usr", "series", "commands"};
-		
-		// Jeżeli to wspólna komenda
-		if (Arrays.asList(common_commands).contains(user_input)) {
-			manager.respondToCommonCommand(user_input);
-		// Jeżeli to komenda unikatowa dla danego użytkownika, lub "kolejny input" 
-		} else {
-			// Jeżeli poprzednia komenda była wspólna
-//			if (Arrays.asList(common_commands).contains(last_user_input)) {
-//				manager.respondToCommonCommand(user_input);
-			// Jeżeli to jednak unikatowa komenda, lub "kolejny input"
-//			} else {
+		// Próbuje wydobyć komendę od użytkownika
+		// Jeżeli się uda, to przekazuje ją do odp. manager'a
+		try {
+			cmd = Command.valueOf(user_input); 
+
+			// Jeżeli to wspólna komenda
+			if (Arrays.asList(common_commands).contains(cmd)) {
+				manager.respondToCommonCommand(user_input);
+			// Jeżeli nie (tzn. że jest unikatowa)
+			} else {
 				manager.respondToCommand(user_input);
-//			}
+			}
+			
+			last_cmd = cmd;
+		// Jeżeli się nie uda, to traktuje ją jako odpowiedź na wcześniejszą komendę
+		// i również przekazuje do odpowiedniego manager'a, tam może być odrzucona
+		} catch (IllegalArgumentException e) {
+			Loger.println("\t[err] Such command (" + user_input + ") doesn't exist.");
+			
+			if (Arrays.asList(common_commands).contains(last_cmd)) {
+				manager.respondToCommonCommand(user_input);
+			} else {
+				manager.respondToCommand(user_input);
+			}
 		}
-		
-		last_user_input = user_input;
 	}
 
 	private static void setCommandManager() {

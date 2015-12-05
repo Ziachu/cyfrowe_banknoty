@@ -74,16 +74,10 @@ public class Alice {
 	public Series[] hashSeries(Series[] series1, Series[] series2, Series[] series3) {
 		Series[] table_of_hashes = new Series[no_identification_series];
 
-		// Można ewentualnie zsumować je inaczej: 
-		// (series.getValues().toString() + ... + ... ).getBytes()
 		for (int i = 0; i < no_identification_series; i++) {
 			String sum_help = series1[i].getValues().toString() 
 							+ series2[i].getValues().toString()
 							+ series3[i].getValues().toString();
-			
-//			int sum_length = series1[i].getLength() 
-//						   + series2[i].getLength()
-//						   + series3[i].getLength();
 
 			Loger.print("\t--- H(" + series1[i].getValues().toString() + " ," 
 						+ series2[i].getValues().toString() + " ," 

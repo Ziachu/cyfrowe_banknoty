@@ -77,7 +77,7 @@ public class Server {
 
 				try {
 					user_input = socket_in.readLine();	
-//					Loger.println("[srv] from user: " + user_input + ".");
+					Loger.println("[srv] from user: " + user_input + ".");
 					cmd = Command.valueOf(user_input);
 					
 					switch (cmd) {

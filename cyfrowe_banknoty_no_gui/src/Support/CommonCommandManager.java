@@ -67,12 +67,12 @@ public class CommonCommandManager{
 					respondToCommandsCommand();
 					break;
 				default:
-					
 					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");
 					break;
 				}
 			} catch (IllegalArgumentException e) {
-				Loger.println("\t[err] Wrong command: " + user_input);
+				if (user_input != " ")
+					Loger.println("\t[err] Wrong command: " + user_input);
 			} catch (NullPointerException e) {
 				Loger.println("\t[err] Some null in command!\n\t" + e.getMessage());
 			}
