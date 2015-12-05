@@ -1,6 +1,6 @@
 
-cyfrowe_banknoty/bin/
-cyfrowe_banknoty_no_gui/bin/
+cyfrowe_banknoty/bin/*
+cyfrowe_banknoty_no_gui/bin/*
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 
