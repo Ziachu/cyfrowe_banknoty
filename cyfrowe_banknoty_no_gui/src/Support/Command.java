@@ -10,5 +10,6 @@ public enum Command {
 	series,
 	commands,
 	example_series,
-	tst_ali,			// Alice
+	test_alice,			// Alice
+	generate_banknotes,	// Alice
 }

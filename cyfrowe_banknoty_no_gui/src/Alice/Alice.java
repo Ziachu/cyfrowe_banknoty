@@ -2,7 +2,9 @@ package Alice;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 
+import Support.Banknote;
 import Support.Loger;
 import Support.Series;
 
@@ -23,6 +25,8 @@ public class Alice {
 	public Series[] b_series;
 	public Series[] w_series;
 	public Series[] u_series;
+	
+	public ArrayList<Banknote> banknotes;
 
 	// Przerobiłem wszystko w taki sposób, że liczba ciągów identyfikujących Alice
 	// oraz długość wszystkich pojedynczych ciągów zależy od tego, co wprowadzi użytkownik
@@ -33,6 +37,8 @@ public class Alice {
 		no_identification_series = no_i_series;
 		this.length_of_series = length_of_series;
 
+		banknotes = new ArrayList<Banknote>();
+		
 		Loger.println("--- Generating her identification series.");
 		i_series = Series.createSeriesTable(no_i_series, length_of_series);
 		Loger.println("--- Drawing RIGHT part of her id_series.");
@@ -89,5 +95,10 @@ public class Alice {
 
 		return table_of_hashes;
 	}
-
+	
+	public void generateBanknote(double cash_amount) {
+		Banknote banknote = new Banknote(cash_amount, 1, s_series, u_series, t_series, w_series);
+		banknote.generateBanknoteId();
+		banknotes.add(banknote);
+	}
 }

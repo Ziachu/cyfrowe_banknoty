@@ -74,10 +74,7 @@ public class Series {
 	
 	public void visualizeSeries() {
 		for (int i = 0; i < this.length; i++) {
-			if (i > 0 && i % 20 == 0)
-				Loger.println("");
-			
-			Loger.print(" " + this.values[i] + " ");
+			Loger.print(this.values[i] + "");
 		}
 		
 		Loger.println("");

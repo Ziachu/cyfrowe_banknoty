@@ -18,8 +18,12 @@ public class AliceCommandManager extends CommonCommandManager {
 	private String user_input;
 	private boolean waiting_for_next_input;
 	
+	private Alice alice;
+	
 	public AliceCommandManager() {
 		super();
+		
+		alice = new Alice(100, 32);
 		waiting_for_next_input = false;
 	}
 	
@@ -47,25 +51,18 @@ public class AliceCommandManager extends CommonCommandManager {
 					
 					respondToExampleSeriesCommand();
 					break;
-				case tst_ali:
+				case test_alice:
 				
-					Alice alice = new Alice(5, 10);
+					respondToTestAliceCommand();
+					break;
+				case generate_banknotes:
 					
-					Loger.println("\nAlice's identification series:");
-					for (int i = 0; i < alice.no_identification_series; i++) {
-						Loger.print("no. " + i + ".:");
-						alice.i_series[i].visualizeSeries();
-						Loger.print("\tL: ");
-						alice.l_series[i].visualizeSeries();
-						Loger.print("\tR: ");
-						alice.r_series[i].visualizeSeries();
-						Loger.println("\tHashes:");
-						Loger.print("\tU: ");
-						alice.u_series[i].visualizeSeries();
-						Loger.print("\tW: ");
-						alice.w_series[i].visualizeSeries();
+					Loger.println("100 banknotes are being generated...");
+					for (int i = 0; i < 10; i++) {
+						alice.generateBanknote(10.1);
 					}
-						
+
+					alice.banknotes.get(0).visualizeBanknote();
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
 					- generowanie bankotów
@@ -109,6 +106,25 @@ public class AliceCommandManager extends CommonCommandManager {
 				break;
 			}	
 		}	
+	}
+
+	private void respondToTestAliceCommand() {
+		Alice alice = new Alice(5, 10);
+		
+		Loger.println("\nAlice's identification series:");
+		for (int i = 0; i < alice.no_identification_series; i++) {
+			Loger.print("no. " + i + ".:");
+			alice.i_series[i].visualizeSeries();
+			Loger.print("\tL: ");
+			alice.l_series[i].visualizeSeries();
+			Loger.print("\tR: ");
+			alice.r_series[i].visualizeSeries();
+			Loger.println("\tHashes:");
+			Loger.print("\tU: ");
+			alice.u_series[i].visualizeSeries();
+			Loger.print("\tW: ");
+			alice.w_series[i].visualizeSeries();
+		}
 	}
 
 	private void respondToExampleSeriesCommand() {
