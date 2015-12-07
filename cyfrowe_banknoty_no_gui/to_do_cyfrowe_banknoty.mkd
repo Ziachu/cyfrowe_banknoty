@@ -1,0 +1,24 @@
+# To-Do
+
+### Krok 1.
+1. Ogarnięcie implementacji RSA w Java'ie. Najlepiej by było, gdyby ta implementacja rozdzielała **klucz publiczny** od **klucza prywatnego**, a już w ogóle idealnie jeżeli z każdego z tych kluczy dałoby się wyciągnąć **e**/**d** i **n**.
+2. Potrzebujemy tej implementacji żeby stworzyć klasę **Banku** (potrzebuje dwóch pol właśnie, *klucza publicznego* i *klucza prywatnego*).
+
+### Krok 2.
+3. Alice trzeba nauczyć **pobierać klucz publiczny** od banku.
+    - komenda *get_bank_public_key*
+    - metoda w klasie Alice
+4. Metoda w klasie Alice odpowiedzialna za zakrywanie banknotów. I kolejne pola w tej klasie (tak samo jak wszystkie ciągi i hash'e): **tablica_losowych_Z_do_zakrywania_banknotów** oraz **tablica_zakrytych_banknotów_Y**. W tej metodzie trzeba obliczyć odpowiednie Y.
+
+### Krok 3.
+5. Do klasy *Banknote* trzeba dodać metody **sendBanknote** i **receiveBanknote** żeby spokojnie móc przesyłać banknoty (zajmę się tym). Ogólnie trzeba wmontować w klasie *Alice* pole **tablica_banknotów**, bo tego przecież nie ma (właśnie sobie uświadomiłem :P)
+6. W klasie *Alice* przyda się też metoda **odkryjBanknoty**, która będzie odpowiedzialna za wysłanie *Bankowi* ciągów potrzebnych do okrycia banknotów (S, L, U, R, dla odpowiednich i != j).
+
+### Krok 4.
+7. *Bankowi* musimy pokazać jak podpisywać na ślepo banknot. Tu znowu istotna jest implementacja RSA, bo jeżeli będziemy mieli rozróżnione klucze *publiczny* i *prywatny*, i wyodrębnione z nich **e**/**d** i n, to to będzie pikuś. Inaczej będzie trzeba kombinować.
+
+### Krok 5.
+8. Jak Alice odbierze zakryty podpis banknotu to musi umieć go jeszcze odkryć.
+9. Po odkryciu trzeba jakoś sfinalizować proces, dodając pole **podpis_banknotu**, albo może zupgrade'ować klasę *Banknote* dodając jej pole **podpisany** typu *boolean* (czaisz?)
+
+Jak to zrobimy to będziemy mieli za sobą pierwszy etap. Alice będzie dysponowała podpisanym banknotem. Fajnie by było jakbyś ogarnął implementację RSA (zależy nam **baaaardzo** na tym, żeby mieć dostęp do klucza publicznego i prywatnego i do ich składowych). Jak to zrobisz to możesz odpowiednio (według powyższych wskazówek) rozwinąć klasy Alice i Banknote, ewentualnie Bank. Ja się zajmę przekazywaniem komunikatów (możesz mnie wzywać do tego kiedy tylko dojdziesz do momentu kiedy będzie potrzebne przesłanie czegoś ;P)
