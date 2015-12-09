@@ -1,5 +1,7 @@
 package Support;
 
+import Client.User;
+
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -12,7 +14,11 @@ public class CommonCommandManager{
 	private Command last_cmd;
 	private String user_input;
 	private boolean waiting_for_next_input = false;
-	
+
+	public User getUser() {
+		return null;
+	}
+
 	// Ustawia kanały komunikacyjne, tak żeby manager mógł przekazywać komunikaty do serwera
 	public void setCommandLine(BufferedReader socket_in, PrintWriter socket_out) {
 		this.socket_out = socket_out;

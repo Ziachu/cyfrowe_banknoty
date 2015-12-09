@@ -12,5 +12,6 @@ public enum Command {
 	example_series,
 	test_alice,			// Alice (testowanie klasy Alice, tworzenie ciągów, banknotu etc.)
 	generate_banknotes,	// Alice (testowanie kalsy Banknote, tworzenie banknotu, wizualizacja etc.)
-	save_id				// Alice (testowanie eksportowania ID do pliku)
+	save_id,				// Alice (testowanie eksportowania ID do pliku)
+	get_bank_key		// Alice (pobiera klucz publiczny banku do slepego podpisu RSA)
 }
