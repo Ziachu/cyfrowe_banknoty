@@ -27,6 +27,8 @@ public class RSA {
 			RSAPublicKeySpec pub = factory.getKeySpec(publicKey, RSAPublicKeySpec.class);
 			RSAPrivateKeySpec priv = factory.getKeySpec(privateKey, RSAPrivateKeySpec.class);
 		
+			publicKey.
+			
 			System.out.println(pub.getModulus().bitLength());
 		
 		} catch (NoSuchAlgorithmException e) {

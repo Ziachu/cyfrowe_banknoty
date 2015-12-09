@@ -17,6 +17,8 @@ public class BankCommandManager extends CommonCommandManager {
 	private String user_input;
 	private boolean waiting_for_next_input;
 	
+	public Bank bank;
+	
 	public BankCommandManager() {
 		waiting_for_next_input = false;
 	}
