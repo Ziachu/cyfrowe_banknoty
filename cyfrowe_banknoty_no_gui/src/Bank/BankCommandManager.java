@@ -16,13 +16,16 @@ public class BankCommandManager extends CommonCommandManager {
 	private Command last_cmd;
 	private String user_input;
 	private boolean waiting_for_next_input;
-	
-	public Bank bank;
-	
+	private Bank bank;
+
 	public BankCommandManager() {
 		waiting_for_next_input = false;
 	}
-	
+
+	public Bank getBank() {
+		return bank;
+	}
+
 	// Umożliwia ręczne wywołanie odpowiedzi na komendę
 	public void setCommand(Command cmd) {
 		this.cmd = cmd;

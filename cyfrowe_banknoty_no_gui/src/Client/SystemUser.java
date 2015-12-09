@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -31,6 +32,7 @@ public class SystemUser {
 	
 	private static ServerResponseListener server_response_listener;
 	private static CommonCommandManager manager;
+    private static User user;
 	
 	public static Command[] common_commands;
 	private static Command last_cmd;
@@ -105,13 +107,13 @@ public class SystemUser {
 
 	private static void setCommandManager() {
 		
-		server_response_listener = new ServerResponseListener(socket_in);
+		server_response_listener = new ServerResponseListener(socket_in, user);
 		server_response_listener.start();
 		
 		switch(user_role) {
 		case Alice:
 			
-			manager = new AliceCommandManager();			
+			manager = new AliceCommandManager();
 			break;
 		case Bank:
 			
@@ -125,7 +127,9 @@ public class SystemUser {
 			Loger.err("This error shouldn't occur, what's wrong with " + user_role + " role?");
 			break;
 		}
-		
+
+        user = manager.getUser();
+
 		manager.setCommandLine(socket_in, socket_out);
 		
 		manager.respondToCommonCommand(Command.role.toString());
@@ -161,9 +165,12 @@ class ServerResponseListener extends Thread {
 	BufferedReader socket_in;
 	Command cmd;
 	String user_input;
+    User user;
 		
-	ServerResponseListener(BufferedReader socket_in) {
-		this.socket_in = socket_in;
+	ServerResponseListener(BufferedReader socket_in, User user) {
+
+        this.socket_in = socket_in;
+        this.user = user;
 	}
 		
 	public void run() {
@@ -179,12 +186,24 @@ class ServerResponseListener extends Thread {
 						case usr:
 							
 							displayServerResponseToUsrCommand();
-								
 							break;
 						case series:								
 							
 							displayServerResponseToSeriesCommand();
 								
+							break;
+                            case get_bank_key:
+
+                                //if (user.getClass() == Bank.class) {
+                                    Loger.debug("Ok, tryin' to get Bank's public key.");
+                                    Loger.debug(user.toString());
+                                    Loger.debug(user.getClass().toString());
+                                    Key bank_public_key = user.getPublicKey();
+                                    Loger.debug("I've got key!\n" + bank_public_key);
+                                //} else {
+                                //    Loger.err("Other user than BANK cannot user that command!");
+                                //}
+
 							break;
 						default:
 							

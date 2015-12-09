@@ -143,6 +143,10 @@ public class Server {
 						// TODO: send amount, id, then series
 						
 						break;*/
+                        case get_bank_key:
+                            PrintWriter prw = users.get(Role.Bank).getY();
+                            prw.println("get_bank_key");
+                            break;
 					default:
 						
 						Loger.println("[srv] Such command (" + cmd.toString() + ") isn't supported.");

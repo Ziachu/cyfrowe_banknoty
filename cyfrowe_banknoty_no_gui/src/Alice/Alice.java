@@ -5,10 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
+import Client.User;
 import Support.Banknote;
 import Support.Loger;
 import Support.Series;
@@ -16,7 +18,7 @@ import Support.Series;
 /**
  * Created by Damian on 2015-12-04.
  */
-public class Alice {
+public class Alice extends User {
 
 	public int no_identification_series; 
 	public int length_of_series;
@@ -32,6 +34,8 @@ public class Alice {
 	public Series[] u_series;
 	
 	public ArrayList<Banknote> banknotes;
+
+    public Key bank_key;
 
 	// Przerobiłem wszystko w taki sposób, że liczba ciągów identyfikujących Alice
 	// oraz długość wszystkich pojedynczych ciągów zależy od tego, co wprowadzi użytkownik
@@ -66,6 +70,14 @@ public class Alice {
 		u_series = hashSeries(s_series, b_series, l_series);
 		
 	}
+
+    public User getUser() {
+        return this;
+    }
+
+    public void setBankKey(Key key){
+        bank_key = key;
+    }
 
 	public static byte[] getMD5(byte[] input) {
 		try {
@@ -106,7 +118,8 @@ public class Alice {
 		banknote.generateBanknoteId();
 		banknotes.add(banknote);
 	}
-	
+
+
 	// testowo wypycha tylko jeden ciąg
 	public void exportIdToFile() {
 		File file = new File("id_series.txt");
