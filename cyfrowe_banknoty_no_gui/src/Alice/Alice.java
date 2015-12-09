@@ -1,5 +1,10 @@
 package Alice;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -32,32 +37,32 @@ public class Alice {
 	// oraz długość wszystkich pojedynczych ciągów zależy od tego, co wprowadzi użytkownik
 	
 	public Alice(int no_i_series, int length_of_series) {
-		Loger.println("--- Creating new instance of Alice's class.");
+		Loger.debug("--- Creating new instance of Alice's class.");
 		
 		no_identification_series = no_i_series;
 		this.length_of_series = length_of_series;
 
 		banknotes = new ArrayList<Banknote>();
 		
-		Loger.println("--- Generating her identification series.");
+		Loger.debug("--- Generating her identification series.");
 		i_series = Series.createSeriesTable(no_i_series, length_of_series);
-		Loger.println("--- Drawing RIGHT part of her id_series.");
+		Loger.debug("--- Drawing RIGHT part of her id_series.");
 		r_series = Series.createSeriesTable(no_i_series, length_of_series);
-		Loger.println("--- XOR'ing LEFT part of her id_series.");
+		Loger.debug("--- XOR'ing LEFT part of her id_series.");
 		l_series = Series.xorSeries(i_series, r_series);
 		
-		Loger.println("--- Drawing t_series.");
+		Loger.debug("--- Drawing t_series.");
 		t_series = Series.createSeriesTable(no_i_series, length_of_series);
-		Loger.println("--- Drawing s_series.");
+		Loger.debug("--- Drawing s_series.");
 		s_series = Series.createSeriesTable(no_i_series, length_of_series);
-		Loger.println("--- Drawing c_series.");
+		Loger.debug("--- Drawing c_series.");
 		c_series = Series.createSeriesTable(no_i_series, length_of_series);
-		Loger.println("--- Drawing b_series.");
+		Loger.debug("--- Drawing b_series.");
 		b_series = Series.createSeriesTable(no_i_series, length_of_series);
 		
-		Loger.println("--- Hashing t_series and c_series with r_series.");
+		Loger.debug("--- Hashing t_series and c_series with r_series.");
 		w_series = hashSeries(t_series, c_series, r_series);
-		Loger.println("--- Hashing s_series and b_series with l_series.");
+		Loger.debug("--- Hashing s_series and b_series with l_series.");
 		u_series = hashSeries(s_series, b_series, l_series);
 		
 	}
@@ -68,7 +73,7 @@ public class Alice {
 			md = MessageDigest.getInstance("MD5");
 			
 			byte[] thedigest = md.digest(input);
-			Loger.println(" = " + thedigest.toString());
+			/*Loger.println(" = " + thedigest.toString());*/
 
 			return thedigest;
 		} catch (NoSuchAlgorithmException e) {
@@ -85,9 +90,9 @@ public class Alice {
 							+ series2[i].getValues().toString()
 							+ series3[i].getValues().toString();
 
-			Loger.print("\t--- H(" + series1[i].getValues().toString() + " ," 
+			/*Loger.print("\t--- H(" + series1[i].getValues().toString() + " ," 
 						+ series2[i].getValues().toString() + " ," 
-						+ series3[i].getValues().toString() + ")");
+						+ series3[i].getValues().toString() + ")");*/
 			
 			byte[] sum_bytes = getMD5(sum_help.getBytes());		
 			table_of_hashes[i] = new Series(sum_bytes.length, sum_bytes);
@@ -100,5 +105,43 @@ public class Alice {
 		Banknote banknote = new Banknote(cash_amount, 1, s_series, u_series, t_series, w_series);
 		banknote.generateBanknoteId();
 		banknotes.add(banknote);
+	}
+	
+	// testowo wypycha tylko jeden ciąg
+	public void exportIdToFile() {
+		File file = new File("id_series.txt");
+		Loger.debug("File opened.");
+		
+		FileOutputStream fos;
+		try {
+			fos = new FileOutputStream(file);
+			Loger.debug("FileOutputStream created.");
+			i_series[0].writeToFile(fos);
+			Loger.debug("id_series saved to file.");
+			fos.close();
+		} catch (FileNotFoundException e) {
+			Loger.err("Couldn't open file \"id_series.txt\"");
+		} catch (IOException e) {
+			Loger.err("Couldn't close FileOutputStream for \"id_series.txt\"");
+		}
+	}
+	
+	// testowo zciąga tylko jeden ciąg
+	public void importIdFromFile() {
+		File file = new File("id_series.txt");
+		Loger.debug("File opened.");
+		
+		FileInputStream fis;
+		try {
+			fis = new FileInputStream(file);
+			Loger.debug("FileInputStream created.");
+			i_series[0].readFromFile(fis);
+			Loger.debug("id_series read from file.");
+			fis.close();
+		} catch (FileNotFoundException e) {
+			Loger.err("Couldn't open file \"id_series.txt\"");
+		} catch (IOException e) {
+			Loger.err("Couldn't close FileInputStream for \"id_series.txt\"");
+		}
 	}
 }

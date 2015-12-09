@@ -1,6 +1,8 @@
 package Support;
 
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -112,4 +114,21 @@ public class Series {
 		return series_table;
 	}
 
+	public void writeToFile(FileOutputStream fos) {
+		try {
+			fos.write(getValues());
+			fos.write("\n".getBytes());
+		} catch (IOException e) {
+			Loger.err("Couldn't write series to a file.\n\t" + e.getMessage());
+		}
+	}
+	
+	public void readFromFile(FileInputStream fis) {
+		try {
+			fis.read(this.values);
+		} catch (IOException e) {
+			Loger.err("Couldn't read series from file.\n\t" + e.getMessage());
+		}
+	}
+	
 }

@@ -10,6 +10,7 @@ public enum Command {
 	series,
 	commands,
 	example_series,
-	test_alice,			// Alice
-	generate_banknotes,	// Alice
+	test_alice,			// Alice (testowanie klasy Alice, tworzenie ciągów, banknotu etc.)
+	generate_banknotes,	// Alice (testowanie kalsy Banknote, tworzenie banknotu, wizualizacja etc.)
+	save_id				// Alice (testowanie eksportowania ID do pliku)
 }

@@ -57,12 +57,20 @@ public class AliceCommandManager extends CommonCommandManager {
 					break;
 				case generate_banknotes:
 					
-					Loger.println("100 banknotes are being generated...");
-					for (int i = 0; i < 10; i++) {
-						alice.generateBanknote(10.1);
-					}
+					respondToGenerateBanknotesCommand();
+					break;
+				case save_id:
 
-					alice.banknotes.get(0).visualizeBanknote();
+					Loger.debug("id_series before import...");
+					alice.i_series[0].visualizeSeries();
+					alice.i_series[1].visualizeSeries();
+					//alice.exportIdToFile();
+
+					alice.importIdFromFile();
+					Loger.debug("id_series after export...");
+					alice.i_series[0].visualizeSeries();
+					alice.i_series[1].visualizeSeries();
+	
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
 					- generowanie bankotów
@@ -106,6 +114,15 @@ public class AliceCommandManager extends CommonCommandManager {
 				break;
 			}	
 		}	
+	}
+
+	private void respondToGenerateBanknotesCommand() {
+		Loger.println("100 banknotes are being generated...");
+		for (int i = 0; i < 10; i++) {
+			alice.generateBanknote(10.1);
+		}
+
+		alice.banknotes.get(0).visualizeBanknote();
 	}
 
 	private void respondToTestAliceCommand() {
