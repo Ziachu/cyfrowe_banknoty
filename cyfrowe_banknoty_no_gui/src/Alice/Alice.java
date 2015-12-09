@@ -77,7 +77,7 @@ public class Alice {
 
 			return thedigest;
 		} catch (NoSuchAlgorithmException e) {
-			Loger.println("\t[err] Trouble with md5 hashing.");
+			Loger.err("Trouble with md5 hashing.");
 			throw new RuntimeException(e);
 		}
 	}

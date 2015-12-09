@@ -56,9 +56,9 @@ public class SystemUser {
 			}
 			
 		} catch (UnknownHostException e) {
-			Loger.println("\t[err] Unknown server address.\n\t" + e.getMessage());
+			Loger.err("Unknown server address.\n\t" + e.getMessage());
 		} catch (IOException e) {
-			Loger.println("\t[err] Couldn't establish connection.\n\t" + e.getMessage());
+			Loger.err("Couldn't establish connection.\n\t" + e.getMessage());
 		}
 	}
 	
@@ -67,7 +67,7 @@ public class SystemUser {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			Loger.println("\t[err] Troubles with Thread.sleep() function.");
+			Loger.err("Troubles with Thread.sleep() function.");
 		}
 		
 		Loger.print("[usr] ");
@@ -93,7 +93,7 @@ public class SystemUser {
 		// Jeżeli się nie uda, to traktuje ją jako odpowiedź na wcześniejszą komendę
 		// i również przekazuje do odpowiedniego manager'a, tam może być odrzucona
 		} catch (IllegalArgumentException e) {
-			Loger.println("\t[err] Such command (" + user_input + ") doesn't exist.");
+			Loger.err("Such command (" + user_input + ") doesn't exist.");
 			
 			if (Arrays.asList(common_commands).contains(last_cmd)) {
 				manager.respondToCommonCommand(user_input);
@@ -122,7 +122,7 @@ public class SystemUser {
 			manager = new VendorCommandManager();
 			break;
 		default:
-			Loger.println("\t[err] This error shouldn't occur, what's wrong with " + user_role + " role?");
+			Loger.err("This error shouldn't occur, what's wrong with " + user_role + " role?");
 			break;
 		}
 		
@@ -141,7 +141,7 @@ public class SystemUser {
 				
 				user_role_applied = true;
 			} catch (IllegalArgumentException e) {
-				Loger.println("\t[err] Wrong role applied.");
+				Loger.err("Wrong role applied.");
 			}			
 		}
 	}

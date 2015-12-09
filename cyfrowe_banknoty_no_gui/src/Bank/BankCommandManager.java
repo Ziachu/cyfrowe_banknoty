@@ -34,7 +34,7 @@ public class BankCommandManager extends CommonCommandManager {
 
 	// Spełnia główne zadanie CommandManager'a, zarządza wprowadzonymi komendami
 	public void respondToCommand(String msg) {
-		Loger.println("\t[debug] Responding to user_input: " + msg + " (" + waiting_for_next_input + ")");
+		Loger.debug("Responding to user_input: " + msg + " (" + waiting_for_next_input + ")");
 		user_input = msg;
 		
 		if (!waiting_for_next_input) {
@@ -76,14 +76,14 @@ public class BankCommandManager extends CommonCommandManager {
 					break;
 				}
 			} catch (NullPointerException | IllegalArgumentException e) {
-				Loger.println("\t[err] Wrong command: " + msg + ".");
+				Loger.err("Wrong command: " + msg + ".");
 			}
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
 			switch(last_cmd) {
 			default:
 				
-				Loger.println("\t[err] Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
+				Loger.err("Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
 				break;
 			}
 		}		

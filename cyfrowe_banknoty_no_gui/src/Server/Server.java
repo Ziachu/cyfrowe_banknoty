@@ -39,7 +39,7 @@ public class Server {
 			}
 			
 		} catch (IOException e) {
-			Loger.println("[err] Couldn't create server socket.\n\t" + e.getMessage());
+			Loger.err("Couldn't create server socket.\n\t" + e.getMessage());
 		}
 		
 		
@@ -61,7 +61,7 @@ public class Server {
 				socket_out = new PrintWriter(this.socket.getOutputStream(), true);
 				io_pair = new Pair<BufferedReader, PrintWriter>(socket_in, socket_out);
 			} catch (IOException e) {
-				Loger.println("[err] Couldn't obtain socket i/o.\n\t" + e.getMessage());
+				Loger.err("Couldn't obtain socket i/o.\n\t" + e.getMessage());
 			}
 			
 			
@@ -133,7 +133,7 @@ public class Server {
 							temp_socket_out.println("series");
 							series.sendSeries(temp_socket_out);
 						} else {
-							Loger.println("\t[err] There's no receiver with given name (" + receiver + ");");
+							Loger.err("There's no receiver with given name (" + receiver + ");");
 						}
 						
 						//transferSeries(receiver, series);
@@ -149,19 +149,19 @@ public class Server {
 						break;
 					}
 				} catch (IllegalArgumentException e) {
-					Loger.println("[err] Unknown command from " + user_role + ".");
+					Loger.err("Unknown command from " + user_role + ".");
 				} catch (NullPointerException e) {
-					Loger.println("[err] Unknown command from " + user_role + ".");
-					Loger.println("[err] Shutting down connection, \"no_command_loop\".");
+					Loger.err("Unknown command from " + user_role + ".");
+					Loger.err("Shutting down connection, \"no_command_loop\".");
 					try {
 						socket.close();
 					} catch (IOException e1) { }
 				} catch (IOException e) {
-					Loger.println("[err] Couldn't read from socket.\n\t" + e.getMessage());
+					Loger.err("Couldn't read from socket.\n\t" + e.getMessage());
                     try {
                         socket.close();
                     } catch (IOException e1) {
-                        Loger.println("[err] Socket closed.\n\t");
+                        Loger.err("Socket closed.\n\t");
                     }
                 }
 			}

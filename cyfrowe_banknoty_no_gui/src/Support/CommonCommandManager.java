@@ -26,7 +26,7 @@ public class CommonCommandManager{
 	// Dzięki niej nie trzeba implementować obsługi podstawych komend (takich jak: usr, exit, commands)
 	// a wystarczy zrobić to raz, właśnie tutaj
 	public void respondToCommonCommand(String user_input) {
-		Loger.println("\t[debug] Responding to common user_input: \"" + user_input + "\" (" + waiting_for_next_input + ")");
+		Loger.debug("Responding to common user_input: \"" + user_input + "\" (" + waiting_for_next_input + ")");
 		
 		if (!waiting_for_next_input) {
 			// Jeżeli nie oczekuje żadnego konkretnego input'u to próbuje wydobyć komendę
@@ -62,9 +62,9 @@ public class CommonCommandManager{
 				}
 			} catch (IllegalArgumentException e) {
 				if (user_input != " ")
-					Loger.println("\t[err] Wrong command: " + user_input);
+					Loger.err("Wrong command: " + user_input);
 			} catch (NullPointerException e) {
-				Loger.println("\t[err] Some null in command!\n\t" + e.getMessage());
+				Loger.err("Some null in command!\n\t" + e.getMessage());
 			}
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
@@ -83,7 +83,7 @@ public class CommonCommandManager{
 				break;
 			default:
 				
-				Loger.println("\t[err] Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
+				Loger.err("Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
 				break;
 			}
 		}
@@ -92,7 +92,7 @@ public class CommonCommandManager{
 	private void respondToCommandsCommand() {
 		Loger.println("[cmd] Available commands:");
 		for (Command cmd : Command.values()) {
-			Loger.println("\t" + TerminalColors.ANSI_RED + cmd + TerminalColors.ANSI_RESET);
+			Loger.println("\t" + TerminalColors.ANSI_CYAN + cmd + TerminalColors.ANSI_RESET);
 		}
 	}
 
@@ -110,9 +110,9 @@ public class CommonCommandManager{
 				series.visualizeSeries();
 				series.sendSeries(socket_out);
 			} catch (IllegalArgumentException e) {
-				Loger.println("\t[err] There is no user with name: " + user_input);
+				Loger.err("There is no user with name: " + user_input);
 			} catch (UnsupportedEncodingException e) {
-				Loger.println("\t[err] Couldn't send series through socket.\n\t" + e.getMessage());
+				Loger.err("Couldn't send series through socket.\n\t" + e.getMessage());
 			}
 			
 			waiting_for_next_input = false;

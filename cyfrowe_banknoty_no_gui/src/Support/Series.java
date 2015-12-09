@@ -67,10 +67,10 @@ public class Series {
 			this.length = Integer.parseInt(received);
 			this.values = in.readLine().getBytes();
 		} catch (NumberFormatException e) {
-			Loger.println("[err] received = " + received);
+			Loger.err("received = " + received);
 			e.printStackTrace();
 		} catch (IOException e) {
-			Loger.println("[err] I/O problem; Series class during receiving series.\n\t" + e.getMessage());
+			Loger.err("I/O problem; Series class during receiving series.\n\t" + e.getMessage());
 		}
 	}
 	
@@ -99,7 +99,7 @@ public class Series {
         	return xor_result;
         	
         } else {
-        	Loger.println("[err] Couldn't XOR two series (two different lengths.");
+        	Loger.err("Couldn't XOR two series (two different lengths.");
         	throw new IllegalArgumentException();
         }
     }

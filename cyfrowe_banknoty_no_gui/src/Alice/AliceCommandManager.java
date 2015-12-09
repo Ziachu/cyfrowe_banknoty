@@ -37,7 +37,7 @@ public class AliceCommandManager extends CommonCommandManager {
 
 	// Spełnia główne zadanie CommandManager'a, zarządza wprowadzonymi komendami
 	public void respondToCommand(String msg) {
-		Loger.println("\t[debug] Responding to uncommon user_input: " + msg + " (" + waiting_for_next_input + ")");
+		Loger.debug("Responding to uncommon user_input: " + msg + " (" + waiting_for_next_input + ")");
 		user_input = msg;
 		
 		if (!waiting_for_next_input) {
@@ -52,7 +52,7 @@ public class AliceCommandManager extends CommonCommandManager {
 					respondToExampleSeriesCommand();
 					break;
 				case test_alice:
-				
+					
 					respondToTestAliceCommand();
 					break;
 				case generate_banknotes:
@@ -60,17 +60,8 @@ public class AliceCommandManager extends CommonCommandManager {
 					respondToGenerateBanknotesCommand();
 					break;
 				case save_id:
-
-					Loger.debug("id_series before import...");
-					alice.i_series[0].visualizeSeries();
-					alice.i_series[1].visualizeSeries();
-					//alice.exportIdToFile();
-
-					alice.importIdFromFile();
-					Loger.debug("id_series after export...");
-					alice.i_series[0].visualizeSeries();
-					alice.i_series[1].visualizeSeries();
-	
+					
+					respondToSaveIdCommand();
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
 					- generowanie bankotów
@@ -101,19 +92,31 @@ public class AliceCommandManager extends CommonCommandManager {
 					break;
 				}
 			} catch (IllegalArgumentException e) {
-				Loger.println("\t[err] Wrong command: " + msg + ".");
+				Loger.err("Wrong command: " + msg + ".");
 			} catch (NullPointerException e) {
-				Loger.println("\t[err] Null value somewhere.");
+				Loger.err("Null value somewhere.");
 			}
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
 			switch(last_cmd) {
 			default:
 				
-				Loger.println("\t[err] Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
+				Loger.err("Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
 				break;
 			}	
 		}	
+	}
+
+	private void respondToSaveIdCommand() {
+		Loger.debug("id_series before import...");
+		alice.i_series[0].visualizeSeries();
+		alice.i_series[1].visualizeSeries();
+		//alice.exportIdToFile();
+
+		alice.importIdFromFile();
+		Loger.debug("id_series after export...");
+		alice.i_series[0].visualizeSeries();
+		alice.i_series[1].visualizeSeries();
 	}
 
 	private void respondToGenerateBanknotesCommand() {
@@ -130,7 +133,7 @@ public class AliceCommandManager extends CommonCommandManager {
 		
 		Loger.println("\nAlice's identification series:");
 		for (int i = 0; i < alice.no_identification_series; i++) {
-			Loger.print("no. " + i + ".:");
+			Loger.print("no. " + i + ".: ");
 			alice.i_series[i].visualizeSeries();
 			Loger.print("\tL: ");
 			alice.l_series[i].visualizeSeries();
