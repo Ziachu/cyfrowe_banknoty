@@ -1,7 +1,8 @@
 package Client;
 
+import java.security.Key;
 
 public class User {
 
-    public byte[] getPublicKey() { return null; }
+    public Key getPublicKey() { return null; }
 }

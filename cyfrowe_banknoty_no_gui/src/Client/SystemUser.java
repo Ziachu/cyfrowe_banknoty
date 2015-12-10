@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.security.PublicKey;
+import java.security.Key;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -15,7 +15,6 @@ import Bank.BankCommandManager;
 import Support.Command;
 import Support.CommonCommandManager;
 import Support.Loger;
-import Support.RSA;
 import Support.Role;
 import Support.Series;
 import Vendor.VendorCommandManager;
@@ -108,6 +107,9 @@ public class SystemUser {
 
 	private static void setCommandManager() {
 		
+		server_response_listener = new ServerResponseListener(socket_in, user);
+		server_response_listener.start();
+		
 		switch(user_role) {
 		case Alice:
 			
@@ -127,10 +129,6 @@ public class SystemUser {
 		}
 
         user = manager.getUser();
-        Loger.debug("User: " + user);
-
-        server_response_listener = new ServerResponseListener(socket_in, socket_out, user);
-        server_response_listener.start();
 
 		manager.setCommandLine(socket_in, socket_out);
 		
@@ -165,17 +163,15 @@ public class SystemUser {
 
 class ServerResponseListener extends Thread {
 	BufferedReader socket_in;
-	PrintWriter socket_out;
 	Command cmd;
 	String user_input;
     User user;
 		
-	ServerResponseListener(BufferedReader socket_in, PrintWriter socket_out, User user) {
+	ServerResponseListener(BufferedReader socket_in, User user) {
 
         this.socket_in = socket_in;
-        this.socket_out = socket_out;
-       	this.user = user;
-   	}
+        this.user = user;
+	}
 		
 	public void run() {
 		while (true) {
@@ -196,33 +192,18 @@ class ServerResponseListener extends Thread {
 							displayServerResponseToSeriesCommand();
 								
 							break;
-						case client_publish_key:
+                            case get_bank_key:
 
-							Loger.debug("I'm publishing my public key (" + user.toString() + ")");
-                        	byte[] public_key = user.getPublicKey();
-                        	Loger.println("My public key (in bytes):\t" + public_key);
-                        	System.out.println(public_key.length);
+                                //if (user.getClass() == Bank.class) {
+                                    Loger.debug("Ok, tryin' to get Bank's public key.");
+                                    Loger.debug(user.toString());
+                                    Loger.debug(user.getClass().toString());
+                                    Key bank_public_key = user.getPublicKey();
+                                    Loger.debug("I've got key!\n" + bank_public_key);
+                                //} else {
+                                //    Loger.err("Other user than BANK cannot user that command!");
+                                //}
 
-                        	Loger.println("My public key (in string):\t" + public_key.toString());
-                        	System.out.println(public_key.toString().length());
-                        	
-                        	Loger.println("My public key (in bytes):\t" + public_key.toString().getBytes());
-                        	System.out.println(public_key.toString().getBytes().length);
-                        	
-                        	
-                        	socket_out.println("server_publish_key");
-                        	socket_out.println(public_key);
-                        	
-							break;
-						case client_get_key:
-							
-							Loger.debug("Got Bank's public key from server!");
-							byte[] pub_key = socket_in.readLine().getBytes();
-							System.out.println(pub_key.length);
-							Loger.println("I've got the Bank's public key (in bytes):\t" + pub_key);
-														
-							PublicKey pu_key = RSA.restorePublicKey(pub_key);
-							
 							break;
 						default:
 							
