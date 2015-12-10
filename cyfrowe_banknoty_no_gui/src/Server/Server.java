@@ -5,7 +5,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import Support.Command;
@@ -19,6 +21,7 @@ public class Server {
 	private static int port;
 	private static HashMap<Role, Pair<BufferedReader, PrintWriter>> users;
 	private static ServerSocket server_socket_listener;
+	private static LinkedList<Role> waiting_for_response;
 	
 	public static void main(String args[]) {
 		
@@ -27,6 +30,7 @@ public class Server {
 		try {
 			server_socket_listener = new ServerSocket(port);
 			users = new HashMap<Role, Pair<BufferedReader, PrintWriter>>();
+			waiting_for_response = new LinkedList<Role>();
 			
 			Loger.println("[info] Listening at " + port + "...");			
 
@@ -72,12 +76,13 @@ public class Server {
 		
 			Command cmd;
 			String user_input;
+			PrintWriter temp_socket;
 
 			while (!socket.isClosed()) {
 
 				try {
 					user_input = socket_in.readLine();	
-					Loger.println("[srv] from user: " + user_input + ".");
+//					Loger.println("[srv] from user: " + user_input + ".");
 					cmd = Command.valueOf(user_input);
 					
 					switch (cmd) {
@@ -91,7 +96,6 @@ public class Server {
 							users.put(user_role, io_pair);
 							Loger.println("[srv] " + user_role + " has logged in.");
 						}
-						
 						break;
 					case usr:
 						
@@ -139,14 +143,33 @@ public class Server {
 						//transferSeries(receiver, series);
 						
 						break;
-					/*case banknote:
-						// TODO: send amount, id, then series
+					case server_get_bank_key:
 						
-						break;*/
-                        case get_bank_key:
-                            PrintWriter prw = users.get(Role.Bank).getY();
-                            prw.println("get_bank_key");
-                            break;
+						Loger.debug(user_role + " is trying to get Bank's public key.");
+						// Dodaję użytkownika do listy użytkowników czekających na odpowiedź
+						waiting_for_response.add(user_role);
+						
+						temp_socket = users.get(Role.Bank).getY();
+						temp_socket.println("client_publish_key");
+						
+						break;
+					case server_publish_key:
+						
+						Loger.debug("I've got public key bytes from Bank.");
+						String public_key = socket_in.readLine();
+						
+						Loger.println("Bank's public key (in bytes):\t" + public_key);
+						System.out.println(public_key.length());
+                    	
+						// Pobieram pierwszego użytkownika w kolejce czekającego na odpowiedź
+						// TODO (to się może zje***...)
+						Role user = waiting_for_response.removeFirst();
+						
+						temp_socket = users.get(user).getY();
+						temp_socket.println("client_get_key");
+						temp_socket.println(public_key);
+						
+						break;
 					default:
 						
 						Loger.println("[srv] Such command (" + cmd.toString() + ") isn't supported.");

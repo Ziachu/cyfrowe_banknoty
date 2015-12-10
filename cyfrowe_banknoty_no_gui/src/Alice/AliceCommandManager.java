@@ -3,6 +3,7 @@ package Alice;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 
+import Client.User;
 import Support.Command;
 import Support.CommonCommandManager;
 import Support.Loger;
@@ -27,7 +28,7 @@ public class AliceCommandManager extends CommonCommandManager {
 		waiting_for_next_input = false;
 	}
 
-    public Alice getAlice() {
+    public User getUser() {
         return alice;
     }
 
@@ -67,10 +68,10 @@ public class AliceCommandManager extends CommonCommandManager {
 
 					respondToSaveIdCommand();
 					break;
-                    case get_bank_key:
-                        socket_out.println("get_bank_key");
-                        break;
-
+				case server_get_bank_key:
+					Loger.debug("Sending request to server.");
+					//sending request to server
+                    break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
 					- generowanie bankotów
 						- ustalanie kwoty Y

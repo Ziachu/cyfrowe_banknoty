@@ -3,6 +3,7 @@ package Bank;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 
+import Client.User;
 import Support.Command;
 import Support.CommonCommandManager;
 import Support.Loger;
@@ -19,18 +20,16 @@ public class BankCommandManager extends CommonCommandManager {
 	private Bank bank;
 
 	public BankCommandManager() {
+		super();
+		
+		bank = new Bank();
 		waiting_for_next_input = false;
 	}
 
-	public Bank getBank() {
+	public User getUser() {
 		return bank;
 	}
 
-	// Umożliwia ręczne wywołanie odpowiedzi na komendę
-	public void setCommand(Command cmd) {
-		this.cmd = cmd;
-	}
-	
 	// Ustawia kanały komunikacyjne, tak żeby manager mógł przekazywać komunikaty do serwera
 	public void setCommandLine(BufferedReader socket_in, PrintWriter socket_out) {
 		this.socket_out = socket_out;
