@@ -8,12 +8,14 @@ import java.io.IOException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 
 import Client.User;
 import Support.Banknote;
 import Support.Loger;
 import Support.Series;
+import sun.rmi.runtime.Log;
 
 /**
  * Created by Damian on 2015-12-04.
@@ -34,6 +36,7 @@ public class Alice extends User {
 	public Series[] u_series;
 	
 	public ArrayList<Banknote> banknotes;
+	public ArrayList<Banknote> hidden_banknotes;
 
     public Key bank_key;
 
@@ -75,9 +78,6 @@ public class Alice extends User {
         return this;
     }
 
-    public void setBankKey(Key key){
-        bank_key = key;
-    }
 
 	public static byte[] getMD5(byte[] input) {
 		try {
@@ -157,4 +157,14 @@ public class Alice extends User {
 			Loger.err("Couldn't close FileInputStream for \"id_series.txt\"");
 		}
 	}
+	public void setPublicKey(PublicKey public_key){
+		this.bank_key = public_key;
+		Loger.debug("Public key restored successfully");
+	}
+
+	public void hideBanknotes(){
+
+	}
+
+
 }

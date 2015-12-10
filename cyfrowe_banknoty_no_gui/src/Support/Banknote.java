@@ -1,6 +1,8 @@
 package Support;
 
 
+import Bank.Bank;
+
 import java.util.Random;
 
 /**
@@ -16,6 +18,7 @@ public class Banknote {
     private Series[] u_series;
     private Series[] t_series;
     private Series[] w_series;
+    public boolean hidden=false;
 
     public Banknote (double amount, int banknote_id, 
     				 Series[] s_series, Series[] u_series,
@@ -110,5 +113,12 @@ public class Banknote {
     	Loger.println("\t\t[...]");
     	Loger.println("\t" + TerminalColors.ANSI_GREEN + "*-------------------------------------------------------*"  
     				  + TerminalColors.ANSI_RESET);
+    }
+
+    public Banknote hideBanknote(){
+            //todo trzeba zrobic zakrywanie banknotu
+        //Banknote banknote = new Banknote();
+        hidden = true;
+        return null;
     }
 }

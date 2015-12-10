@@ -23,4 +23,5 @@ public enum Command {
 	test_alice,					// Alice (testowanie klasy Alice, tworzenie ciągów, banknotu etc.)
 	generate_banknotes,			// Alice (testowanie kalsy Banknote, tworzenie banknotu, wizualizacja etc.)
 	save_id,					// Alice (testowanie eksportowania ID do pliku)
+	show_bank_key,				//	Alice sprawdza czy dobrze zapamietala klucz
 }

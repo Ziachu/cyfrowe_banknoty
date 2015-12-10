@@ -198,32 +198,29 @@ class ServerResponseListener extends Thread {
 							break;
 						case client_publish_key:
 
-							Loger.debug("I'm publishing my public key (" + user.toString() + ")");
-                        	byte[] public_key = user.getPublicKey();
-                        	Loger.println("My public key (in bytes):\t" + public_key);
-                        	System.out.println(public_key.length);
+							Loger.debug("I'm publishing my public key.");
+                        	String public_key = user.getPublicKey();
 
-                        	Loger.println("My public key (in string):\t" + public_key.toString());
-                        	System.out.println(public_key.toString().length());
-                        	
-                        	Loger.println("My public key (in bytes):\t" + public_key.toString().getBytes());
-                        	System.out.println(public_key.toString().getBytes().length);
-                        	
-                        	
+							Loger.println("My public key (in string):\t\t" + public_key);
+                        	Loger.println("Length of my public key (in string):\t" + public_key.length());
+
                         	socket_out.println("server_publish_key");
                         	socket_out.println(public_key);
                         	
 							break;
-						case client_get_key:
-							
-							Loger.debug("Got Bank's public key from server!");
-							byte[] pub_key = socket_in.readLine().getBytes();
-							System.out.println(pub_key.length);
-							Loger.println("I've got the Bank's public key (in bytes):\t" + pub_key);
-														
-							PublicKey pu_key = RSA.restorePublicKey(pub_key);
-							
-							break;
+							case client_get_key:
+
+								Loger.debug("Got Bank's public key from server!");
+								String bank_key = socket_in.readLine();
+
+								Loger.println("I've got the Bank's public key (in string):\t" + bank_key);
+								Loger.println("It's length:\t\t\t" + bank_key.length());
+
+								PublicKey pu_key = RSA.restorePublicKey(bank_key);
+								user.setPublicKey(pu_key);
+								Loger.debug("Public Key restored!");
+
+								break;
 						default:
 							
 							Loger.println("[srv] Wrong command.");

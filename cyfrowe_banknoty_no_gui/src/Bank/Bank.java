@@ -36,7 +36,7 @@ public class Bank extends User {
         return this;
     }
 
-    public byte[] getPublicKey() {
+    public String getPublicKey() {
         return RSA.exportPublicKey(public_key);
     }
 }

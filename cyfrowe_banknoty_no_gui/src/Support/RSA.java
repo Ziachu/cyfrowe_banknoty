@@ -1,35 +1,38 @@
 package Support;
 
+import java.math.BigInteger;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.*;
+import java.util.Base64;
+
 
 import javax.crypto.Cipher;
 
 public class RSA {
 
-	public static byte[] exportPublicKey (Key public_key) {
+	public static String exportPublicKey (Key public_key) {
 
-		byte[] public_bytes = public_key.getEncoded();
-		return public_bytes;
+		String public_string = Base64.getEncoder().encodeToString(public_key.getEncoded());
+		return public_string;
 	}
 	
-	public static byte[] exportKeyToPrivateKeySpecification (Key private_key) {
-		
-		byte[] private_bytes = private_key.getEncoded();
-		return private_bytes;	
-	}
+//	public static byte[] exportKeyToPrivateKeySpecification (Key private_key) {
+//
+//		byte[] private_bytes = private_key.getEncoded();
+//		return private_bytes;
+//	}
 	
-	public static PublicKey restorePublicKey (byte[] public_bytes) {
+	public static PublicKey restorePublicKey (String public_string) {
 		
 		PublicKey public_key;
 		try {
-			
+
+			byte[] public_bytes = Base64.getDecoder().decode(public_string);
 			public_key = KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(public_bytes));
 			return public_key;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
@@ -40,19 +43,19 @@ public class RSA {
 		
 	}
 	
-	public static PrivateKey restorePrivateKey (byte[] private_bytes) {
-		
-		PrivateKey private_key;
-		try {
-
-			private_key = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(private_bytes));
-			return private_key;
-		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-			
-			Loger.err("Couldn't restore private key.");
-			return null;
-		}
-	}
+//	public static PrivateKey restorePrivateKey (byte[] private_bytes) {
+//
+//		PrivateKey private_key;
+//		try {
+//
+//			private_key = KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(private_bytes));
+//			return private_key;
+//		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+//
+//			Loger.err("Couldn't restore private key.");
+//			return null;
+//		}
+//	}
 	
 	public static byte[] encrypt(String text, Key key){
         byte[] cipher_text=null;
@@ -77,5 +80,38 @@ public class RSA {
         }
         return new String(decrypted_text);
     }
+
+	public static BigInteger getModulus(Key key){
+		try {
+			RSAPublicKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(key,RSAPublicKeySpec.class);
+			BigInteger modulus = spec.getModulus();
+			return modulus;
+		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+			Loger.err("Couldn't get RSA specification in getModulus");
+			return null;
+		}
+	}
+
+	public static BigInteger getPublicExponent(PublicKey pub_key){
+		try {
+			RSAPublicKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(pub_key,RSAPublicKeySpec.class);
+			BigInteger pub_exp = spec.getPublicExponent();
+			return pub_exp;
+		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+			Loger.err("Couldn't get RSA specification in getPublicExponent");
+			return null;
+		}
+	}
+
+	public static BigInteger getPrivateExponent(PrivateKey priv_key){
+		try {
+			RSAPrivateKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(priv_key, RSAPrivateKeySpec.class);
+			BigInteger priv_exp = spec.getModulus();
+			return priv_exp;
+		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+			Loger.err("Couldn't get RSA specification in getPrivateExponent");
+			return null;
+		}
+	}
 
 }

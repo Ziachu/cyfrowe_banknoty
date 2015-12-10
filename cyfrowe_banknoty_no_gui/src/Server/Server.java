@@ -158,11 +158,10 @@ public class Server {
 						Loger.debug("I've got public key bytes from Bank.");
 						String public_key = socket_in.readLine();
 						
-						Loger.println("Bank's public key (in bytes):\t" + public_key);
-						System.out.println(public_key.length());
+						Loger.println("Bank's public key (in string):\t" + public_key);
+						Loger.println("Bank's public key length:\t" + public_key.length());
                     	
 						// Pobieram pierwszego użytkownika w kolejce czekającego na odpowiedź
-						// TODO (to się może zje***...)
 						Role user = waiting_for_response.removeFirst();
 						
 						temp_socket = users.get(user).getY();
