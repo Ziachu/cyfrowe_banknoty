@@ -70,7 +70,7 @@ public class AliceCommandManager extends CommonCommandManager {
 
 					respondToTestSaveIdCommand();
 					break;
-				case server_get_bank_key:
+				case get_bank_key:
 					
 					Loger.debug("Sending request to server.");
                     break;
@@ -81,6 +81,25 @@ public class AliceCommandManager extends CommonCommandManager {
 				case hide_banknotes:
 
 					respondToHideBanknotesCommand();
+					break;
+				case send_hidden_banknotes:
+					
+					if (alice.haveHiddenBanknotes()) {
+						// TODO: najpierw przesyłam liczbę banknotów
+						int no_banknotes = alice.hidden_banknotes.size();
+						Loger.println("So, I've got " + no_banknotes + ". hidden banknotes to send.\nI'll better get to work!");
+						
+						socket_out.println(no_banknotes);
+						
+						// TODO: przesyłam każdy zakryty banknot pokolei
+						for (int i = 0; i < no_banknotes; i++) {
+							alice.getHiddenBanknote(i).sendHiddenBanknote(socket_out);
+							Loger.println(i + ". hidden banknote sent.");
+						}
+					} else {
+						Loger.warr("I don't have any hidden banknotes.");
+					}
+					
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
 					- generowanie bankotów
@@ -128,7 +147,7 @@ public class AliceCommandManager extends CommonCommandManager {
 
 	private void respondToHideBanknotesCommand() {
 		if (alice.haveBanknotes()) {
-			if (alice.isPublicKey()) {
+			if (alice.havePublicKey()) {
 				Loger.debug("Allright, I'm hiding my banknotes.");
 				alice.hideBanknotes();
 			} else

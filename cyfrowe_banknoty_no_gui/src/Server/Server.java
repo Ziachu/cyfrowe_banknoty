@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import Support.Command;
+import Support.HiddenBanknote;
 import Support.Loger;
 import Support.Pair;
 import Support.Role;
@@ -53,6 +54,10 @@ public class Server {
 		private BufferedReader socket_in;
 		private PrintWriter socket_out;
 		private Pair<BufferedReader, PrintWriter> io_pair;
+
+		Command cmd;
+		String user_input;
+		PrintWriter temp_socket;
 		
 		private Role user_role;
 		
@@ -72,10 +77,6 @@ public class Server {
 		
 		public void run() {
 			Loger.println("[info] Connection with " + socket.getInetAddress() + ":" + socket.getPort() + " established.");
-		
-			Command cmd;
-			String user_input;
-			PrintWriter temp_socket;
 
 			while (!socket.isClosed()) {
 
@@ -87,104 +88,52 @@ public class Server {
 					switch (cmd) {
 					case role:
 						
-						user_input = socket_in.readLine();
-						if (user_input.isEmpty())
-							break;
-						else {
-							user_role = Role.valueOf(user_input);
-							users.put(user_role, io_pair);
-							Loger.println("[srv] " + user_role + " has logged in.");
-						}
+						respondToRoleCommand();
 						break;
 					case usr:
 						
-						// najpierw komenda "usr" żeby poinformować ServerResponseListenera czego ma się spodziewać
-						socket_out.println("usr");
-						socket_out.println(users.size());
-						
-						for (Map.Entry<Role, Pair<BufferedReader, PrintWriter>> user : users.entrySet()) {
-							socket_out.println(user.getKey().toString());
-						}
-						
-						Loger.println("[srv] " + user_role + " printing users.");
-						
+						respondToUsrCommand();
 						break;
 					case exit:
-						users.remove(user_role);
 						
-						if (users.containsKey(user_role)) {
-							Loger.println("[srv] " + user_role + " still logged in. Couldn't remove him from HashMap.");
-						} else {
-							Loger.println("[srv] " + user_role + " logged out.");
-							socket.close();
-						}
-						
+						respondToExitCommand();
 						break;
 					case series:
-						// po stronie klienta jest sprawdzana wartość "receiver" więc tu przyjmuję
-						// że nie będzie problemu z funkcją Role.valueOf()
-						Role receiver = Role.valueOf(socket_in.readLine());
-						Loger.println("[srv] " + user_role + " sends series to " + receiver + ".");
 						
-						Series series = new Series();
-						series.receiveSeries(socket_in);
-						series.visualizeSeries();
-						
-						if (users.containsKey(receiver)) {
-							PrintWriter temp_socket_out = users.get(receiver).getY();
-							
-							temp_socket_out.println("series");
-							series.sendSeries(temp_socket_out);
-						} else {
-							Loger.err("There's no receiver with given name (" + receiver + ");");
-						}
-						
-						//transferSeries(receiver, series);
-						
+						respondToSeriesCommand();
 						break;
-					case server_get_bank_key:
+					case get_bank_key:
 						
-						Loger.debug(user_role + " is trying to get Bank's public key.");
-						// Dodaję użytkownika do listy użytkowników czekających na odpowiedź
-						
-						if (users.containsKey(Role.Bank)) {
-							temp_socket = users.get(Role.Bank).getY();
-							waiting_for_response.add(user_role);
-							temp_socket.println("client_publish_key");							
-						} else {
-							Loger.warr("Bank isn't online.");
-						}
-						
+						respondToGetBankKeyCommand();
 						break;
 					case server_publish_key:
 						
-						Loger.debug("I've got public key bytes from Bank.");
-						String public_key = socket_in.readLine();
+						respondToServerPublishKeyCommand();
+						break;
+					case send_hidden_banknotes:
 						
-						Loger.println("Bank's public key (in string):\t" + public_key);
-						Loger.println("Bank's public key length:\t" + public_key.length());
-                    	
-						// Pobieram pierwszego użytkownika w kolejce czekającego na odpowiedź
-						Role user = waiting_for_response.removeFirst();
-						
-						temp_socket = users.get(user).getY();
-						temp_socket.println("client_get_key");
-						temp_socket.println(public_key);
-						
+						if (users.containsKey(Role.Bank)) {
+							temp_socket = users.get(Role.Bank).getY();
+							temp_socket.println("receive_hidden_banknotes");
+
+							int no_banknotes = Integer.parseInt(socket_in.readLine());
+							temp_socket.println(no_banknotes);
+							
+							for (int i = 0; i < no_banknotes; i++) {
+								HiddenBanknote temp_banknote = new HiddenBanknote();
+								temp_banknote.receiveHiddenBanknote(socket_in);
+								Loger.println("Sending " + i + ". hidden banknote to bank.");
+								temp_banknote.sendHiddenBanknote(temp_socket);
+							}
+						} else {
+							Loger.warr("Bank isn't online.");
+						}
 						break;
 					default:
 						
 						Loger.println("[srv] Such command (" + cmd.toString() + ") isn't supported.");
 						break;
 					}
-				} catch (IllegalArgumentException e) {
-					Loger.err("Unknown command from " + user_role + ".");
-				} catch (NullPointerException e) {
-					Loger.err("Unknown command from " + user_role + ".");
-					Loger.err("Shutting down connection, \"no_command_loop\".");
-					try {
-						socket.close();
-					} catch (IOException e1) { }
 				} catch (IOException e) {
 					Loger.err("Couldn't read from socket.\n\t" + e.getMessage());
                     try {
@@ -193,6 +142,110 @@ public class Server {
                         Loger.err("Socket closed.\n\t");
                     }
                 }
+			}
+		}
+
+		private void respondToServerPublishKeyCommand() {
+			try {
+				Loger.debug("I've got public key bytes from Bank.");
+				String public_key = socket_in.readLine();
+			
+				// Pobieram pierwszego użytkownika w kolejce czekającego na odpowiedź
+				Role user = waiting_for_response.removeFirst();
+			
+				temp_socket = users.get(user).getY();
+				temp_socket.println("client_get_key");
+				temp_socket.println(public_key);
+			} catch (IOException e) {
+				Loger.err("Couldn't read from socket_in.");
+			}
+			
+		}
+
+		private void respondToGetBankKeyCommand() {
+			
+			Loger.debug(user_role + " is trying to get Bank's public key.");
+			// Dodaję użytkownika do listy użytkowników czekających na odpowiedź
+			
+			if (users.containsKey(Role.Bank)) {
+				temp_socket = users.get(Role.Bank).getY();
+				waiting_for_response.add(user_role);
+				temp_socket.println("client_publish_key");							
+			} else {
+				Loger.warr("Bank isn't online.");
+			}
+		}
+
+		private void respondToSeriesCommand() {
+			
+			// po stronie klienta jest sprawdzana wartość "receiver" więc tu przyjmuję
+			// że nie będzie problemu z funkcją Role.valueOf()
+
+			try {
+				Role receiver = Role.valueOf(socket_in.readLine());
+				Loger.println("[srv] " + user_role + " sends series to " + receiver + ".");
+				
+				Series series = new Series();
+				series.receiveSeries(socket_in);
+				series.visualizeSeries();
+					
+				if (users.containsKey(receiver)) {
+					PrintWriter temp_socket_out = users.get(receiver).getY();
+						
+					temp_socket_out.println("series");
+					series.sendSeries(temp_socket_out);
+				} else {
+					Loger.err("There's no receiver with given name (" + receiver + ");");
+				}
+
+				//transferSeries(receiver, series);
+			} catch (IOException e) {
+				Loger.err("Couldn't read series receiver from socket_in");
+			}
+		}
+
+		private void respondToExitCommand() {
+			
+			users.remove(user_role);
+			
+			if (users.containsKey(user_role)) {
+				Loger.println("[srv] " + user_role + " still logged in. Couldn't remove him from HashMap.");
+			} else {
+				
+				Loger.println("[srv] " + user_role + " logged out.");
+				
+				try {
+					socket.close();
+				} catch (IOException e) {
+					Loger.err("Couldn't properly close socket after user exit command.");
+				}
+			}
+		}
+
+		private void respondToUsrCommand() {
+			// najpierw komenda "usr" żeby poinformować ServerResponseListenera czego ma się spodziewać
+			socket_out.println("usr");
+			socket_out.println(users.size());
+			
+			for (Map.Entry<Role, Pair<BufferedReader, PrintWriter>> user : users.entrySet()) {
+				socket_out.println(user.getKey().toString());
+			}
+			
+			Loger.println("[srv] " + user_role + " printing users.");
+		}
+
+		private void respondToRoleCommand() {
+			try {
+				user_input = socket_in.readLine();
+				if (user_input.isEmpty()) {
+					// pass
+				} else {
+					user_role = Role.valueOf(user_input);
+					users.put(user_role, io_pair);
+					Loger.println("[srv] " + user_role + " has logged in.");
+				}
+			} catch (IOException e) {
+				Loger.err("Coulnd't read role from socket_in.");
 			}
 		}
 	}

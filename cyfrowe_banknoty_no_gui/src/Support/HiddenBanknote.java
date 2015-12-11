@@ -1,5 +1,8 @@
 package Support;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.math.BigInteger;
 
 public class HiddenBanknote {
@@ -99,5 +102,86 @@ public class HiddenBanknote {
     	Loger.println("\t\t[...]");
     	Loger.println("\t" + TerminalColors.ANSI_GREEN + "*-------------------------------------------------------*"  
     				  + TerminalColors.ANSI_RESET);
+	}
+
+	public void sendHiddenBanknote(PrintWriter out) {
+		
+		/* Wysyłamy w nastepującej kolejności
+		 * 		- amount
+		 * 		- banknote_id
+		 * 		- liczbę ciągów S
+		 * 		- każdy ciąg S...
+		 * 		- liczbę ciągów U
+		 * 		- ...
+		 */	
+		
+		out.println(amount);
+		out.println(banknote_id);
+
+		out.println(s_series.length);
+		for (BigInteger series : s_series) {
+			out.println(series);
+		}
+		
+		out.println(u_series.length);
+		for (BigInteger series : u_series) {
+			out.println(series);
+		}
+		
+		out.println(t_series.length);
+		for (BigInteger series : t_series) {
+			out.println(series);
+		}
+		
+		out.println(w_series.length);
+		for (BigInteger series : w_series) {
+			out.println(series);
+		}
+	}
+	
+	public void receiveHiddenBanknote(BufferedReader in) {
+		
+		try {
+			setAmount(new BigInteger(in.readLine()));
+			setBanknoteId(banknote_id = new BigInteger(in.readLine()));
+			
+			int no_s_series = Integer.parseInt(in.readLine());
+			BigInteger[] s_series = new BigInteger[no_s_series];
+			
+			for (int i = 0; i < no_s_series; i++) {
+				s_series[i] = new BigInteger(in.readLine());
+			}
+			
+			setSseries(s_series);
+			
+			int no_u_series = Integer.parseInt(in.readLine());
+			BigInteger[] u_series = new BigInteger[no_u_series];
+			
+			for (int i = 0; i < no_u_series; i++) {
+				u_series[i] = new BigInteger(in.readLine());
+			}
+			
+			setUseries(u_series);
+			
+			int no_t_series = Integer.parseInt(in.readLine());
+			BigInteger[] t_series = new BigInteger[no_t_series];
+			
+			for (int i = 0; i < no_t_series; i++) {
+				t_series[i] = new BigInteger(in.readLine());
+			}
+			
+			setTseries(t_series);
+			
+			int no_w_series = Integer.parseInt(in.readLine());
+			BigInteger[] w_series = new BigInteger[no_w_series];
+			
+			for (int i = 0; i < no_w_series; i++) {
+				w_series[i] = new BigInteger(in.readLine());
+			}
+			
+			setWseries(w_series);
+		} catch (IOException e) {
+			Loger.err("Couldn't parse to BigInteger what was found in socket_in");
+		}
 	}
 }

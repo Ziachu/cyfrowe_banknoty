@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import Client.User;
 import Support.Command;
 import Support.CommonCommandManager;
+import Support.HiddenBanknote;
 import Support.Loger;
 
 public class BankCommandManager extends CommonCommandManager {
@@ -38,7 +39,7 @@ public class BankCommandManager extends CommonCommandManager {
 
 	// Spełnia główne zadanie CommandManager'a, zarządza wprowadzonymi komendami
 	public void respondToCommand(String msg) {
-		Loger.debug("Responding to user_input: " + msg + " (" + waiting_for_next_input + ")");
+		Loger.debug("Responding to bank's command: " + msg + " (" + waiting_for_next_input + ")");
 		user_input = msg;
 		
 		if (!waiting_for_next_input) {
@@ -48,7 +49,16 @@ public class BankCommandManager extends CommonCommandManager {
 				socket_out.println(cmd);
 				
 				switch(cmd) {
-				
+				case test_hidden_banknotes:
+					
+					if (bank.haveHiddenBanknotes()) {
+						HiddenBanknote tmp = bank.hidden_banknotes.get(0);
+						tmp.visualizeHiddenBanknote();
+					} else {
+						Loger.debug("Alice have to first send them.");
+					}
+
+					break;
 				/* TODO: dodać kolejne obsługiwane przez Bank komendy (case):
 					- losowanie j (numeru bankotu do podpisu)
 					- udostępnianie klucza publicznego

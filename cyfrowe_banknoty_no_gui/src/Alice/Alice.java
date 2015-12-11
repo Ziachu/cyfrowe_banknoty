@@ -163,7 +163,7 @@ public class Alice extends User {
 		this.bank_key = public_key;
 	}
 	
-	public boolean isPublicKey() {
+	public boolean havePublicKey() {
 		
 		return bank_key == null ? false : true;
 	}
@@ -171,6 +171,11 @@ public class Alice extends User {
 	public boolean haveBanknotes() {
 		
 		return banknotes.isEmpty() ? false : true;
+	}
+	
+	public boolean haveHiddenBanknotes() {
+		
+		return hidden_banknotes.isEmpty() ? false : true;
 	}
 	
 	public void hideBanknotes(){
@@ -191,5 +196,9 @@ public class Alice extends User {
 		}
 	}
 
-
+	public HiddenBanknote getHiddenBanknote(int index){
+		
+		return hidden_banknotes.get(index);
+	}
+	
 }

@@ -5,7 +5,10 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.ArrayList;
+
 import Client.User;
+import Support.HiddenBanknote;
 import Support.Loger;
 import Support.RSA;
 
@@ -16,8 +19,12 @@ public class Bank extends User {
     private PublicKey public_key;
     @SuppressWarnings("unused")
 	private PrivateKey private_key;
-
+    
+    public ArrayList<HiddenBanknote> hidden_banknotes;
+    
     public Bank (){
+    	
+    	hidden_banknotes = new ArrayList<HiddenBanknote>();
     	
         try {
         	KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -33,10 +40,22 @@ public class Bank extends User {
     }
 
     public User getUser() {
-        return this;
+        
+    	return this;
     }
 
     public String getPublicKey() {
-        return RSA.exportPublicKey(public_key);
+       
+    	return RSA.exportPublicKey(public_key);
+    }
+
+    public void setHiddenBanknotes(ArrayList<HiddenBanknote> hidden_banknotes) {
+    	this.hidden_banknotes = hidden_banknotes;
+    	Loger.println("Ok, hidden banknotes from Alice received.");
+    }
+    
+    public boolean haveHiddenBanknotes() {
+    	
+    	return hidden_banknotes.isEmpty() ? false : true;
     }
 }

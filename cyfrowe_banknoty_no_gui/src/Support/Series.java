@@ -61,15 +61,16 @@ public class Series {
 	}
 	
 	public void receiveSeries(BufferedReader in) {
-		String received = "";
+		
 		try {
-			received = in.readLine();
+			String received = in.readLine();
 			this.length = Integer.parseInt(received);
 			this.values = in.readLine().getBytes();
 		} catch (NumberFormatException e) {
-			Loger.err("received = " + received);
-			e.printStackTrace();
+			
+			Loger.err("Couldn't parse received series's length to Integer.");
 		} catch (IOException e) {
+			
 			Loger.err("I/O problem; Series class during receiving series.\n\t" + e.getMessage());
 		}
 	}

@@ -19,6 +19,8 @@ public class Banknote {
     private Series[] u_series;
     private Series[] t_series;
     private Series[] w_series;
+    
+    private HiddenBanknote hidden_version;
 
     public Banknote (double amount, int banknote_id, 
     				 Series[] s_series, Series[] u_series,
@@ -30,19 +32,6 @@ public class Banknote {
         this.t_series = t_series;
         this.w_series = w_series;
     }
-
-//    public Banknote generateBanknote(){
-//        todox tu beda getTseries itd zeby moc ustalic
-//        Banknote banknote = new Banknote(int amount, int banknote_id, Series s_series, Series u_series, Series t_series, Series w_series)
-//        getBanknote_id();
-//        setBanknote_id();
-//
-//        return banknote;
-//    }
-
-//    public byte[] getTSeries(BanknoteGenerator.GenerateTSeries()) {
-//        return Banknote.t_series[];
-//    }
 
     public int getBanknoteId() { return banknote_id; }
 
@@ -152,6 +141,7 @@ public class Banknote {
     	}
     	hidden.setWseries(hidden_w_series);
     	
+    	hidden_version = hidden;
         return hidden;
     }
 }

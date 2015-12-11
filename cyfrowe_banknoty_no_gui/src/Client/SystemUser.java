@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.PublicKey;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -14,6 +15,7 @@ import Alice.AliceCommandManager;
 import Bank.BankCommandManager;
 import Support.Command;
 import Support.CommonCommandManager;
+import Support.HiddenBanknote;
 import Support.Loger;
 import Support.RSA;
 import Support.Role;
@@ -53,7 +55,7 @@ public class SystemUser {
 
 			getUserRole();
 			setCommandManager();
-
+			
 			while (true) {
 				managerUserInput();
 			}
@@ -194,30 +196,34 @@ class ServerResponseListener extends Thread {
 						case series:								
 							
 							displayServerResponseToSeriesCommand();
-								
 							break;
 						case client_publish_key:
 
-							Loger.debug("I'm publishing my public key.");
-                        	String public_key = user.getPublicKey();
-
-							Loger.println("My public key (in string):\t\t" + public_key);
-                        	Loger.println("Length of my public key (in string):\t" + public_key.length());
-
-                        	socket_out.println("server_publish_key");
-                        	socket_out.println(public_key);
-                        	
+							displayServerResponseToClientPublishKeyCommand();
 							break;
 						case client_get_key:
 
-							Loger.debug("I've received public key from bank!");
-							String bank_key = socket_in.readLine();
+							displayServerResponseToClientGetKeyCommand();
+							break;
+						case receive_hidden_banknotes:
 							
-							PublicKey pub_key = RSA.restorePublicKey(bank_key);
+							Loger.println("I see some hidden banknotes comming...!");
+							// TODO: odbieram liczbę banknotów
+							int no_banknotes = Integer.parseInt(socket_in.readLine());
+							ArrayList<HiddenBanknote> temp_arr = new ArrayList<HiddenBanknote>();
 							
-							// dany użytkownik (Alice/Sprzedawca) będzie miał teraz dostęp do klucza banku
-							user.setPublicKey(pub_key);
-
+							Loger.println("There is " + no_banknotes + " of them.");
+							
+							// TODO: w odpowiedniej pętli odbieram wszystkie banknoty
+							for (int i = 0; i < no_banknotes; i++) {
+								HiddenBanknote temp_banknote = new HiddenBanknote();
+								temp_banknote.receiveHiddenBanknote(socket_in);
+								Loger.println(i + ". hidden banknote received from server.");
+								temp_arr.add(temp_banknote);
+							}
+							
+							// TODO: przekazuje banknoty do klasy banku
+							user.setHiddenBanknotes(temp_arr);
 							break;
 						default:
 							
@@ -225,10 +231,7 @@ class ServerResponseListener extends Thread {
 							break;
 						}
 					} catch (IllegalArgumentException e) {
-						/*try {
-							Thread.sleep(100);
-						} catch (InterruptedException e1) {}*/
-							
+						Loger.err("IllegalArgExc");
 						continue;
 					}
 				}
@@ -237,6 +240,31 @@ class ServerResponseListener extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void displayServerResponseToClientGetKeyCommand() {
+		
+		try {
+			String bank_key = socket_in.readLine();
+			Loger.debug("I've received public key from bank!");
+			
+			PublicKey pub_key = RSA.restorePublicKey(bank_key);
+			
+			// dany użytkownik (Alice/Sprzedawca) będzie miał teraz dostęp do klucza banku
+			user.setPublicKey(pub_key);		
+
+		} catch (IOException e) {
+			Loger.err("Couldn't get key from server.");
+		}
+	}
+
+	private void displayServerResponseToClientPublishKeyCommand() {
+		
+		Loger.debug("I'm publishing my public key.");
+    	String public_key = user.getPublicKey();
+
+    	socket_out.println("server_publish_key");
+    	socket_out.println(public_key);
 	}
 
 	private void displayServerResponseToSeriesCommand() {
