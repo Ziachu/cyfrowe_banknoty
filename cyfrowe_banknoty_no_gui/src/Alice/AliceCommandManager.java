@@ -66,18 +66,21 @@ public class AliceCommandManager extends CommonCommandManager {
 
 					respondToGenerateBanknotesCommand();
 					break;
-				case save_id:
+				case test_save_id:
 
-					respondToSaveIdCommand();
+					respondToTestSaveIdCommand();
 					break;
 				case server_get_bank_key:
 					
 					Loger.debug("Sending request to server.");
                     break;
-				case show_bank_key:
+				case test_show_bank_key:
 					
-					Loger.println("Modulus:\t" + RSA.getModulus(alice.bank_key).toString());
-					Loger.println("Exponens:t" + RSA.getPublicExponent((PublicKey) alice.bank_key).toString());
+					respondToTestShowBankKeyCommand();
+					break;
+				case hide_banknotes:
+
+					respondToHideBanknotesCommand();
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
 					- generowanie bankotów
@@ -123,7 +126,24 @@ public class AliceCommandManager extends CommonCommandManager {
 		}	
 	}
 
-	private void respondToSaveIdCommand() {
+	private void respondToHideBanknotesCommand() {
+		if (alice.haveBanknotes()) {
+			if (alice.isPublicKey()) {
+				Loger.debug("Allright, I'm hiding my banknotes.");
+				alice.hideBanknotes();
+			} else
+				Loger.warr("Get public key from bank first!");
+		} else {
+			Loger.warr("You should first generate some banknotes.");
+		}
+	}
+
+	private void respondToTestShowBankKeyCommand() {
+		Loger.println("Modulus:\t" + RSA.getModulus(alice.bank_key).toString());
+		Loger.println("Exponens:t" + RSA.getPublicExponent((PublicKey) alice.bank_key).toString());		
+	}
+
+	private void respondToTestSaveIdCommand() {
 		Loger.debug("id_series before import...");
 		alice.i_series[0].visualizeSeries();
 		alice.i_series[1].visualizeSeries();
@@ -136,8 +156,8 @@ public class AliceCommandManager extends CommonCommandManager {
 	}
 
 	private void respondToGenerateBanknotesCommand() {
-		Loger.println("100 banknotes are being generated...");
-		for (int i = 0; i < 100; i++) {
+		Loger.println("\t5 banknotes are being generated...");
+		for (int i = 0; i < 5; i++) {
 			alice.generateBanknote(10.1);
 		}
 

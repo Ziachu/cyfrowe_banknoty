@@ -25,9 +25,12 @@ public class test_rsa {
         System.out.println("----------------------------");
         
         // stwórz wiadomość
-        String msg = "Gdzie zabrać Martę?";
-        byte[] raw_msg = msg.getBytes("UTF-8");
+//        String msg = "Gdzie zabrać Martę?";
+        int msg = 123123;
+        byte[] raw_msg = new byte[] {(byte)msg};//msg.getBytes("UTF-8");
         BigInteger m = new BigInteger(raw_msg);
+        
+        
         
         System.out.println("msg:\n" + msg + "\n" + m);
         System.out.println("----------------------------");
@@ -103,6 +106,10 @@ public class test_rsa {
         	System.out.println("There is some difference in signatures.");
         System.out.println("----------------------------");
 
+        /*
+         * To nie działa, napisałem
+        */
+        
         	// weryfikacja sprzedawcy: podpis = m^{e} (mod n)
         BigInteger vendor_sig_of_m = m.modPow(e, n);
         System.out.println("vendor_sig_of_m:\t" + vendor_sig_of_m);

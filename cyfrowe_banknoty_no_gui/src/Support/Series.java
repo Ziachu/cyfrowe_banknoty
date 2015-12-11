@@ -130,5 +130,4 @@ public class Series {
 			Loger.err("Couldn't read series from file.\n\t" + e.getMessage());
 		}
 	}
-	
 }

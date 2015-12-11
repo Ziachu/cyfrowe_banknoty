@@ -146,10 +146,14 @@ public class Server {
 						
 						Loger.debug(user_role + " is trying to get Bank's public key.");
 						// Dodaję użytkownika do listy użytkowników czekających na odpowiedź
-						waiting_for_response.add(user_role);
 						
-						temp_socket = users.get(Role.Bank).getY();
-						temp_socket.println("client_publish_key");
+						if (users.containsKey(Role.Bank)) {
+							temp_socket = users.get(Role.Bank).getY();
+							waiting_for_response.add(user_role);
+							temp_socket.println("client_publish_key");							
+						} else {
+							Loger.warr("Bank isn't online.");
+						}
 						
 						break;
 					case server_publish_key:

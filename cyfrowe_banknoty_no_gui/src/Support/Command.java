@@ -11,18 +11,25 @@ public enum Command {
 	commands,
 	example_series,
 	
+	/* Wydobywanie przez użytkoników klucza od banku. */
 	server_get_bank_key,		// "Hey Serwerze, zdobądź dla mnie klucz banku!"
 								// komenda klienta ubiegającego się o klucz publiczny banku
 	client_publish_key,			// "Hey Banku, daj mi swój klucz!"
 								// komenda wysyłana przez Serwer do Banku (który publikuje swój klucz publiczny)
 	server_publish_key,			// "Łap serwerze, to mój klucz!"
 								// komenda wysyłana przez Bank do Serwera (który przekazuje dalej klucz publiczny banku)
-	client_get_key,		// "No siema kliencie, masz to klucz banku!"
+	client_get_key,				// "No siema kliencie, masz to klucz banku!"
 								// komenda wysyłana przez Serwer do Klienta
 	
+	/* Różnorakie testy */
 	test_alice,					// Alice (testowanie klasy Alice, tworzenie ciągów, banknotu etc.)
+	test_save_id,				// Alice (testowanie eksportowania ID do pliku)
+	test_show_bank_key,			//	Alice sprawdza czy dobrze zapamietala klucz
+	
+	/* Etap pierwszy (tworzenie banknotów) */
 	generate_banknotes,			// Alice (testowanie kalsy Banknote, tworzenie banknotu, wizualizacja etc.)
 	hide_banknotes,				// Alice (zakrywanie banknotów)
-	save_id,					// Alice (testowanie eksportowania ID do pliku)
-	show_bank_key,				//	Alice sprawdza czy dobrze zapamietala klucz
+	send_hidden_banknotes,		// Alice (przesyła do banku zakryte banknoty)
+	
+	
 }

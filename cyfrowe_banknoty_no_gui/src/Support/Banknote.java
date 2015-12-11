@@ -1,6 +1,8 @@
 package Support;
 
 
+import java.math.BigInteger;
+import java.security.PublicKey;
 import java.util.Random;
 
 /**
@@ -9,6 +11,7 @@ import java.util.Random;
  z listy i sobie zczytuje do swojej listy te 100 banknotow w forze
  ALICE PODAJE Y i CIAGI IDENTYFIKUJACE(sama sobie je generuje z series zeby miec swoj komplet)
  */
+
 public class Banknote {
     private double amount;
     private int banknote_id;
@@ -16,7 +19,6 @@ public class Banknote {
     private Series[] u_series;
     private Series[] t_series;
     private Series[] w_series;
-    public boolean hidden=false;
 
     public Banknote (double amount, int banknote_id, 
     				 Series[] s_series, Series[] u_series,
@@ -67,13 +69,15 @@ public class Banknote {
     public void setAmount(double cash) { amount = cash; }
 
     public void generateBanknoteId(){
-        Random rand = new Random();
+        
+    	Random rand = new Random();
         int id = rand.nextInt(Integer.MAX_VALUE);
        
         this.banknote_id = id; 
     }
 
     public void visualizeBanknote() {
+    	
     	Loger.println("\t" + TerminalColors.ANSI_GREEN + "*-------------------------------------------------------*");
     	Loger.println("\n\t\t\t\tAmount: " + TerminalColors.ANSI_RESET + getAmount());
     	Loger.println("\t\t\t\t" + TerminalColors.ANSI_GREEN + "ID: " + TerminalColors.ANSI_RESET + getBanknoteId());
@@ -113,11 +117,41 @@ public class Banknote {
     				  + TerminalColors.ANSI_RESET);
     }
 
-    public Banknote hideBanknote(){
-        
+    public HiddenBanknote hideBanknote(PublicKey pub_key, BigInteger secret){
     	
+    	// zakrywamy wszystko osobno w banknocie: kwotę, identyfikator, ciągi
+    	HiddenBanknote hidden = new HiddenBanknote();
+
+    	byte[] raw_id = Converter.intToByte(this.banknote_id);
+    	hidden.setBanknoteId(RSA.hideMessage(raw_id, pub_key, secret));
     	
-        hidden = true;
-        return null;
+    	byte[] raw_amount = Converter.doubleToByte(this.amount);
+    	hidden.setAmount(RSA.hideMessage(raw_amount, pub_key, secret));
+    	
+    	BigInteger[] hidden_s_series = new BigInteger[s_series.length];
+    	for (int i = 0; i < s_series.length; i++) {
+    		hidden_s_series[i] = RSA.hideMessage(s_series[i].getValues(), pub_key, secret);
+    	}
+    	hidden.setSseries(hidden_s_series);
+    	
+    	BigInteger[] hidden_u_series = new BigInteger[u_series.length];
+    	for (int i = 0; i < u_series.length; i++) {
+    		hidden_u_series[i] = RSA.hideMessage(u_series[i].getValues(), pub_key, secret);
+    	}
+    	hidden.setUseries(hidden_u_series);
+
+    	BigInteger[] hidden_t_series = new BigInteger[t_series.length];
+    	for (int i = 0; i < t_series.length; i++) {
+    		hidden_t_series[i] = RSA.hideMessage(t_series[i].getValues(), pub_key, secret);
+    	}
+    	hidden.setTseries(hidden_t_series);
+    	
+    	BigInteger[] hidden_w_series = new BigInteger[w_series.length];
+    	for (int i = 0; i < w_series.length; i++) {
+    		hidden_w_series[i] = RSA.hideMessage(w_series[i].getValues(), pub_key, secret);
+    	}
+    	hidden.setWseries(hidden_w_series);
+    	
+        return hidden;
     }
 }

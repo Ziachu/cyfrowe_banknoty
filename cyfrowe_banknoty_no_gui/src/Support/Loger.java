@@ -16,4 +16,8 @@ public class Loger {
 	static public void debug(String msg) {
 		System.out.println(TerminalColors.ANSI_YELLOW + "\t[debug] " + msg + TerminalColors.ANSI_RESET);
 	}
+	
+	static public void warr(String msg) {
+		System.out.println(TerminalColors.ANSI_PURPLE + "\t[warning] " + msg + TerminalColors.ANSI_RESET);
+	}
 }

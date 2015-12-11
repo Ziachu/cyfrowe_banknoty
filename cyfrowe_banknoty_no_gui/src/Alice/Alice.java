@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.Key;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -13,7 +13,9 @@ import java.util.ArrayList;
 
 import Client.User;
 import Support.Banknote;
+import Support.HiddenBanknote;
 import Support.Loger;
+import Support.RSA;
 import Support.Series;
 
 /**
@@ -35,9 +37,9 @@ public class Alice extends User {
 	public Series[] u_series;
 	
 	public ArrayList<Banknote> banknotes;
-	public ArrayList<Banknote> hidden_banknotes;
+	public ArrayList<HiddenBanknote> hidden_banknotes;
 
-    public Key bank_key;
+    public PublicKey bank_key;
 
 	// Przerobiłem wszystko w taki sposób, że liczba ciągów identyfikujących Alice
 	// oraz długość wszystkich pojedynczych ciągów zależy od tego, co wprowadzi użytkownik
@@ -49,6 +51,7 @@ public class Alice extends User {
 		this.length_of_series = length_of_series;
 
 		banknotes = new ArrayList<Banknote>();
+		hidden_banknotes = new ArrayList<HiddenBanknote>();
 		
 		Loger.debug("--- Generating her identification series.");
 		i_series = Series.createSeriesTable(no_i_series, length_of_series);
@@ -76,7 +79,6 @@ public class Alice extends User {
     public User getUser() {
         return this;
     }
-
 
 	public static byte[] getMD5(byte[] input) {
 		try {
@@ -118,7 +120,6 @@ public class Alice extends User {
 		banknotes.add(banknote);
 	}
 
-
 	// testowo wypycha tylko jeden ciąg
 	public void exportIdToFile() {
 		File file = new File("id_series.txt");
@@ -156,13 +157,38 @@ public class Alice extends User {
 			Loger.err("Couldn't close FileInputStream for \"id_series.txt\"");
 		}
 	}
+	
 	public void setPublicKey(PublicKey public_key){
+		
 		this.bank_key = public_key;
-		Loger.debug("Public key restored successfully");
+	}
+	
+	public boolean isPublicKey() {
+		
+		return bank_key == null ? false : true;
 	}
 
+	public boolean haveBanknotes() {
+		
+		return banknotes.isEmpty() ? false : true;
+	}
+	
 	public void hideBanknotes(){
-
+		
+		BigInteger secret = RSA.drawRandomSecret(bank_key);
+		Loger.debug("I drew random secret: " + secret);
+		
+		int index = 0;
+		
+		if (banknotes != null) {
+			for (Banknote banknote : banknotes) {
+				hidden_banknotes.add(banknote.hideBanknote(bank_key, secret));
+				index++;
+				Loger.println("Hiding " + index + ". banknote");
+			}
+		} else {
+			Loger.err("Alice doesn't have any banknotes. (null)");
+		}
 	}
 
 

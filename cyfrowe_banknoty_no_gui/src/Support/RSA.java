@@ -6,12 +6,12 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Random;
 
 import javax.crypto.Cipher;
 
@@ -125,27 +125,36 @@ public class RSA {
 	
 	// Wylosowanie Z (sekretu) do zakrycia banknotów, używając klucza publicznego
 	public static BigInteger drawRandomSecret(PublicKey pub_key) {
-		Random rand = new Random();
-		BigInteger random_secret = new BigInteger(32, rand);
+		try {
+			SecureRandom secure_rand = SecureRandom.getInstance("SHA1PRNG");
+			byte[] random_bytes = new byte[10];
+			BigInteger n = getModulus(pub_key);
+			BigInteger z = null;
+			BigInteger gdc = null;
+			BigInteger one = new BigInteger("1");
 		
-		while (!NWD(random_secret, getModulus(pub_key)).equals(1)){
-			Loger.debug("Nope... " + random_secret);
-			random_secret = new BigInteger(32, rand);
-		}
+			do {
+				secure_rand.nextBytes(random_bytes);
+				z = new BigInteger(1, random_bytes);
+				gdc = z.gcd(n);
+			} while (!gdc.equals(one) || z.compareTo(n) >= 0 || z.compareTo(one) <= 0);
 		
-		return random_secret;
-	}
+			return z;
 
-	//Algorytm Euklidesa do wyszukiwania NWD, na potrzeby drawRandomSecret()
-	private static BigInteger NWD(BigInteger a, BigInteger b) {
-		while (a != b){
-			if (a.compareTo(b) > 0)
-				a = a.subtract(b);
-			else
-				b = b.subtract(a);
-		}
-		
-		return a;
+		} catch (NoSuchAlgorithmException e) {
+			Loger.err("Could'nt get instance of SHA1PRNG (during drawing random secret).");
+			return null;
+		}	
 	}
 	
+	public static BigInteger hideMessage(byte[] raw_msg, PublicKey pub_key, BigInteger secret) {
+
+        BigInteger m = new BigInteger(raw_msg);
+		BigInteger n = getModulus(pub_key);
+		BigInteger e = getPublicExponent(pub_key);
+		
+        BigInteger y = (secret.modPow(e, n).multiply(m)).mod(n);
+        
+        return y;
+	}
 }
