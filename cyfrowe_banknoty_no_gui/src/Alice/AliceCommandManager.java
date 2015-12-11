@@ -1,16 +1,19 @@
 package Alice;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.PublicKey;
 
 import Client.User;
-import Support.*;
+import Support.Command;
+import Support.CommonCommandManager;
+import Support.Loger;
+import Support.RSA;
+import Support.Series;
 
 public class AliceCommandManager extends CommonCommandManager {
 
-	private BufferedReader socket_in;
+//	private BufferedReader socket_in;
 	private PrintWriter socket_out;
 	 
 	private Command cmd;
@@ -33,7 +36,7 @@ public class AliceCommandManager extends CommonCommandManager {
 
 	// Ustawia kanały komunikacyjne, tak żeby manager mógł przekazywać komunikaty do serwera
 	public void setCommandLine(BufferedReader socket_in, PrintWriter socket_out) {
-		this.socket_in = socket_in;
+//		this.socket_in = socket_in;
 		this.socket_out = socket_out;
 		
 		super.setCommandLine(socket_in, socket_out);
@@ -68,11 +71,13 @@ public class AliceCommandManager extends CommonCommandManager {
 					respondToSaveIdCommand();
 					break;
 				case server_get_bank_key:
+					
 					Loger.debug("Sending request to server.");
-					//sending request to server
                     break;
 				case show_bank_key:
-					Loger.println(RSA.getModulus(alice.bank_key).toString());
+					
+					Loger.println("Modulus:\t" + RSA.getModulus(alice.bank_key).toString());
+					Loger.println("Exponens:t" + RSA.getPublicExponent((PublicKey) alice.bank_key).toString());
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
 					- generowanie bankotów

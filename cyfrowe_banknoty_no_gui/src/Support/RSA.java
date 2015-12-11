@@ -6,15 +6,18 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.spec.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-
+import java.util.Random;
 
 import javax.crypto.Cipher;
 
 public class RSA {
 
+	// Bank eksportuje swój klucz publiczny w postaci string'a w Base64
 	public static String exportPublicKey (Key public_key) {
 
 		String public_string = Base64.getEncoder().encodeToString(public_key.getEncoded());
@@ -27,6 +30,7 @@ public class RSA {
 //		return private_bytes;
 //	}
 	
+	// Alice / Sprzedawca "odtwarzają" klucz banku z postaci string'a w Base64 
 	public static PublicKey restorePublicKey (String public_string) {
 		
 		PublicKey public_key;
@@ -57,6 +61,7 @@ public class RSA {
 //		}
 //	}
 	
+	// Szyfrowanie zadanym kluczem
 	public static byte[] encrypt(String text, Key key){
         byte[] cipher_text=null;
         try{
@@ -69,6 +74,7 @@ public class RSA {
         return cipher_text;
     }
 
+	// Odszyfrowanie zadanym kluczem
     public static String decrypt(byte[] text, Key key){
         byte[] decrypted_text=null;
         try{
@@ -81,6 +87,7 @@ public class RSA {
         return new String(decrypted_text);
     }
 
+    // Zwrócenie N'ki z zadanego klucza (publicznego, lub prywatnego)
 	public static BigInteger getModulus(Key key){
 		try {
 			RSAPublicKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(key,RSAPublicKeySpec.class);
@@ -92,6 +99,7 @@ public class RSA {
 		}
 	}
 
+	// Zwrócenie E z publicznego klucza
 	public static BigInteger getPublicExponent(PublicKey pub_key){
 		try {
 			RSAPublicKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(pub_key,RSAPublicKeySpec.class);
@@ -103,6 +111,7 @@ public class RSA {
 		}
 	}
 
+	// Zwrócenie D z prywatnego klucza
 	public static BigInteger getPrivateExponent(PrivateKey priv_key){
 		try {
 			RSAPrivateKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(priv_key, RSAPrivateKeySpec.class);
@@ -113,5 +122,30 @@ public class RSA {
 			return null;
 		}
 	}
+	
+	// Wylosowanie Z (sekretu) do zakrycia banknotów, używając klucza publicznego
+	public static BigInteger drawRandomSecret(PublicKey pub_key) {
+		Random rand = new Random();
+		BigInteger random_secret = new BigInteger(32, rand);
+		
+		while (!NWD(random_secret, getModulus(pub_key)).equals(1)){
+			Loger.debug("Nope... " + random_secret);
+			random_secret = new BigInteger(32, rand);
+		}
+		
+		return random_secret;
+	}
 
+	//Algorytm Euklidesa do wyszukiwania NWD, na potrzeby drawRandomSecret()
+	private static BigInteger NWD(BigInteger a, BigInteger b) {
+		while (a != b){
+			if (a.compareTo(b) > 0)
+				a = a.subtract(b);
+			else
+				b = b.subtract(a);
+		}
+		
+		return a;
+	}
+	
 }

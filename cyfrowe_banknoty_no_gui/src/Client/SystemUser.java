@@ -208,19 +208,17 @@ class ServerResponseListener extends Thread {
                         	socket_out.println(public_key);
                         	
 							break;
-							case client_get_key:
+						case client_get_key:
 
-								Loger.debug("Got Bank's public key from server!");
-								String bank_key = socket_in.readLine();
+							Loger.debug("I've received public key from bank!");
+							String bank_key = socket_in.readLine();
+							
+							PublicKey pub_key = RSA.restorePublicKey(bank_key);
+							
+							// dany użytkownik (Alice/Sprzedawca) będzie miał teraz dostęp do klucza banku
+							user.setPublicKey(pub_key);
 
-								Loger.println("I've got the Bank's public key (in string):\t" + bank_key);
-								Loger.println("It's length:\t\t\t" + bank_key.length());
-
-								PublicKey pu_key = RSA.restorePublicKey(bank_key);
-								user.setPublicKey(pu_key);
-								Loger.debug("Public Key restored!");
-
-								break;
+							break;
 						default:
 							
 							Loger.println("[srv] Wrong command.");

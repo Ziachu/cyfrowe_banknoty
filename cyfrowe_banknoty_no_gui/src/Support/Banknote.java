@@ -1,8 +1,6 @@
 package Support;
 
 
-import Bank.Bank;
-
 import java.util.Random;
 
 /**
@@ -116,8 +114,9 @@ public class Banknote {
     }
 
     public Banknote hideBanknote(){
-            //todo trzeba zrobic zakrywanie banknotu
-        //Banknote banknote = new Banknote();
+        
+    	
+    	
         hidden = true;
         return null;
     }

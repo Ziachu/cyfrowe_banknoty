@@ -15,7 +15,6 @@ import Client.User;
 import Support.Banknote;
 import Support.Loger;
 import Support.Series;
-import sun.rmi.runtime.Log;
 
 /**
  * Created by Damian on 2015-12-04.
