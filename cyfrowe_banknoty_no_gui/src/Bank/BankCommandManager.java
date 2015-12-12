@@ -2,6 +2,7 @@ package Bank;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.util.Random;
 
 import Client.User;
 import Support.Command;
@@ -51,13 +52,23 @@ public class BankCommandManager extends CommonCommandManager {
 				switch(cmd) {
 				case test_hidden_banknotes:
 					
+					respondeToTestHiddenBanknotesCommand();
+					break;
+				case pick_one_banknote:
+					
 					if (bank.haveHiddenBanknotes()) {
-						HiddenBanknote tmp = bank.hidden_banknotes.get(0);
-						tmp.visualizeHiddenBanknote();
+						int no_banknotes = bank.hidden_banknotes.size();
+						
+						Random rand = new Random();
+						int picked_banknote = rand.nextInt(no_banknotes + 1);
+						
+						bank.picked_banknote = picked_banknote;
+						
+						Loger.println("\tI have picked " + picked_banknote + ". banknote. I want to see the rest.");
+						socket_out.println(picked_banknote);
 					} else {
-						Loger.debug("Alice have to first send them.");
+						Loger.warr("Theoretically I could pick it right now, but I don't know how many banknotes I'll get.");
 					}
-
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Bank komendy (case):
 					- losowanie j (numeru bankotu do podpisu)
@@ -101,5 +112,15 @@ public class BankCommandManager extends CommonCommandManager {
 				break;
 			}
 		}		
+	}
+
+	private void respondeToTestHiddenBanknotesCommand() {
+		
+		if (bank.haveHiddenBanknotes()) {
+			HiddenBanknote tmp = bank.hidden_banknotes.get(0);
+			tmp.visualizeHiddenBanknote();
+		} else {
+			Loger.debug("Alice have to first send them.");
+		}
 	}
 }

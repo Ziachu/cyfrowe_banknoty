@@ -8,10 +8,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Random;
 
 public class test_rsa {
 
-	public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+	public static void main(String[] args) throws NoSuchAlgorithmException, UnsupportedEncodingException {		
+		
 		// stwórz klucz
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
         kpg.initialize(2048, new SecureRandom());

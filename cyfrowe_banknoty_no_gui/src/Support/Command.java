@@ -28,11 +28,15 @@ public enum Command {
 	test_hidden_banknotes,		// Bank (sprawdza, czy otrzymał zakryte banknoty od Alice)
 	
 	/* Etap pierwszy (tworzenie banknotów) */
-	generate_banknotes,				// Alice (testowanie kalsy Banknote, tworzenie banknotu, wizualizacja etc.)
-	hide_banknotes,					// Alice (zakrywanie banknotów)
-	send_hidden_banknotes,			// Alice (przesyła do server zakryte banknoty)
+	generate_banknotes,				// Alice  (testowanie kalsy Banknote, tworzenie banknotu, wizualizacja etc.)
+	hide_banknotes,					// Alice  (zakrywanie banknotów)
+	send_hidden_banknotes,			// Alice  (przesyła do server zakryte banknoty)
 	server_receive_hidden_banknotes,// Server (odbiera od Alice zakryte banknoty)
 	server_send_hidden_banknotes,	// Server (przesyła do banku zakryte banknoty
-	receive_hidden_banknotes,		// Bank  (odbiera od Alice zakryte banknoty)
+	receive_hidden_banknotes,		// Bank   (odbiera od Alice zakryte banknoty)
+	pick_one_banknote,				// Bank   (wybiera, którego banknotu nie sprawdzi)
+	server_banknote_picked,			// Bank   (serwer odbiera wybrane przez Bank "J", banknot, który nie będzie odkryty)
+	picked_banknote,				// Server (serwer przekazuje Alice wybrany przez Bank banknot)
+	reveal_hidden_banknotes,		// Alice  (ujawnia ukryte banknoty Bankowi, poza j-tym)
 	
 }

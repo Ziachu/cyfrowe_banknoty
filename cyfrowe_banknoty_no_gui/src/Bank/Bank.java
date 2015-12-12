@@ -20,6 +20,7 @@ public class Bank extends User {
     @SuppressWarnings("unused")
 	private PrivateKey private_key;
     
+    public int picked_banknote;
     public ArrayList<HiddenBanknote> hidden_banknotes;
     
     public Bank (){

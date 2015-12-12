@@ -5,9 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.ArrayList;
 
@@ -38,6 +38,8 @@ public class Alice extends User {
 	
 	public ArrayList<Banknote> banknotes;
 	public ArrayList<HiddenBanknote> hidden_banknotes;
+	public ArrayList<BigInteger> secrets;
+	public int picked_banknote;
 
     public PublicKey bank_key;
 
@@ -52,6 +54,7 @@ public class Alice extends User {
 
 		banknotes = new ArrayList<Banknote>();
 		hidden_banknotes = new ArrayList<HiddenBanknote>();
+		secrets = new ArrayList<BigInteger>();
 		
 		Loger.debug("--- Generating her identification series.");
 		i_series = Series.createSeriesTable(no_i_series, length_of_series);
@@ -70,50 +73,15 @@ public class Alice extends User {
 		b_series = Series.createSeriesTable(no_i_series, length_of_series);
 		
 		Loger.debug("--- Hashing t_series and c_series with r_series.");
-		w_series = hashSeries(t_series, c_series, r_series);
+		w_series = Series.hashSeries(no_identification_series, t_series, c_series, r_series);
 		Loger.debug("--- Hashing s_series and b_series with l_series.");
-		u_series = hashSeries(s_series, b_series, l_series);
-		
+		u_series = Series.hashSeries(no_identification_series, s_series, b_series, l_series);
 	}
 
     public User getUser() {
         return this;
     }
 
-	public static byte[] getMD5(byte[] input) {
-		try {
-			MessageDigest md;
-			md = MessageDigest.getInstance("MD5");
-			
-			byte[] thedigest = md.digest(input);
-			/*Loger.println(" = " + thedigest.toString());*/
-
-			return thedigest;
-		} catch (NoSuchAlgorithmException e) {
-			Loger.err("Trouble with md5 hashing.");
-			throw new RuntimeException(e);
-		}
-	}
-
-	public Series[] hashSeries(Series[] series1, Series[] series2, Series[] series3) {
-		Series[] table_of_hashes = new Series[no_identification_series];
-
-		for (int i = 0; i < no_identification_series; i++) {
-			String sum_help = series1[i].getValues().toString() 
-							+ series2[i].getValues().toString()
-							+ series3[i].getValues().toString();
-
-			/*Loger.print("\t--- H(" + series1[i].getValues().toString() + " ," 
-						+ series2[i].getValues().toString() + " ," 
-						+ series3[i].getValues().toString() + ")");*/
-			
-			byte[] sum_bytes = getMD5(sum_help.getBytes());		
-			table_of_hashes[i] = new Series(sum_bytes.length, sum_bytes);
-		}
-
-		return table_of_hashes;
-	}
-	
 	public void generateBanknote(double cash_amount) {
 		Banknote banknote = new Banknote(cash_amount, 1, s_series, u_series, t_series, w_series);
 		banknote.generateBanknoteId();
@@ -163,6 +131,12 @@ public class Alice extends User {
 		this.bank_key = public_key;
 	}
 	
+	public void setPickedBanknote(int picked_banknote) {
+		
+		this.picked_banknote = picked_banknote;
+		Loger.debug("Ok, I know which banknote was choosen by Bank (j = " + picked_banknote + ").");
+	}
+
 	public boolean havePublicKey() {
 		
 		return bank_key == null ? false : true;
@@ -180,14 +154,15 @@ public class Alice extends User {
 	
 	public void hideBanknotes(){
 		
-		BigInteger secret = RSA.drawRandomSecret(bank_key);
-		Loger.debug("I drew random secret: " + secret);
-		
 		int index = 0;
 		
 		if (banknotes != null) {
 			for (Banknote banknote : banknotes) {
+				BigInteger secret= RSA.drawRandomSecret(bank_key);
+
+				secrets.add(secret);
 				hidden_banknotes.add(banknote.hideBanknote(bank_key, secret));
+				
 				index++;
 				Loger.println("Hiding " + index + ". banknote");
 			}
@@ -200,5 +175,43 @@ public class Alice extends User {
 		
 		return hidden_banknotes.get(index);
 	}
+	
+	public void revealBanknotes(PrintWriter out) throws UnsupportedEncodingException {
+		// wyślij ciągi S, B, L oraz T, C, W
+		// wyślij sekrety potrzebne do odkrycia banknotów
+		
+		out.println(no_identification_series);
+		
+		for (Series series : s_series) {
+			series.sendSeries(out);
+		}
+		
+		for (Series series : b_series) {
+			series.sendSeries(out);
+		}
+		
+		for (Series series : l_series) {
+			series.sendSeries(out);
+		}
+		
+		for (Series series : t_series) {
+			series.sendSeries(out);
+		}
+		
+		for (Series series : c_series) {
+			series.sendSeries(out);
+		}
+		
+		for (Series series : w_series) {
+			series.sendSeries(out);
+		}
+		
+		out.println(secrets.size());
+		
+		for (BigInteger secret : secrets) {
+			out.println(secret);
+		}
+	}
+	
 	
 }

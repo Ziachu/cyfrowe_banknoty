@@ -90,6 +90,10 @@ public class Server {
 						
 						respondToRoleCommand();
 						break;
+					case commands:
+						
+						Loger.println(user_role + " is listing commands.");
+						break;
 					case usr:
 						
 						respondToUsrCommand();
@@ -112,21 +116,95 @@ public class Server {
 						break;
 					case send_hidden_banknotes:
 						
+						resnpodToSendHiddenBanknotes();
+						break;
+					case pick_one_banknote:
+						
+						respondToPickOneBanknoteCommand();
+						break;
+					case reveal_hidden_banknotes :
+						
 						if (users.containsKey(Role.Bank)) {
-							temp_socket = users.get(Role.Bank).getY();
-							temp_socket.println("receive_hidden_banknotes");
-
-							int no_banknotes = Integer.parseInt(socket_in.readLine());
-							temp_socket.println(no_banknotes);
 							
-							for (int i = 0; i < no_banknotes; i++) {
-								HiddenBanknote temp_banknote = new HiddenBanknote();
-								temp_banknote.receiveHiddenBanknote(socket_in);
-								Loger.println("Sending " + i + ". hidden banknote to bank.");
-								temp_banknote.sendHiddenBanknote(temp_socket);
+							Loger.debug("Bank is online.");
+							PrintWriter temp_socket = users.get(Role.Bank).getY();
+
+							int no_id_series = Integer.parseInt(socket_in.readLine());
+							Loger.debug("no_id_series received.");
+							temp_socket.println(no_id_series);
+							Loger.debug("no_id_series sent to Bank.");
+							
+							for (int i = 0; i < no_id_series; i++) {
+								Series tmp_s_series = new Series();
+								tmp_s_series.receiveSeries(socket_in);
+								Loger.debug("Single s_series received.");
+								tmp_s_series.sendSeries(temp_socket);
+								Loger.debug("Single s_series sent.");
 							}
+							
+							Loger.debug("All s_series sent.");
+							
+							for (int i = 0; i < no_id_series; i++) {
+								Series tmp_b_series = new Series();
+								tmp_b_series.receiveSeries(socket_in);
+								Loger.debug("Single b_series received.");
+								tmp_b_series.sendSeries(temp_socket);
+								Loger.debug("Single b_series sent.");
+							}
+							
+							Loger.debug("All b_series sent.");
+							
+							for (int i = 0; i < no_id_series; i++) {
+								Series tmp_l_series = new Series();
+								tmp_l_series.receiveSeries(socket_in);
+								Loger.debug("Single l_series received.");
+								tmp_l_series.sendSeries(temp_socket);
+								Loger.debug("Single l_series sent.");
+							}
+							
+							Loger.debug("All l_series sent.");
+							
+							for (int i = 0; i < no_id_series; i++) {
+								Series tmp_t_series = new Series();
+								tmp_t_series.receiveSeries(socket_in);
+								Loger.debug("Single t_series received.");
+								tmp_t_series.sendSeries(temp_socket);
+								Loger.debug("Single t_series sent.");
+							}
+							
+							Loger.debug("All t_series sent.");
+							
+							for (int i = 0; i < no_id_series; i++) {
+								Series tmp_c_series = new Series();
+								tmp_c_series.receiveSeries(socket_in);
+								Loger.debug("Single c_series received.");
+								tmp_c_series.sendSeries(temp_socket);
+								Loger.debug("Single c_series sent.");
+							}
+							
+							Loger.debug("All c_series sent.");
+							
+							for (int i = 0; i < no_id_series; i++) {
+								Series tmp_w_series = new Series();
+								tmp_w_series.receiveSeries(socket_in);
+								Loger.debug("Single w_series received.");
+								tmp_w_series.sendSeries(temp_socket);
+								Loger.debug("Single w_series sent.");
+							}
+							
+							Loger.debug("All w_series sent.");
+							Loger.debug("--------------------All series sent!");
+							
+							int no_secrets = Integer.parseInt(socket_in.readLine());
+							
+							for (int i = 0; i < no_secrets; i++) {
+								temp_socket.println(socket_in.readLine());
+								Loger.debug("Secret received and sent over.");
+							}
+							Loger.debug("--------------------Done!");
+							
 						} else {
-							Loger.warr("Bank isn't online.");
+							Loger.warr("It seems that Bank has logged out.");
 						}
 						break;
 					default:
@@ -142,6 +220,38 @@ public class Server {
                         Loger.err("Socket closed.\n\t");
                     }
                 }
+			}
+		}
+
+		private void respondToPickOneBanknoteCommand() throws NumberFormatException, IOException {
+			int picked_banknote = Integer.parseInt(socket_in.readLine());
+			
+			if (users.containsKey(Role.Alice)){
+				PrintWriter temp_socket = users.get(Role.Alice).getY();
+				temp_socket.println("picked_banknote");
+				temp_socket.println(picked_banknote);
+				
+			} else {
+				Loger.warr("Alice isn't online.");
+			}
+		}
+
+		private void resnpodToSendHiddenBanknotes() throws NumberFormatException, IOException {
+			if (users.containsKey(Role.Bank)) {
+				temp_socket = users.get(Role.Bank).getY();
+				temp_socket.println("receive_hidden_banknotes");
+
+				int no_banknotes = Integer.parseInt(socket_in.readLine());
+				temp_socket.println(no_banknotes);
+				
+				for (int i = 0; i < no_banknotes; i++) {
+					HiddenBanknote temp_banknote = new HiddenBanknote();
+					temp_banknote.receiveHiddenBanknote(socket_in);
+					Loger.println("Sending " + i + ". hidden banknote to bank.");
+					temp_banknote.sendHiddenBanknote(temp_socket);
+				}
+			} else {
+				Loger.warr("Bank isn't online.");
 			}
 		}
 

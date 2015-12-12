@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 public class Series {
@@ -62,6 +64,8 @@ public class Series {
 	
 	public void receiveSeries(BufferedReader in) {
 		
+		Loger.println("Receiving some series.");
+		
 		try {
 			String received = in.readLine();
 			this.length = Integer.parseInt(received);
@@ -83,6 +87,40 @@ public class Series {
 		Loger.println("");
 	}
 
+	public static Series[] hashSeries(int no_id_series, Series[] series1, Series[] series2, Series[] series3) {
+		Series[] table_of_hashes = new Series[no_id_series];
+
+		for (int i = 0; i < no_id_series; i++) {
+			String sum_help = series1[i].getValues().toString() 
+							+ series2[i].getValues().toString()
+							+ series3[i].getValues().toString();
+
+			/*Loger.print("\t--- H(" + series1[i].getValues().toString() + " ," 
+						+ series2[i].getValues().toString() + " ," 
+						+ series3[i].getValues().toString() + ")");*/
+			
+			byte[] sum_bytes = getMD5(sum_help.getBytes());		
+			table_of_hashes[i] = new Series(sum_bytes.length, sum_bytes);
+		}
+
+		return table_of_hashes;
+	}
+	
+	public static byte[] getMD5(byte[] input) {
+		try {
+			MessageDigest md;
+			md = MessageDigest.getInstance("MD5");
+			
+			byte[] thedigest = md.digest(input);
+			/*Loger.println(" = " + thedigest.toString());*/
+
+			return thedigest;
+		} catch (NoSuchAlgorithmException e) {
+			Loger.err("Trouble with md5 hashing.");
+			throw new RuntimeException(e);
+		}
+	}
+	
     public static Series[] xorSeries (Series[] I, Series[] R){
     	if (I.length == R.length) {
         	int length = I.length;

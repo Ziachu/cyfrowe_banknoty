@@ -1,6 +1,7 @@
 package Support;
 
 
+import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.util.Random;
@@ -144,4 +145,5 @@ public class Banknote {
     	hidden_version = hidden;
         return hidden;
     }
+
 }

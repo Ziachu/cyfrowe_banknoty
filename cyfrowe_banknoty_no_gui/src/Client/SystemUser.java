@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.PublicKey;
@@ -75,9 +76,14 @@ public class SystemUser {
 			Loger.err("Troubles with Thread.sleep() function.");
 		}
 		
-		Loger.print("[usr] ");
-		String user_input = user_in.nextLine();
-
+		String user_input;
+		
+		do {
+			Loger.print("[usr] ");
+			user_input = user_in.nextLine();
+		} while (user_input.equals(""));
+		
+		
 		common_commands = new Command[] {Command.role, Command.exit, Command.usr, Command.series, Command.commands};
 		Command cmd;
 		
@@ -207,23 +213,57 @@ class ServerResponseListener extends Thread {
 							break;
 						case receive_hidden_banknotes:
 							
-							Loger.println("I see some hidden banknotes comming...!");
-							// TODO: odbieram liczbę banknotów
-							int no_banknotes = Integer.parseInt(socket_in.readLine());
-							ArrayList<HiddenBanknote> temp_arr = new ArrayList<HiddenBanknote>();
+							respondToReceiveHiddenBanknotes();
+							break;
+						case picked_banknote:
 							
-							Loger.println("There is " + no_banknotes + " of them.");
+							int picked_banknote = Integer.parseInt(socket_in.readLine());
+							user.setPickedBanknote(picked_banknote);
+							break;
+						case reveal_hidden_banknotes:
 							
-							// TODO: w odpowiedniej pętli odbieram wszystkie banknoty
-							for (int i = 0; i < no_banknotes; i++) {
-								HiddenBanknote temp_banknote = new HiddenBanknote();
-								temp_banknote.receiveHiddenBanknote(socket_in);
-								Loger.println(i + ". hidden banknote received from server.");
-								temp_arr.add(temp_banknote);
+							Loger.println("Oh, I got secrets from Alice.");
+							int no_revealed_banknotes = Integer.parseInt(socket_in.readLine());
+							int no_id_series = Integer.parseInt(socket_in.readLine());
+							
+							Series[] s_series = new Series[no_id_series];
+							Series[] b_series = new Series[no_id_series];
+							Series[] l_series = new Series[no_id_series];
+							
+							Series[] t_series = new Series[no_id_series];
+							Series[] c_series = new Series[no_id_series];
+							Series[] w_series = new Series[no_id_series];
+
+							ArrayList<BigInteger> secrets = new ArrayList<BigInteger>();
+							
+							// NIEDOKOŃCZONE!
+							// NIEPRZETESTOWANE PRZESYŁANIE "j"
+							
+							for (int i = 0; i < no_revealed_banknotes; i++) {
+								BigInteger secret = new BigInteger(socket_in.readLine());
+								
+								// następnie ciągi
+								for (int k = 0; k < no_id_series; k++) {
+									// lewa część ciągów id
+									s_series[k] = new Series();
+									s_series[k].receiveSeries(socket_in);
+									b_series[k] = new Series();
+									b_series[k].receiveSeries(socket_in);
+									l_series[k] = new Series();
+									l_series[k].receiveSeries(socket_in);
+									
+									// prawa część ciagów id
+									t_series[k] = new Series();
+									t_series[k].receiveSeries(socket_in);
+									c_series[k] = new Series();
+									c_series[k].receiveSeries(socket_in);
+									w_series[k] = new Series();
+									w_series[k].receiveSeries(socket_in);
+								}
 							}
+
+							Loger.println("Oh, and also other stuff to uncover banknotes.");
 							
-							// TODO: przekazuje banknoty do klasy banku
-							user.setHiddenBanknotes(temp_arr);
 							break;
 						default:
 							
@@ -240,6 +280,26 @@ class ServerResponseListener extends Thread {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private void respondToReceiveHiddenBanknotes() throws NumberFormatException, IOException {
+		Loger.println("I see some hidden banknotes comming...!");
+		// TODO: odbieram liczbę banknotów
+		int no_banknotes = Integer.parseInt(socket_in.readLine());
+		ArrayList<HiddenBanknote> temp_arr = new ArrayList<HiddenBanknote>();
+		
+		Loger.println("There is " + no_banknotes + " of them.");
+		
+		// TODO: w odpowiedniej pętli odbieram wszystkie banknoty
+		for (int i = 0; i < no_banknotes; i++) {
+			HiddenBanknote temp_banknote = new HiddenBanknote();
+			temp_banknote.receiveHiddenBanknote(socket_in);
+			Loger.println(i + ". hidden banknote received from server.");
+			temp_arr.add(temp_banknote);
+		}
+		
+		// TODO: przekazuje banknoty do klasy banku
+		user.setHiddenBanknotes(temp_arr);		
 	}
 
 	private void displayServerResponseToClientGetKeyCommand() {

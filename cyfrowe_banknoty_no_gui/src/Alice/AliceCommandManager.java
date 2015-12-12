@@ -2,6 +2,8 @@ package Alice;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.PublicKey;
 
 import Client.User;
@@ -84,21 +86,19 @@ public class AliceCommandManager extends CommonCommandManager {
 					break;
 				case send_hidden_banknotes:
 					
-					if (alice.haveHiddenBanknotes()) {
-						// TODO: najpierw przesyłam liczbę banknotów
-						int no_banknotes = alice.hidden_banknotes.size();
-						Loger.println("So, I've got " + no_banknotes + ". hidden banknotes to send.\nI'll better get to work!");
-						
-						socket_out.println(no_banknotes);
-						
-						// TODO: przesyłam każdy zakryty banknot pokolei
-						for (int i = 0; i < no_banknotes; i++) {
-							alice.getHiddenBanknote(i).sendHiddenBanknote(socket_out);
-							Loger.println(i + ". hidden banknote sent.");
-						}
-					} else {
-						Loger.warr("I don't have any hidden banknotes.");
-					}
+					respondToSendHiddenBanknotesCommand();
+					break;
+				case reveal_hidden_banknotes:
+
+					try {
+						alice.revealBanknotes(socket_out);
+					} catch (UnsupportedEncodingException e) {
+						Loger.err("Jebać jakiś encoding.");
+					}					
+					
+					// TODO: jeżeli trafiam na banknot_i != j to wysyłam jego Z, ciągi do okrycia lewego zobowiązania
+					// oraz ciągi do odkrycia prawego zobowiązania
+					
 					
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Alice komendy (case):
@@ -143,6 +143,24 @@ public class AliceCommandManager extends CommonCommandManager {
 				break;
 			}	
 		}	
+	}
+
+	private void respondToSendHiddenBanknotesCommand() {
+		if (alice.haveHiddenBanknotes()) {
+			// TODO: najpierw przesyłam liczbę banknotów
+			int no_banknotes = alice.hidden_banknotes.size();
+			Loger.println("So, I've got " + no_banknotes + ". hidden banknotes to send.\nI'll better get to work!");
+			
+			socket_out.println(no_banknotes);
+			
+			// TODO: przesyłam każdy zakryty banknot pokolei
+			for (int i = 0; i < no_banknotes; i++) {
+				alice.getHiddenBanknote(i).sendHiddenBanknote(socket_out);
+				Loger.println(i + ". hidden banknote sent.");
+			}
+		} else {
+			Loger.warr("I don't have any hidden banknotes.");
+		}
 	}
 
 	private void respondToHideBanknotesCommand() {
