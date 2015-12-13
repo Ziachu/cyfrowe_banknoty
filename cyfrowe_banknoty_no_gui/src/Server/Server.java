@@ -32,7 +32,7 @@ public class Server {
 			users = new HashMap<Role, Pair<BufferedReader, PrintWriter>>();
 			waiting_for_response = new LinkedList<Role>();
 			
-			Loger.println("[info] Listening at " + port + "...");			
+			Loger.println("[info] Nasluchiwanie na porcie " + port + "...");
 
 			try {
 				while (true) {
@@ -76,7 +76,7 @@ public class Server {
 		}
 		
 		public void run() {
-			Loger.println("[info] Connection with " + socket.getInetAddress() + ":" + socket.getPort() + " established.");
+			Loger.println("[info] Polaczenie z adresem " + socket.getInetAddress() + ":" + socket.getPort() + " zostalo ustanowione.");
 
 			while (!socket.isClosed()) {
 
@@ -92,7 +92,7 @@ public class Server {
 						break;
 					case commands:
 						
-						Loger.println(user_role + " is listing commands.");
+						Loger.println(user_role + " wypisuje komendy.");
 						break;
 					case usr:
 						
@@ -126,13 +126,13 @@ public class Server {
 						
 						if (users.containsKey(Role.Bank)) {
 							
-							Loger.debug("Bank is online.");
+							Loger.mess("[SERVER] Bank jest dostepny.");
 							PrintWriter temp_socket = users.get(Role.Bank).getY();
 
 							int no_id_series = Integer.parseInt(socket_in.readLine());
-							Loger.debug("no_id_series received.");
+							Loger.mess("[SERVER] Nie otrzymano serii identyfikujacych.");
 							temp_socket.println(no_id_series);
-							Loger.debug("no_id_series sent to Bank.");
+							Loger.mess("[SERVER] Nie przeslano serii identyfikujacych do BANKU.");
 							
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_s_series = new Series();
@@ -142,7 +142,7 @@ public class Server {
 								Loger.debug("Single s_series sent.");
 							}
 							
-							Loger.debug("All s_series sent.");
+							Loger.mess("[SERVER] Wyslano wszystkie ciagi s.");
 							
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_b_series = new Series();
@@ -152,8 +152,8 @@ public class Server {
 								Loger.debug("Single b_series sent.");
 							}
 							
-							Loger.debug("All b_series sent.");
-							
+							Loger.mess("[SERVER] Wyslano wszystkie ciagi b.");
+
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_l_series = new Series();
 								tmp_l_series.receiveSeries(socket_in);
@@ -162,7 +162,7 @@ public class Server {
 								Loger.debug("Single l_series sent.");
 							}
 							
-							Loger.debug("All l_series sent.");
+							Loger.mess("[SERVER] Wyslano wszystkie ciagi l");
 							
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_t_series = new Series();
@@ -172,8 +172,8 @@ public class Server {
 								Loger.debug("Single t_series sent.");
 							}
 							
-							Loger.debug("All t_series sent.");
-							
+							Loger.mess("[SERVER] Wyslano wszystkie ciagi t.");
+
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_c_series = new Series();
 								tmp_c_series.receiveSeries(socket_in);
@@ -182,7 +182,7 @@ public class Server {
 								Loger.debug("Single c_series sent.");
 							}
 							
-							Loger.debug("All c_series sent.");
+							Loger.mess("[SERVER] Wyslano wszystkie ciagi w");
 							
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_w_series = new Series();
@@ -192,24 +192,24 @@ public class Server {
 								Loger.debug("Single w_series sent.");
 							}
 							
-							Loger.debug("All w_series sent.");
-							Loger.debug("--------------------All series sent!");
+							Loger.mess("[SERVER] Wyslano wszystkie ciagi w.");
+							Loger.mess("[SERVER] Wyslano wszystkie ciagi.");
 							
 							int no_secrets = Integer.parseInt(socket_in.readLine());
 							
 							for (int i = 0; i < no_secrets; i++) {
 								temp_socket.println(socket_in.readLine());
-								Loger.debug("Secret received and sent over.");
+								Loger.mess("[SERVER] Otrzymano sekret i przeslano dalej.");
 							}
-							Loger.debug("--------------------Done!");
+							Loger.mess("[SERVER] Wyslano!");
 							
 						} else {
-							Loger.warr("It seems that Bank has logged out.");
+							Loger.warr("[SERVER] It seems that Bank has logged out.");
 						}
 						break;
 					default:
 						
-						Loger.println("[srv] Such command (" + cmd.toString() + ") isn't supported.");
+						Loger.mess("[SERVER] Komenda (" + cmd.toString() + ") nie istnieje.");
 						break;
 					}
 				} catch (IOException e) {
@@ -257,7 +257,7 @@ public class Server {
 
 		private void respondToServerPublishKeyCommand() {
 			try {
-				Loger.debug("I've got public key bytes from Bank.");
+				Loger.debug("[SERVER] Otrzymalem klucz publiczny w bajtach od BANKU.");
 				String public_key = socket_in.readLine();
 			
 				// Pobieram pierwszego użytkownika w kolejce czekającego na odpowiedź
@@ -274,7 +274,7 @@ public class Server {
 
 		private void respondToGetBankKeyCommand() {
 			
-			Loger.debug(user_role + " is trying to get Bank's public key.");
+			Loger.mess("[SERVER]" + user_role + " probuje uzyskac klucz publiczny BANKU.");
 			// Dodaję użytkownika do listy użytkowników czekających na odpowiedź
 			
 			if (users.containsKey(Role.Bank)) {
@@ -282,7 +282,7 @@ public class Server {
 				waiting_for_response.add(user_role);
 				temp_socket.println("client_publish_key");							
 			} else {
-				Loger.warr("Bank isn't online.");
+				Loger.warr("[SERVER] Bank nie jest dostepny.");
 			}
 		}
 
@@ -293,7 +293,7 @@ public class Server {
 
 			try {
 				Role receiver = Role.valueOf(socket_in.readLine());
-				Loger.println("[srv] " + user_role + " sends series to " + receiver + ".");
+				Loger.mess("[SERVER] " + user_role + " wysyla ciagi do " + receiver + ".");
 				
 				Series series = new Series();
 				series.receiveSeries(socket_in);
@@ -305,12 +305,12 @@ public class Server {
 					temp_socket_out.println("series");
 					series.sendSeries(temp_socket_out);
 				} else {
-					Loger.err("There's no receiver with given name (" + receiver + ");");
+					Loger.err("[SERVER] There's no receiver with given name (" + receiver + ");");
 				}
 
 				//transferSeries(receiver, series);
 			} catch (IOException e) {
-				Loger.err("Couldn't read series receiver from socket_in");
+				Loger.err("[SERVER] Couldn't read series receiver from socket_in");
 			}
 		}
 
@@ -319,15 +319,15 @@ public class Server {
 			users.remove(user_role);
 			
 			if (users.containsKey(user_role)) {
-				Loger.println("[srv] " + user_role + " still logged in. Couldn't remove him from HashMap.");
+				Loger.println("[SERVER] " + user_role + " jest nadal zalogowany. Nie jestem w stanie usunac go z hashmapy.");
 			} else {
 				
-				Loger.println("[srv] " + user_role + " logged out.");
+				Loger.println("[SERVER] " + user_role + " wylogowany.");
 				
 				try {
 					socket.close();
 				} catch (IOException e) {
-					Loger.err("Couldn't properly close socket after user exit command.");
+					Loger.err("[SERVER] Couldn't properly close socket after user exit command.");
 				}
 			}
 		}
@@ -341,7 +341,7 @@ public class Server {
 				socket_out.println(user.getKey().toString());
 			}
 			
-			Loger.println("[srv] " + user_role + " printing users.");
+			Loger.println("[SERVER] " + user_role + " wyswietlam obecnych uzykownikow.");
 		}
 
 		private void respondToRoleCommand() {
@@ -352,7 +352,7 @@ public class Server {
 				} else {
 					user_role = Role.valueOf(user_input);
 					users.put(user_role, io_pair);
-					Loger.println("[srv] " + user_role + " has logged in.");
+					Loger.println("[SERVER] " + user_role + " zalogowany.");
 				}
 			} catch (IOException e) {
 				Loger.err("Coulnd't read role from socket_in.");

@@ -34,6 +34,8 @@ public class Bank extends User {
             KeyPair kp = kpg.generateKeyPair();
             public_key = kp.getPublic();
             private_key = kp.getPrivate();
+
+            Loger.mess("[BANK] Utworzono instancje klasy RSA.");
             
         } catch (NoSuchAlgorithmException e) {
             Loger.err("Couldn't initialize KeyPairGenerator.");
@@ -53,6 +55,7 @@ public class Bank extends User {
     public void setHiddenBanknotes(ArrayList<HiddenBanknote> hidden_banknotes) {
     	this.hidden_banknotes = hidden_banknotes;
     	Loger.println("Ok, hidden banknotes from Alice received.");
+        Loger.mess("BANK: Otrzymano zasloniete banknoty od ALICE.");
     }
     
     public boolean haveHiddenBanknotes() {

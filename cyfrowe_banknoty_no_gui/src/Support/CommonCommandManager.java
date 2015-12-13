@@ -32,7 +32,7 @@ public class CommonCommandManager{
 	// Dzięki niej nie trzeba implementować obsługi podstawych komend (takich jak: usr, exit, commands)
 	// a wystarczy zrobić to raz, właśnie tutaj
 	public void respondToCommonCommand(String user_input) {
-		Loger.debug("Responding to common user_input: \"" + user_input + "\" (" + waiting_for_next_input + ")");
+		Loger.mess("Odpowiadam na wspoldzielony user_input: \"" + user_input + "\" (" + waiting_for_next_input + ")");
 		
 		if (!waiting_for_next_input) {
 			// Jeżeli nie oczekuje żadnego konkretnego input'u to próbuje wydobyć komendę
@@ -63,7 +63,7 @@ public class CommonCommandManager{
 					respondToCommandsCommand();
 					break;
 				default:
-					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");
+					Loger.println("[info] Komenda (" + cmd.toString() + ") nie jest jeszcze wspierana.");
 					break;
 				}
 			} catch (IllegalArgumentException e) {
@@ -96,7 +96,7 @@ public class CommonCommandManager{
 	}
 
 	private void respondToCommandsCommand() {
-		Loger.println("[cmd] Available commands:");
+		Loger.println("[cmd] Dostepne komendy:");
 		for (Command cmd : Command.values()) {
 			Loger.println("\t" + TerminalColors.ANSI_CYAN + cmd + TerminalColors.ANSI_RESET);
 		}
@@ -104,7 +104,7 @@ public class CommonCommandManager{
 
 	private void respondToSeriesCommand(boolean wait_for_next) {
 		if (wait_for_next) {
-			Loger.println("[cmd] Enter receiver's name.");
+			Loger.println("[cmd] Podaj nazwe adresata.");
 			last_cmd = cmd;
 			waiting_for_next_input = true;
 		} else {
@@ -116,9 +116,9 @@ public class CommonCommandManager{
 				series.visualizeSeries();
 				series.sendSeries(socket_out);
 			} catch (IllegalArgumentException e) {
-				Loger.err("There is no user with name: " + user_input);
+				Loger.err("[cmd] Nie ma uzytkownika: " + user_input);
 			} catch (UnsupportedEncodingException e) {
-				Loger.err("Couldn't send series through socket.\n\t" + e.getMessage());
+				Loger.err("[cmd] Couldn't send series through socket.\n\t" + e.getMessage());
 			}
 			
 			waiting_for_next_input = false;
