@@ -52,7 +52,7 @@ public class SystemUser {
 			socket_out = new PrintWriter(socket.getOutputStream(), true);
 			user_in = new Scanner(System.in);
 			
-			Loger.println("[info] Connection with " + server_address + ":" + port + " established!");
+			Loger.println("[info] Polaczenie z adresem " + server_address + ":" + port + " zostalo ustanowione!");
 
 			getUserRole();
 			setCommandManager();
@@ -104,7 +104,7 @@ public class SystemUser {
 		// Jeżeli się nie uda, to traktuje ją jako odpowiedź na wcześniejszą komendę
 		// i również przekazuje do odpowiedniego manager'a, tam może być odrzucona
 		} catch (IllegalArgumentException e) {
-			Loger.err("Such command (" + user_input + ") doesn't exist.");
+			Loger.err("Taka komenda (" + user_input + ") nie istnieje.");
 			
 			if (Arrays.asList(common_commands).contains(last_cmd)) {
 				manager.respondToCommonCommand(user_input);
@@ -135,7 +135,7 @@ public class SystemUser {
 		}
 
         user = manager.getUser();
-        Loger.debug("User: " + user);
+        Loger.mess("Uzytkownik: " + user);
 
         server_response_listener = new ServerResponseListener(socket_in, socket_out, user);
         server_response_listener.start();
@@ -150,12 +150,12 @@ public class SystemUser {
 		boolean user_role_applied = false;
 		while (!user_role_applied) {
 			try {
-				Loger.print("Enter Your role: ");
+				Loger.print("Powiedz kim jestes nieznajomy :) : ");
 				user_role = Role.valueOf(user_in.nextLine());
 				
 				user_role_applied = true;
 			} catch (IllegalArgumentException e) {
-				Loger.err("Wrong role applied.");
+				Loger.err("Jestes jakas dziwna osoba, chyba nie ma takiej roli :(.");
 			}			
 		}
 	}
@@ -222,7 +222,7 @@ class ServerResponseListener extends Thread {
 							break;
 						case reveal_hidden_banknotes:
 							
-							Loger.println("Oh, I got secrets from Alice.");
+							Loger.mess("Ooo, mam sekrety od Alice! Ale super!");
 							int no_revealed_banknotes = Integer.parseInt(socket_in.readLine());
 							int no_id_series = Integer.parseInt(socket_in.readLine());
 							
@@ -262,12 +262,12 @@ class ServerResponseListener extends Thread {
 								}
 							}
 
-							Loger.println("Oh, and also other stuff to uncover banknotes.");
+							Loger.mess("Wow, mam nawet reszte materialow ktore mi sa potrzebne do odsloniecia banknotow :) ale superowo!.");
 							
 							break;
 						default:
 							
-							Loger.println("[srv] Wrong command.");
+							Loger.mess("[srv] Pomyleczka. Nie ma takiej komendy :(.");
 							break;
 						}
 					} catch (IllegalArgumentException e) {
@@ -276,28 +276,27 @@ class ServerResponseListener extends Thread {
 					}
 				}
 			} catch (IOException e) {
-				Loger.println("[srv] IO problem: SystemUser in ListenerThread's run() method");
+				Loger.err("[srv] IO problem: SystemUser in ListenerThread's run() method");
 				e.printStackTrace();
 			}
 		}
 	}
 
 	private void respondToReceiveHiddenBanknotes() throws NumberFormatException, IOException {
-		Loger.println("I see some hidden banknotes comming...!");
+		Loger.mess("łoooooo! Dostaje jakies ukryte banknoty! ale bajer!");
 		// TODO: odbieram liczbę banknotów
 		int no_banknotes = Integer.parseInt(socket_in.readLine());
 		ArrayList<HiddenBanknote> temp_arr = new ArrayList<HiddenBanknote>();
 		
-		Loger.println("There is " + no_banknotes + " of them.");
+		Loger.mess("Juz jest ich " + no_banknotes + ".");
 		
 		// TODO: w odpowiedniej pętli odbieram wszystkie banknoty
 		for (int i = 0; i < no_banknotes; i++) {
 			HiddenBanknote temp_banknote = new HiddenBanknote();
 			temp_banknote.receiveHiddenBanknote(socket_in);
-			Loger.println(i + ". hidden banknote received from server.");
 			temp_arr.add(temp_banknote);
 		}
-		
+		Loger.mess("Odebralem "+ no_banknotes + "banknotow");
 		// TODO: przekazuje banknoty do klasy banku
 		user.setHiddenBanknotes(temp_arr);		
 	}
@@ -306,7 +305,7 @@ class ServerResponseListener extends Thread {
 		
 		try {
 			String bank_key = socket_in.readLine();
-			Loger.debug("I've received public key from bank!");
+			Loger.mess("Dostalem klucz publiczny od banku!");
 			
 			PublicKey pub_key = RSA.restorePublicKey(bank_key);
 			
@@ -320,7 +319,7 @@ class ServerResponseListener extends Thread {
 
 	private void displayServerResponseToClientPublishKeyCommand() {
 		
-		Loger.debug("I'm publishing my public key.");
+		Loger.mess("Publikuje moj klucz publiczny.");
     	String public_key = user.getPublicKey();
 
     	socket_out.println("server_publish_key");
@@ -331,7 +330,7 @@ class ServerResponseListener extends Thread {
 		Series series = new Series();
 		series.receiveSeries(socket_in);
 			
-		Loger.println("[srv] Series came from server:");
+		Loger.mess("[srv] Przyszly ciagi od serwera:");
 		series.visualizeSeries();
 	}
 
@@ -343,6 +342,6 @@ class ServerResponseListener extends Thread {
 			response += socket_in.readLine() + " ";
 		}
 			
-		Loger.println("[srv] " + response);
+		Loger.mess("[srv] " + response);
 	}
 }

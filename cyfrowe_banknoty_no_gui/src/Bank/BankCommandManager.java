@@ -40,7 +40,7 @@ public class BankCommandManager extends CommonCommandManager {
 
 	// Spełnia główne zadanie CommandManager'a, zarządza wprowadzonymi komendami
 	public void respondToCommand(String msg) {
-		Loger.debug("Responding to bank's command: " + msg + " (" + waiting_for_next_input + ")");
+		Loger.debug("Odpowiadam na komende banku: " + msg + " (" + waiting_for_next_input + ")");
 		user_input = msg;
 		
 		if (!waiting_for_next_input) {
@@ -64,10 +64,10 @@ public class BankCommandManager extends CommonCommandManager {
 						
 						bank.picked_banknote = picked_banknote;
 						
-						Loger.println("\tI have picked " + picked_banknote + ". banknote. I want to see the rest.");
+						Loger.println("\t[BANK] Wybralem banknot " + picked_banknote + ". Prosze o pokazanie reszty.");
 						socket_out.println(picked_banknote);
 					} else {
-						Loger.warr("Theoretically I could pick it right now, but I don't know how many banknotes I'll get.");
+						Loger.warr("[BANK] Theoretically I could pick it right now, but I don't know how many banknotes I'll get.");
 					}
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Bank komendy (case):
@@ -97,18 +97,18 @@ public class BankCommandManager extends CommonCommandManager {
 				*/	
 				default:
 					
-					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");
+					Loger.println("[info] Komenda (" + cmd.toString() + ") nie jest jeszcze wspierana.");
 					break;
 				}
 			} catch (NullPointerException | IllegalArgumentException e) {
-				Loger.err("Wrong command: " + msg + ".");
+				Loger.err("[info] Nieprawidlowa komenda: " + msg + ".");
 			}
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
 			switch(last_cmd) {
 			default:
 				
-				Loger.err("Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
+				Loger.err("[info] Zla odpowiedz na ostatnia komende (" + last_cmd.toString() + "): " + user_input + ".");
 				break;
 			}
 		}		
@@ -120,7 +120,7 @@ public class BankCommandManager extends CommonCommandManager {
 			HiddenBanknote tmp = bank.hidden_banknotes.get(0);
 			tmp.visualizeHiddenBanknote();
 		} else {
-			Loger.debug("Alice have to first send them.");
+			Loger.mess("Chcialbym ale nie dostalem zadnych banknotow od ALICE :(.");
 		}
 	}
 }

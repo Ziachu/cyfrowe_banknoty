@@ -20,4 +20,8 @@ public class Loger {
 	static public void warr(String msg) {
 		System.out.println(TerminalColors.ANSI_PURPLE + "\t[warning] " + msg + TerminalColors.ANSI_RESET);
 	}
+
+	static public void mess(String msg){
+		System.out.println(TerminalColors.ANSI_GREEN + "\t[SYSTEM] " + msg + TerminalColors.ANSI_RESET);
+	}
 }

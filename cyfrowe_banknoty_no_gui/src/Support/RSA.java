@@ -41,7 +41,7 @@ public class RSA {
 			return public_key;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
 
-			Loger.err("Couldn't restore public key.");
+			Loger.err("[RSA] Nie mozna uzyskac klucza publicznego.");
 			return null;
 		}
 		
@@ -65,11 +65,12 @@ public class RSA {
 	public static byte[] encrypt(String text, Key key){
         byte[] cipher_text=null;
         try{
+			Loger.mess("[RSA] Trwa szyfrowanie...");
             final Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.ENCRYPT_MODE, key);
             cipher_text=cipher.doFinal(text.getBytes());
         } catch (Exception e){
-            Loger.err("Couldn't encrypt text.");
+            Loger.err("[RSA] Nie mozna zaszyfrowac tekstu.");
         }
         return cipher_text;
     }
@@ -78,23 +79,27 @@ public class RSA {
     public static String decrypt(byte[] text, Key key){
         byte[] decrypted_text=null;
         try{
+			Loger.mess("[RSA] Trwa odszyfrowywanie...");
             final Cipher cipher = Cipher.getInstance("RSA");
             cipher.init(Cipher.DECRYPT_MODE, key);
             decrypted_text = cipher.doFinal(text);
         } catch (Exception e){
-            Loger.err("Couldn't decrypt text");
+            Loger.err("[RSA] Nie udalo sie odszyfrowac tekstu");
         }
+		Loger.mess("[RSA] Odszyfrowanie zakonczone powodzeniem.");
         return new String(decrypted_text);
     }
 
     // Zwrócenie N'ki z zadanego klucza (publicznego, lub prywatnego)
 	public static BigInteger getModulus(Key key){
 		try {
+			Loger.mess("[RSA] Proba uzyskania modulusa(N)...");
 			RSAPublicKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(key,RSAPublicKeySpec.class);
 			BigInteger modulus = spec.getModulus();
+			Loger.mess("[RSA] Uzyskano modulus.");
 			return modulus;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-			Loger.err("Couldn't get RSA specification in getModulus");
+			Loger.err("[RSA] Proba uzyskania modulusa nieudana.");
 			return null;
 		}
 	}
@@ -102,11 +107,13 @@ public class RSA {
 	// Zwrócenie E z publicznego klucza
 	public static BigInteger getPublicExponent(PublicKey pub_key){
 		try {
+			Loger.mess("[RSA] Proba uzyskania eksponenta (E)...");
 			RSAPublicKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(pub_key,RSAPublicKeySpec.class);
 			BigInteger pub_exp = spec.getPublicExponent();
+			Loger.mess("[RSA] Uzyskano eskponent.");
 			return pub_exp;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-			Loger.err("Couldn't get RSA specification in getPublicExponent");
+			Loger.err("[RSA] Proba uzyskania eksponenta(E) nieudana.");
 			return null;
 		}
 	}
@@ -114,11 +121,13 @@ public class RSA {
 	// Zwrócenie D z prywatnego klucza
 	public static BigInteger getPrivateExponent(PrivateKey priv_key){
 		try {
+			Loger.mess("[RSA] Proba uzyskania prywatnego eksponenta(D)...");
 			RSAPrivateKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(priv_key, RSAPrivateKeySpec.class);
 			BigInteger priv_exp = spec.getModulus();
+			Loger.mess("[RSA] Uzyskano eksponent.");
 			return priv_exp;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-			Loger.err("Couldn't get RSA specification in getPrivateExponent");
+			Loger.err("[RSA] Proba uzyskania eksponenta(D) nieudana.");
 			return null;
 		}
 	}
@@ -126,6 +135,7 @@ public class RSA {
 	// Wylosowanie Z (sekretu) do zakrycia banknotów, używając klucza publicznego
 	public static BigInteger drawRandomSecret(PublicKey pub_key) {
 		try {
+			Loger.mess("[RSA] Proba wylosowania sekretu do zakrycia banknotow...");
 			SecureRandom secure_rand = SecureRandom.getInstance("SHA1PRNG");
 			byte[] random_bytes = new byte[10];
 			BigInteger n = getModulus(pub_key);
@@ -138,11 +148,11 @@ public class RSA {
 				z = new BigInteger(1, random_bytes);
 				gdc = z.gcd(n);
 			} while (!gdc.equals(one) || z.compareTo(n) >= 0 || z.compareTo(one) <= 0);
-		
+			Loger.mess("[RSA] Wygenerowano sekret do zakrycia banknotow.");
 			return z;
 
 		} catch (NoSuchAlgorithmException e) {
-			Loger.err("Could'nt get instance of SHA1PRNG (during drawing random secret).");
+			Loger.err("[RSA]Couldn't get instance of SHA1PRNG (during drawing random secret).");
 			return null;
 		}	
 	}

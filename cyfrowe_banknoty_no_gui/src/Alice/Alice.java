@@ -18,9 +18,6 @@ import Support.Loger;
 import Support.RSA;
 import Support.Series;
 
-/**
- * Created by Damian on 2015-12-04.
- */
 public class Alice extends User {
 
 	public int no_identification_series; 
@@ -47,7 +44,7 @@ public class Alice extends User {
 	// oraz długość wszystkich pojedynczych ciągów zależy od tego, co wprowadzi użytkownik
 	
 	public Alice(int no_i_series, int length_of_series) {
-		Loger.debug("--- Creating new instance of Alice's class.");
+		Loger.mess("ALICE: Czesc, jestem Alice i wlasnie powstalam :)).");
 		
 		no_identification_series = no_i_series;
 		this.length_of_series = length_of_series;
@@ -57,24 +54,33 @@ public class Alice extends User {
 		secrets = new ArrayList<BigInteger>();
 		
 		Loger.debug("--- Generating her identification series.");
+		Loger.mess("ALICE: Generujemy ciagi identyfikacyjne.");
 		i_series = Series.createSeriesTable(no_i_series, length_of_series);
 		Loger.debug("--- Drawing RIGHT part of her id_series.");
+		Loger.mess("ALICE: Generujemy PRAWA czesc ciagow identyfikacyjnych.");
 		r_series = Series.createSeriesTable(no_i_series, length_of_series);
 		Loger.debug("--- XOR'ing LEFT part of her id_series.");
+		Loger.mess("ALICE: Generujemy lewa czesc ciagow identyfikacyjnych za pomoca XOR.");
 		l_series = Series.xorSeries(i_series, r_series);
 		
 		Loger.debug("--- Drawing t_series.");
+		Loger.mess("ALICE: Generujemy ciag t.");
 		t_series = Series.createSeriesTable(no_i_series, length_of_series);
 		Loger.debug("--- Drawing s_series.");
+		Loger.mess("ALICE: Genereujemy ciag s.");
 		s_series = Series.createSeriesTable(no_i_series, length_of_series);
 		Loger.debug("--- Drawing c_series.");
+		Loger.mess("ALICE: Generujemy ciag c.");
 		c_series = Series.createSeriesTable(no_i_series, length_of_series);
 		Loger.debug("--- Drawing b_series.");
+		Loger.mess("ALICE: Generujemy ciag b.");
 		b_series = Series.createSeriesTable(no_i_series, length_of_series);
 		
 		Loger.debug("--- Hashing t_series and c_series with r_series.");
+		Loger.mess("ALICE: Hashujemy ciag t i c wraz z ciagiem r");
 		w_series = Series.hashSeries(no_identification_series, t_series, c_series, r_series);
 		Loger.debug("--- Hashing s_series and b_series with l_series.");
+		Loger.mess("ALICE: Hashujemy ciag s i b wraz z ciagiem l.");
 		u_series = Series.hashSeries(no_identification_series, s_series, b_series, l_series);
 	}
 
@@ -134,7 +140,7 @@ public class Alice extends User {
 	public void setPickedBanknote(int picked_banknote) {
 		
 		this.picked_banknote = picked_banknote;
-		Loger.debug("Ok, I know which banknote was choosen by Bank (j = " + picked_banknote + ").");
+		Loger.mess("ALICE: Bank wybral sobie banknot: (j = " + picked_banknote + ").");
 	}
 
 	public boolean havePublicKey() {
@@ -164,10 +170,10 @@ public class Alice extends User {
 				hidden_banknotes.add(banknote.hideBanknote(bank_key, secret));
 				
 				index++;
-				Loger.println("Hiding " + index + ". banknote");
+				Loger.mess("ALICE: Zaslonie sobie teraz " + index + ". banknot.");
 			}
 		} else {
-			Loger.err("Alice doesn't have any banknotes. (null)");
+			Loger.err("ALICE: Przepraszam ale nie mam zadnego banknotu :( (null)");
 		}
 	}
 

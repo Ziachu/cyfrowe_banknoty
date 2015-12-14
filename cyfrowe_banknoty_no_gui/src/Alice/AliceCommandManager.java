@@ -73,7 +73,7 @@ public class AliceCommandManager extends CommonCommandManager {
 					break;
 				case get_bank_key:
 					
-					Loger.debug("Sending request to server.");
+					Loger.debug("Wysylanie zapytania do serwera.");
                     break;
 				case test_show_bank_key:
 					
@@ -92,7 +92,7 @@ public class AliceCommandManager extends CommonCommandManager {
 					try {
 						alice.revealBanknotes(socket_out);
 					} catch (UnsupportedEncodingException e) {
-						Loger.err("Jebać jakiś encoding.");
+						Loger.err("Problem z encodingiem.");
 					}					
 					
 					// TODO: jeżeli trafiam na banknot_i != j to wysyłam jego Z, ciągi do okrycia lewego zobowiązania
@@ -125,7 +125,7 @@ public class AliceCommandManager extends CommonCommandManager {
 				*/
 				default:
 
-					Loger.println("[info] Such command (" + cmd.toString() + ") isn't supported yet.");
+					Loger.println("[info] Komenda (" + cmd.toString() + ") nie jest jeszcze obslugiwana.");
 					break;
 				}
 			} catch (IllegalArgumentException e) {
@@ -148,29 +148,29 @@ public class AliceCommandManager extends CommonCommandManager {
 		if (alice.haveHiddenBanknotes()) {
 			// TODO: najpierw przesyłam liczbę banknotów
 			int no_banknotes = alice.hidden_banknotes.size();
-			Loger.println("So, I've got " + no_banknotes + ". hidden banknotes to send.\nI'll better get to work!");
+			Loger.println("[ALICE] Posiadam " + no_banknotes + ". zaslonietych banknotow gotowych do wyslania.\nChyba trzeba sie wziac do roboty!");
 			
 			socket_out.println(no_banknotes);
 			
 			// TODO: przesyłam każdy zakryty banknot pokolei
 			for (int i = 0; i < no_banknotes; i++) {
 				alice.getHiddenBanknote(i).sendHiddenBanknote(socket_out);
-				Loger.println(i + ". hidden banknote sent.");
+				Loger.println("[ALICE] " + i + "-ty banknot wyslany :)");
 			}
 		} else {
-			Loger.warr("I don't have any hidden banknotes.");
+			Loger.warr("Nie mam zadnych ukrytych banknotow :( to smutne, wiecie?.");
 		}
 	}
 
 	private void respondToHideBanknotesCommand() {
 		if (alice.haveBanknotes()) {
 			if (alice.havePublicKey()) {
-				Loger.debug("Allright, I'm hiding my banknotes.");
+				Loger.mess("Okej, to zaslaniamy te banknoty! :)");
 				alice.hideBanknotes();
 			} else
-				Loger.warr("Get public key from bank first!");
+				Loger.warr("O kurde! przeciez najpierw trzeba miec klucz publiczny banku! Glupolku :)");
 		} else {
-			Loger.warr("You should first generate some banknotes.");
+			Loger.warr("Moze najpierw poukrywamy jakies banknoty? :)");
 		}
 	}
 
@@ -180,19 +180,20 @@ public class AliceCommandManager extends CommonCommandManager {
 	}
 
 	private void respondToTestSaveIdCommand() {
-		Loger.debug("id_series before import...");
+		Loger.mess("Ciagi identyfikacyjne przed zaimportowaniem.");
 		alice.i_series[0].visualizeSeries();
 		alice.i_series[1].visualizeSeries();
 		//alice.exportIdToFile();
 
 		alice.importIdFromFile();
-		Loger.debug("id_series after export...");
+		Loger.mess("Ciagi identyfikacyjne po zaimportowaniu: ");
 		alice.i_series[0].visualizeSeries();
 		alice.i_series[1].visualizeSeries();
+		Loger.mess("Sa spoko? :)");
 	}
 
 	private void respondToGenerateBanknotesCommand() {
-		Loger.println("\t5 banknotes are being generated...");
+		Loger.println("\ttak testowo tworzymy 5 banknotow :)");
 		for (int i = 0; i < 5; i++) {
 			alice.generateBanknote(10.1);
 		}
@@ -203,15 +204,15 @@ public class AliceCommandManager extends CommonCommandManager {
 	private void respondToTestAliceCommand() {
 		Alice alice = new Alice(5, 10);
 		
-		Loger.println("\nAlice's identification series:");
+		Loger.println("\nCiagi identyfikacyjne Alice(fajne sa :) ):");
 		for (int i = 0; i < alice.no_identification_series; i++) {
-			Loger.print("no. " + i + ".: ");
+			Loger.print("nr. " + i + ".: ");
 			alice.i_series[i].visualizeSeries();
 			Loger.print("\tL: ");
 			alice.l_series[i].visualizeSeries();
 			Loger.print("\tR: ");
 			alice.r_series[i].visualizeSeries();
-			Loger.println("\tHashes:");
+			Loger.println("\tTeraz Hashe:");
 			Loger.print("\tU: ");
 			alice.u_series[i].visualizeSeries();
 			Loger.print("\tW: ");
@@ -221,18 +222,19 @@ public class AliceCommandManager extends CommonCommandManager {
 
 	private void respondToExampleSeriesCommand() {
 		Series example1 = new Series(10);
-		Loger.println("\nRandom series of length: " + example1.getLength() + ".");
+		Loger.println("\nA oto losowy ciag dlugosci: " + example1.getLength() + ".");
 		example1.visualizeSeries();
 		
-		Loger.println("Byte format: #" + example1.getValues().toString() + "#");
+		Loger.println("Format bitowy: #" + example1.getValues().toString() + "#");
 		
 		Series example2 = new Series(10);
-		Loger.println("Another random series of length: " + example2.getLength() + ".");
+		Loger.println("Kolejny losowy ciag dlugosci: " + example2.getLength() + ".");
 		example2.visualizeSeries();
 		
-		Loger.println("Byte format: #" + example2.getValues().toString() + "#");
+		Loger.println("Format bitowy: #" + example2.getValues().toString() + "#");
 		
-		Loger.println("Let's try to add them.");
-		Loger.println("Byte format: #" + (example1.getValues().toString() + example2.getValues().toString()).getBytes() + "#");
+		Loger.println("Uda nam sie je dodac? :).");
+		Loger.println("Format bitowy dodanych ciagow: #" + (example1.getValues().toString() + example2.getValues().toString()).getBytes() + "#");
+		Loger.println("Udalo sie? :)");
 	}
 }
