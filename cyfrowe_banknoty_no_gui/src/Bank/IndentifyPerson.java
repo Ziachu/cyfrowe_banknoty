@@ -18,6 +18,4 @@ public class IndentifyPerson {
 	public Series[] u_series;
 	
 	public void IdentifyPerson() {}
-	
-	public void set
 }

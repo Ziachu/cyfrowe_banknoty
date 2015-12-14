@@ -139,7 +139,7 @@ public class Server {
 								tmp_s_series.receiveSeries(socket_in);
 								Loger.debug("Single s_series received.");
 								tmp_s_series.sendSeries(temp_socket);
-								Loger.debug("Single s_series sent.");
+								Loger.debug("Single s_series sent (" + i + ").");
 							}
 							
 							Loger.debug("All s_series sent.");
@@ -149,7 +149,7 @@ public class Server {
 								tmp_b_series.receiveSeries(socket_in);
 								Loger.debug("Single b_series received.");
 								tmp_b_series.sendSeries(temp_socket);
-								Loger.debug("Single b_series sent.");
+								Loger.debug("Single b_series sent (" + i + ").");
 							}
 							
 							Loger.debug("All b_series sent.");
@@ -159,7 +159,7 @@ public class Server {
 								tmp_l_series.receiveSeries(socket_in);
 								Loger.debug("Single l_series received.");
 								tmp_l_series.sendSeries(temp_socket);
-								Loger.debug("Single l_series sent.");
+								Loger.debug("Single l_series sent (" + i + ").");
 							}
 							
 							Loger.debug("All l_series sent.");
@@ -169,7 +169,7 @@ public class Server {
 								tmp_t_series.receiveSeries(socket_in);
 								Loger.debug("Single t_series received.");
 								tmp_t_series.sendSeries(temp_socket);
-								Loger.debug("Single t_series sent.");
+								Loger.debug("Single t_series sent (" + i + ").");
 							}
 							
 							Loger.debug("All t_series sent.");
@@ -179,7 +179,7 @@ public class Server {
 								tmp_c_series.receiveSeries(socket_in);
 								Loger.debug("Single c_series received.");
 								tmp_c_series.sendSeries(temp_socket);
-								Loger.debug("Single c_series sent.");
+								Loger.debug("Single c_series sent (" + i + ").");
 							}
 							
 							Loger.debug("All c_series sent.");
@@ -189,7 +189,7 @@ public class Server {
 								tmp_w_series.receiveSeries(socket_in);
 								Loger.debug("Single w_series received.");
 								tmp_w_series.sendSeries(temp_socket);
-								Loger.debug("Single w_series sent.");
+								Loger.debug("Single w_series sent (" + i + ").");
 							}
 							
 							Loger.debug("All w_series sent.");
