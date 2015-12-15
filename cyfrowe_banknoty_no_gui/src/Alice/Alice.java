@@ -26,10 +26,10 @@ public class Alice extends User {
 	public Series[] i_series;
 	public Series[] r_series;
 	public Series[] l_series;
-	public Series[] t_series;
 	public Series[] s_series;
-	public Series[] c_series;
 	public Series[] b_series;
+	public Series[] t_series;
+	public Series[] c_series;
 	public Series[] w_series;
 	public Series[] u_series;
 	
@@ -164,7 +164,7 @@ public class Alice extends User {
 		
 		if (banknotes != null) {
 			for (Banknote banknote : banknotes) {
-				BigInteger secret= RSA.drawRandomSecret(bank_key);
+				BigInteger secret = RSA.drawRandomSecret(bank_key);
 
 				secrets.add(secret);
 				hidden_banknotes.add(banknote.hideBanknote(bank_key, secret));
@@ -182,42 +182,51 @@ public class Alice extends User {
 		return hidden_banknotes.get(index);
 	}
 	
-	public void revealBanknotes(PrintWriter out) throws UnsupportedEncodingException {
-		// wyślij ciągi S, B, L oraz T, C, W
-		// wyślij sekrety potrzebne do odkrycia banknotów
-		
-		out.println(no_identification_series);
-		
-		for (Series series : s_series) {
-			series.sendSeries(out);
-		}
-		
-		for (Series series : b_series) {
-			series.sendSeries(out);
-		}
-		
-		for (Series series : l_series) {
-			series.sendSeries(out);
-		}
-		
-		for (Series series : t_series) {
-			series.sendSeries(out);
-		}
-		
-		for (Series series : c_series) {
-			series.sendSeries(out);
-		}
-		
-		for (Series series : w_series) {
-			series.sendSeries(out);
-		}
-		
-		out.println(secrets.size());
-		
-		for (BigInteger secret : secrets) {
-			out.println(secret);
+	public void sendSecrets(PrintWriter out) throws UnsupportedEncodingException {
+		out.println(secrets.size() - 1);
+	
+		Loger.debug("Sending secrets (" + (secrets.size() - 1) + ")");
+		for (int i = 0; i < secrets.size(); i++) {
+			if (i != picked_banknote) {
+				out.println(secrets.get(i));
+				Loger.debug(i + ".:" + secrets.get(i));
+			}
 		}
 	}
 	
-	
+	public void sendIdSeries(PrintWriter out) throws UnsupportedEncodingException {
+		out.println(no_identification_series);
+		
+		for (Series series : this.s_series) {
+			series.visualizeSeries();
+			series.sendSeries(out);
+		}
+		
+		for (Series series : this.b_series) {
+			series.visualizeSeries();
+			series.sendSeries(out);
+		}
+		
+		for (Series series : this.l_series) {
+			series.visualizeSeries();
+			series.sendSeries(out);
+		}
+		
+		for (Series series : this.t_series) {
+			series.visualizeSeries();
+			series.sendSeries(out);
+		}
+		
+		for (Series series : this.c_series) {
+			series.visualizeSeries();
+			series.sendSeries(out);
+		}
+		
+		for (Series series : this.r_series) {
+			series.visualizeSeries();
+			series.sendSeries(out);
+		}
+		
+		Loger.debug("Series sent.");
+	}
 }

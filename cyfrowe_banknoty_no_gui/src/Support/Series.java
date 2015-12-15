@@ -16,20 +16,29 @@ public class Series {
 	
 	public Series() {}
 	
-	public Series(int length, byte[]values) {
-		this.length = length;
-		this.values = values;
-	}
-	
 	public Series(int length) {
+		
 		this.length = length;
 		this.values = new byte[length];
 		generateRandomSeries(this.length);
 	}
 	
+	public Series(byte[] values) {
+
+		this.values = values;
+		this.length = values.length;
+	}
+	
+	public Series(int length, byte[]values) {
+		
+		this.length = length;
+		this.values = values;
+	}
+	
 	public Series(Series series) {
-		this.length = series.length;
-		this.values = series.values;
+		
+		this.length = series.getLength();
+		this.values = series.getValues();
 	}
 
 	public void generateRandomSeries(int length) {
@@ -63,8 +72,6 @@ public class Series {
 	}
 	
 	public void receiveSeries(BufferedReader in) {
-		
-		Loger.println("Receiving some series.");
 		
 		try {
 			String received = in.readLine();
@@ -102,7 +109,9 @@ public class Series {
 			byte[] sum_bytes = getMD5(sum_help.getBytes());		
 			table_of_hashes[i] = new Series(sum_bytes.length, sum_bytes);
 		}
-
+		
+		table_of_hashes[10].visualizeSeries();
+		
 		return table_of_hashes;
 	}
 	

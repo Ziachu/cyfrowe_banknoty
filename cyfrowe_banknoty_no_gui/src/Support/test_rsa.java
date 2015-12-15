@@ -28,13 +28,19 @@ public class test_rsa {
         
         // stwórz wiadomość
 //        String msg = "Gdzie zabrać Martę?";
-        int msg = 123123;
-        byte[] raw_msg = new byte[] {(byte)msg};//msg.getBytes("UTF-8");
-        BigInteger m = new BigInteger(raw_msg);
+//        BigInteger msg = new BigInteger("11001110011000101001000011010101");
+//        byte[] raw_msg = new byte[] {(byte)msg};//msg.getBytes("UTF-8");
+//        BigInteger m = new BigInteger(raw_msg);
+//        BigInteger m  = msg;
         
+        Series s_series = new Series(10);
+        System.out.print("msg: ");
+        s_series.visualizeSeries();
         
+        BigInteger m = new BigInteger(s_series.getValues());
+        System.out.println("m: " + m);
         
-        System.out.println("msg:\n" + msg + "\n" + m);
+//        System.out.println("msg:\n" + msg + "\n" + m);
         System.out.println("----------------------------");
 
         // zdobądź E, D oraz N and "one"
@@ -63,6 +69,7 @@ public class test_rsa {
         System.out.println("----------------------------");
         System.out.println("random_secret:\n" + z);
         System.out.println("----------------------------");
+        
         
         // zakryj wiadomość
         // y = m * z^{e} (mod n)
@@ -128,10 +135,15 @@ public class test_rsa {
         System.out.println("__m:\t" + __m);
         System.out.println("----------------------------");
         
-        if (m.equals(__m))
+        if (m.equals(__m)) {
+        	System.out.println(m);
+        	System.out.println(__m);
         	System.out.println("Messages are identical.");
-        else
+        } else {
+        	System.out.println(m);
+        	System.out.println(__m);
         	System.out.println("There is some difference in messages.");
+        }
         System.out.println("----------------------------");
         
         	// sprawdź, czy podpisy banku i sprzedawcy są takie same
@@ -139,6 +151,19 @@ public class test_rsa {
         	System.out.println("OK, vendor and bank got same signatures.");
         else
         	System.out.println("Nope, vendor and bank still have different signatures.");
+        System.out.println("----------------------------");
+        
+        // odzyskanie oryginalnej wiadomości msg z m, na przykładzie Series
+        Series t_series = new Series(10);
+        BigInteger secret = RSA.drawRandomSecret(public_key);
+        BigInteger hidden_t_series = RSA.hideMessage(t_series.getValues(), public_key, secret);
+        Series _t_series = new Series(RSA.revealMessage(hidden_t_series, public_key, secret));
+        
+        System.out.println(RSA.revealMessage(hidden_t_series, public_key, secret));
+        System.out.print("odzyskana:\t");
+        _t_series.visualizeSeries();
+        System.out.print("oryginał:\t");
+        t_series.visualizeSeries();
         
 	}
 

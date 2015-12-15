@@ -135,7 +135,6 @@ public class SystemUser {
 		}
 
         user = manager.getUser();
-        Loger.mess("Uzytkownik: " + user);
 
         server_response_listener = new ServerResponseListener(socket_in, socket_out, user);
         server_response_listener.start();
@@ -223,45 +222,66 @@ class ServerResponseListener extends Thread {
 						case reveal_hidden_banknotes:
 							
 							Loger.mess("Ooo, mam sekrety od Alice! Ale super!");
-							int no_revealed_banknotes = Integer.parseInt(socket_in.readLine());
-							int no_id_series = Integer.parseInt(socket_in.readLine());
+							int no_secrets = Integer.parseInt(socket_in.readLine());
 							
+
+							BigInteger[] secrets = new BigInteger[no_secrets];
+							
+							for (int i = 0; i < no_secrets; i++) {
+								secrets[i] = new BigInteger(socket_in.readLine());
+							}
+							
+							user.setSecrets(secrets);
+							Loger.debug("Secrets set.");
+							
+							int no_id_series = Integer.parseInt(socket_in.readLine());
+
 							Series[] s_series = new Series[no_id_series];
 							Series[] b_series = new Series[no_id_series];
 							Series[] l_series = new Series[no_id_series];
 							
 							Series[] t_series = new Series[no_id_series];
 							Series[] c_series = new Series[no_id_series];
-							Series[] w_series = new Series[no_id_series];
+							Series[] r_series = new Series[no_id_series];
 
-							ArrayList<BigInteger> secrets = new ArrayList<BigInteger>();
-							
-							// NIEDOKOŃCZONE!
-							// NIEPRZETESTOWANE PRZESYŁANIE "j"
-							
-							for (int i = 0; i < no_revealed_banknotes; i++) {
-								BigInteger secret = new BigInteger(socket_in.readLine());
-								
-								// następnie ciągi
-								for (int k = 0; k < no_id_series; k++) {
-									// lewa część ciągów id
-									s_series[k] = new Series();
-									s_series[k].receiveSeries(socket_in);
-									b_series[k] = new Series();
-									b_series[k].receiveSeries(socket_in);
-									l_series[k] = new Series();
-									l_series[k].receiveSeries(socket_in);
-									
-									// prawa część ciagów id
-									t_series[k] = new Series();
-									t_series[k].receiveSeries(socket_in);
-									c_series[k] = new Series();
-									c_series[k].receiveSeries(socket_in);
-									w_series[k] = new Series();
-									w_series[k].receiveSeries(socket_in);
-								}
+							for (int i = 0; i < no_id_series; i++) {
+								s_series[i] = new Series();
+								s_series[i].receiveSeries(socket_in);
+								s_series[i].visualizeSeries();
 							}
-
+							
+							for (int i = 0; i < no_id_series; i++) {
+								b_series[i] = new Series();
+								b_series[i].receiveSeries(socket_in);
+								b_series[i].visualizeSeries();
+							}
+							
+							for (int i = 0; i < no_id_series; i++) {
+								l_series[i] = new Series();
+								l_series[i].receiveSeries(socket_in);
+								l_series[i].visualizeSeries();
+							}
+							
+							for (int i = 0; i < no_id_series; i++) {
+								t_series[i] = new Series();
+								t_series[i].receiveSeries(socket_in);
+								t_series[i].visualizeSeries();
+							}
+							
+							for (int i = 0; i < no_id_series; i++) {
+								c_series[i] = new Series();
+								c_series[i].receiveSeries(socket_in);
+								c_series[i].visualizeSeries();
+							}
+							
+							for (int i = 0; i < no_id_series; i++) {
+								r_series[i] = new Series();
+								r_series[i].receiveSeries(socket_in);
+								r_series[i].visualizeSeries();
+							}
+							
+							user.setAliceSeries(s_series, b_series, l_series, t_series, c_series, r_series);
+							Loger.debug("Alice series set.");
 							Loger.mess("Wow, mam nawet reszte materialow ktore mi sa potrzebne do odsloniecia banknotow :) ale superowo!.");
 							
 							break;

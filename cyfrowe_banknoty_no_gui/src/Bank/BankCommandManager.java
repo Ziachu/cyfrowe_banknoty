@@ -52,23 +52,27 @@ public class BankCommandManager extends CommonCommandManager {
 				switch(cmd) {
 				case test_hidden_banknotes:
 					
-					respondeToTestHiddenBanknotesCommand();
+					respondToTestHiddenBanknotesCommand();
 					break;
 				case pick_one_banknote:
 					
-					if (bank.haveHiddenBanknotes()) {
-						int no_banknotes = bank.hidden_banknotes.size();
-						
-						Random rand = new Random();
-						int picked_banknote = rand.nextInt(no_banknotes + 1);
-						
-						bank.picked_banknote = picked_banknote;
-						
-						Loger.println("\t[BANK] Wybralem banknot " + picked_banknote + ". Prosze o pokazanie reszty.");
-						socket_out.println(picked_banknote);
+					respondToPickOneBanknoteCommand();					
+					break;
+				case uncover_hidden_banknotes:
+					
+					respondToUncoverHiddenBanknotesCommand();
+					break;
+				case verify_banknotes:
+					
+					if (bank.haveRevealedBanknotes()) {
+						if (bank.verifyBanknotes())
+							Loger.debug("Banknotes verified.");
+						else 
+							Loger.debug("Banknotes aren't same! Abort mission!");
 					} else {
-						Loger.warr("[BANK] Theoretically I could pick it right now, but I don't know how many banknotes I'll get.");
+						Loger.debug("I don't have any revealed banknotes.");
 					}
+					
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Bank komendy (case):
 					- losowanie j (numeru bankotu do podpisu)
@@ -101,7 +105,8 @@ public class BankCommandManager extends CommonCommandManager {
 					break;
 				}
 			} catch (NullPointerException | IllegalArgumentException e) {
-				Loger.err("[info] Nieprawidlowa komenda: " + msg + ".");
+				Loger.err("[info] Nieprawidlowa komenda: " + msg + ". (null somewhere?)\n" + e.getMessage());
+				e.printStackTrace();
 			}
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
@@ -114,7 +119,34 @@ public class BankCommandManager extends CommonCommandManager {
 		}		
 	}
 
-	private void respondeToTestHiddenBanknotesCommand() {
+	private void respondToUncoverHiddenBanknotesCommand() {
+		
+		if (bank.haveHiddenBanknotes()) {
+			bank.revealBanknotes();
+		} else {
+			Loger.debug("I don't have hidden banknotes.");
+		}
+	}
+
+	private void respondToPickOneBanknoteCommand() {
+		
+		if (bank.haveHiddenBanknotes()) {
+			int no_banknotes = bank.hidden_banknotes.size();
+			
+			Random rand = new Random();
+			int picked_banknote = rand.nextInt(no_banknotes);
+			
+			bank.picked_banknote = picked_banknote;
+			
+			Loger.println("\t[BANK] Wybralem banknot " + picked_banknote + ". Prosze o pokazanie reszty.");
+			socket_out.println(picked_banknote);
+		} else {
+			Loger.warr("[BANK] Theoretically I could pick it right now, but I don't know how many banknotes I'll get.");
+		}
+
+	}
+
+	private void respondToTestHiddenBanknotesCommand() {
 		
 		if (bank.haveHiddenBanknotes()) {
 			HiddenBanknote tmp = bank.hidden_banknotes.get(0);

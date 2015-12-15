@@ -128,84 +128,30 @@ public class Server {
 							
 							Loger.mess("[SERVER] Bank jest dostepny.");
 							PrintWriter temp_socket = users.get(Role.Bank).getY();
-
-							int no_id_series = Integer.parseInt(socket_in.readLine());
-							Loger.mess("[SERVER] Nie otrzymano serii identyfikujacych.");
-							temp_socket.println(no_id_series);
-							Loger.mess("[SERVER] Nie przeslano serii identyfikujacych do BANKU.");
-							
-							for (int i = 0; i < no_id_series; i++) {
-								Series tmp_s_series = new Series();
-								tmp_s_series.receiveSeries(socket_in);
-								Loger.debug("Single s_series received.");
-								tmp_s_series.sendSeries(temp_socket);
-								Loger.debug("Single s_series sent (" + i + ").");
-							}
-							
-							Loger.mess("[SERVER] Wyslano wszystkie ciagi s.");
-							
-							for (int i = 0; i < no_id_series; i++) {
-								Series tmp_b_series = new Series();
-								tmp_b_series.receiveSeries(socket_in);
-								Loger.debug("Single b_series received.");
-								tmp_b_series.sendSeries(temp_socket);
-								Loger.debug("Single b_series sent (" + i + ").");
-							}
-							
-							Loger.mess("[SERVER] Wyslano wszystkie ciagi b.");
-
-							for (int i = 0; i < no_id_series; i++) {
-								Series tmp_l_series = new Series();
-								tmp_l_series.receiveSeries(socket_in);
-								Loger.debug("Single l_series received.");
-								tmp_l_series.sendSeries(temp_socket);
-								Loger.debug("Single l_series sent (" + i + ").");
-							}
-							
-							Loger.mess("[SERVER] Wyslano wszystkie ciagi l");
-							
-							for (int i = 0; i < no_id_series; i++) {
-								Series tmp_t_series = new Series();
-								tmp_t_series.receiveSeries(socket_in);
-								Loger.debug("Single t_series received.");
-								tmp_t_series.sendSeries(temp_socket);
-								Loger.debug("Single t_series sent (" + i + ").");
-							}
-							
-							Loger.mess("[SERVER] Wyslano wszystkie ciagi t.");
-
-							for (int i = 0; i < no_id_series; i++) {
-								Series tmp_c_series = new Series();
-								tmp_c_series.receiveSeries(socket_in);
-								Loger.debug("Single c_series received.");
-								tmp_c_series.sendSeries(temp_socket);
-								Loger.debug("Single c_series sent (" + i + ").");
-							}
-							
-							Loger.mess("[SERVER] Wyslano wszystkie ciagi w");
-							
-							for (int i = 0; i < no_id_series; i++) {
-								Series tmp_w_series = new Series();
-								tmp_w_series.receiveSeries(socket_in);
-								Loger.debug("Single w_series received.");
-								tmp_w_series.sendSeries(temp_socket);
-								Loger.debug("Single w_series sent (" + i + ").");
-							}
-							
-							Loger.mess("[SERVER] Wyslano wszystkie ciagi w.");
-							Loger.mess("[SERVER] Wyslano wszystkie ciagi.");
+							temp_socket.println("reveal_hidden_banknotes");
 							
 							int no_secrets = Integer.parseInt(socket_in.readLine());
+							temp_socket.println(no_secrets);
 							
 							for (int i = 0; i < no_secrets; i++) {
 								temp_socket.println(socket_in.readLine());
-								Loger.mess("[SERVER] Otrzymano sekret i przeslano dalej.");
+								Loger.debug("Sending " + i + ". secret.");
 							}
-							Loger.mess("[SERVER] Wyslano!");
 							
+							int no_id_series = Integer.parseInt(socket_in.readLine());
+							temp_socket.println(no_id_series);
+							
+							for (int i = 0; i < no_id_series * 6; i++) {
+								Series tmp = new Series();
+								tmp.receiveSeries(socket_in);
+								tmp.visualizeSeries();
+								tmp.sendSeries(temp_socket);
+								Loger.debug("Sending " + i + ". series");
+							}
 						} else {
 							Loger.warr("[SERVER] It seems that Bank has logged out.");
 						}
+						
 						break;
 					default:
 						
