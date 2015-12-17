@@ -67,7 +67,7 @@ public class BankCommandManager extends CommonCommandManager {
 						Loger.println("\t[BANK] Wybralem banknot " + picked_banknote + ". Prosze o pokazanie reszty.");
 						socket_out.println(picked_banknote);
 					} else {
-						Loger.warr("[BANK] Theoretically I could pick it right now, but I don't know how many banknotes I'll get.");
+						Loger.warr("[BANK] Teoretycznie jest mozliwosc odbioru banknotow teraz ale nie wiemy jeszcze ile ich bedzie.");
 					}
 					break;
 				/* TODO: dodać kolejne obsługiwane przez Bank komendy (case):
@@ -120,7 +120,7 @@ public class BankCommandManager extends CommonCommandManager {
 			HiddenBanknote tmp = bank.hidden_banknotes.get(0);
 			tmp.visualizeHiddenBanknote();
 		} else {
-			Loger.mess("Chcialbym ale nie dostalem zadnych banknotow od ALICE :(.");
+			Loger.mess("Brak banknotow od ALICE.");
 		}
 	}
 }

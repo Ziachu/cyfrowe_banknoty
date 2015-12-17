@@ -68,9 +68,9 @@ public class CommonCommandManager{
 				}
 			} catch (IllegalArgumentException e) {
 				if (user_input != " ")
-					Loger.err("Wrong command: " + user_input);
+					Loger.err("Zla komenda: " + user_input);
 			} catch (NullPointerException e) {
-				Loger.err("Some null in command!\n\t" + e.getMessage());
+				Loger.err("Znaleziono null'a w komendzie!\n\t" + e.getMessage());
 			}
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
@@ -89,7 +89,7 @@ public class CommonCommandManager{
 				break;
 			default:
 				
-				Loger.err("Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
+				Loger.err("Zla odpowiedz dla ostatniej komendy (" + last_cmd.toString() + "): " + user_input + ".");
 				break;
 			}
 		}
@@ -118,7 +118,7 @@ public class CommonCommandManager{
 			} catch (IllegalArgumentException e) {
 				Loger.err("[cmd] Nie ma uzytkownika: " + user_input);
 			} catch (UnsupportedEncodingException e) {
-				Loger.err("[cmd] Couldn't send series through socket.\n\t" + e.getMessage());
+				Loger.err("[cmd] Nie mozna wyslac ciagow poprzez socket.\n\t" + e.getMessage());
 			}
 			
 			waiting_for_next_input = false;

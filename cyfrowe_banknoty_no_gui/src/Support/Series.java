@@ -64,7 +64,7 @@ public class Series {
 	
 	public void receiveSeries(BufferedReader in) {
 		
-		Loger.println("Receiving some series.");
+		Loger.println("Otrzymuje ciagi..");
 		
 		try {
 			String received = in.readLine();
@@ -72,7 +72,7 @@ public class Series {
 			this.values = in.readLine().getBytes();
 		} catch (NumberFormatException e) {
 			
-			Loger.err("Couldn't parse received series's length to Integer.");
+			Loger.err("Nie jestem w stanie sparsowac dlugosci ciagow do Integera.");
 		} catch (IOException e) {
 			
 			Loger.err("I/O problem; Series class during receiving series.\n\t" + e.getMessage());
@@ -116,7 +116,7 @@ public class Series {
 
 			return thedigest;
 		} catch (NoSuchAlgorithmException e) {
-			Loger.err("Trouble with md5 hashing.");
+			Loger.err("Problem z hashowaniem md5.");
 			throw new RuntimeException(e);
 		}
 	}
@@ -138,7 +138,7 @@ public class Series {
         	return xor_result;
         	
         } else {
-        	Loger.err("Couldn't XOR two series (two different lengths.");
+        	Loger.err("Nie jestem w stanie zrobic XOR'a dwoch ciagow(sa roznej dlugosci).");
         	throw new IllegalArgumentException();
         }
     }
@@ -158,7 +158,7 @@ public class Series {
 			fos.write(getValues());
 			fos.write("\n".getBytes());
 		} catch (IOException e) {
-			Loger.err("Couldn't write series to a file.\n\t" + e.getMessage());
+			Loger.err("Nie mozna zapisac ciagow do pliku.\n\t" + e.getMessage());
 		}
 	}
 	
@@ -166,7 +166,7 @@ public class Series {
 		try {
 			fis.read(this.values);
 		} catch (IOException e) {
-			Loger.err("Couldn't read series from file.\n\t" + e.getMessage());
+			Loger.err("Nie mozna odczytac ciagow z pliku.\n\t" + e.getMessage());
 		}
 	}
 }

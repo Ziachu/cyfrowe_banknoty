@@ -62,9 +62,9 @@ public class SystemUser {
 			}
 			
 		} catch (UnknownHostException e) {
-			Loger.err("Unknown server address.\n\t" + e.getMessage());
+			Loger.err("Nieznany adres serwera.\n\t" + e.getMessage());
 		} catch (IOException e) {
-			Loger.err("Couldn't establish connection.\n\t" + e.getMessage());
+			Loger.err("Nie mozna ustanowic polaczenia.\n\t" + e.getMessage());
 		}
 	}
 	
@@ -73,7 +73,7 @@ public class SystemUser {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
-			Loger.err("Troubles with Thread.sleep() function.");
+			Loger.err("Problemy z funkcja Thread.sleep().");
 		}
 		
 		String user_input;
@@ -150,12 +150,12 @@ public class SystemUser {
 		boolean user_role_applied = false;
 		while (!user_role_applied) {
 			try {
-				Loger.print("Powiedz kim jestes nieznajomy :) : ");
+				Loger.print("Podaj swoja role: ");
 				user_role = Role.valueOf(user_in.nextLine());
 				
 				user_role_applied = true;
 			} catch (IllegalArgumentException e) {
-				Loger.err("Jestes jakas dziwna osoba, chyba nie ma takiej roli :(.");
+				Loger.err("Niestety nie ma podanej roli w systemie.");
 			}			
 		}
 	}
@@ -222,7 +222,7 @@ class ServerResponseListener extends Thread {
 							break;
 						case reveal_hidden_banknotes:
 							
-							Loger.mess("Ooo, mam sekrety od Alice! Ale super!");
+							Loger.mess("Otrzymano sekrety od Alice");
 							int no_revealed_banknotes = Integer.parseInt(socket_in.readLine());
 							int no_id_series = Integer.parseInt(socket_in.readLine());
 							
@@ -262,12 +262,12 @@ class ServerResponseListener extends Thread {
 								}
 							}
 
-							Loger.mess("Wow, mam nawet reszte materialow ktore mi sa potrzebne do odsloniecia banknotow :) ale superowo!.");
+							Loger.mess("Otrzymano reszte materialow potrzebnych do odsloniecia banknotow.");
 							
 							break;
 						default:
 							
-							Loger.mess("[srv] Pomyleczka. Nie ma takiej komendy :(.");
+							Loger.mess("[srv] Nie ma takiej komendy.");
 							break;
 						}
 					} catch (IllegalArgumentException e) {
@@ -283,7 +283,7 @@ class ServerResponseListener extends Thread {
 	}
 
 	private void respondToReceiveHiddenBanknotes() throws NumberFormatException, IOException {
-		Loger.mess("łoooooo! Dostaje jakies ukryte banknoty! ale bajer!");
+		Loger.mess("Otrzymuje banknoty");
 		// TODO: odbieram liczbę banknotów
 		int no_banknotes = Integer.parseInt(socket_in.readLine());
 		ArrayList<HiddenBanknote> temp_arr = new ArrayList<HiddenBanknote>();
@@ -305,7 +305,7 @@ class ServerResponseListener extends Thread {
 		
 		try {
 			String bank_key = socket_in.readLine();
-			Loger.mess("Dostalem klucz publiczny od banku!");
+			Loger.mess("Dostalem klucz publiczny od banku");
 			
 			PublicKey pub_key = RSA.restorePublicKey(bank_key);
 			
@@ -313,7 +313,7 @@ class ServerResponseListener extends Thread {
 			user.setPublicKey(pub_key);		
 
 		} catch (IOException e) {
-			Loger.err("Couldn't get key from server.");
+			Loger.err("Nie mozna uzyskac klucza od serwera.");
 		}
 	}
 

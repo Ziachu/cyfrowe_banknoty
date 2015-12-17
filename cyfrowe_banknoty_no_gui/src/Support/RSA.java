@@ -152,7 +152,7 @@ public class RSA {
 			return z;
 
 		} catch (NoSuchAlgorithmException e) {
-			Loger.err("[RSA]Couldn't get instance of SHA1PRNG (during drawing random secret).");
+			Loger.err("[RSA]Nie jestem w stanie stworzyc instancji SHA1PRNG (w trakcie tworzenia losowego sekretu).");
 			return null;
 		}	
 	}

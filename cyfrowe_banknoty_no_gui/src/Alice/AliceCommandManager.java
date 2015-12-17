@@ -46,7 +46,7 @@ public class AliceCommandManager extends CommonCommandManager {
 
 	// Spełnia główne zadanie CommandManager'a, zarządza wprowadzonymi komendami
 	public void respondToCommand(String msg) {
-		Loger.debug("Responding to uncommon user_input: " + msg + " (" + waiting_for_next_input + ")");
+		Loger.mess("Odpowiedz na user_input: " + msg + " (" + waiting_for_next_input + ")");
 		user_input = msg;
 
 		if (!waiting_for_next_input) {
@@ -130,16 +130,16 @@ public class AliceCommandManager extends CommonCommandManager {
 					break;
 				}
 			} catch (IllegalArgumentException e) {
-				Loger.err("Wrong command: " + msg + ".");
+				Loger.err("Zla komenda: " + msg + ".");
 			} catch (NullPointerException e) {
-				Loger.err("Null value somewhere.");
+				Loger.err("Podano wartosc null'owa.");
 			}
 		} else {
 			// Jeżeli oczekuje konkretnego input'u, to sprawdza jaką komendę poprzednio obsługiwał
 			switch(last_cmd) {
 			default:
 				
-				Loger.err("Wrong response for last command (" + last_cmd.toString() + "): " + user_input + ".");
+				Loger.err("Zla odpowiedz na ostatnie polecenie (" + last_cmd.toString() + "): " + user_input + ".");
 				break;
 			}	
 		}	
@@ -149,7 +149,7 @@ public class AliceCommandManager extends CommonCommandManager {
 		if (alice.haveHiddenBanknotes()) {
 			// TODO: najpierw przesyłam liczbę banknotów
 			int no_banknotes = alice.hidden_banknotes.size();
-			Loger.println("[ALICE] Posiadam " + no_banknotes + ". zaslonietych banknotow gotowych do wyslania.\nChyba trzeba sie wziac do roboty!");
+			Loger.println("[ALICE] Posiadam " + no_banknotes + ". zaslonietych banknotow gotowych do wyslania.\n");
 			
 			socket_out.println(no_banknotes);
 			
@@ -159,19 +159,19 @@ public class AliceCommandManager extends CommonCommandManager {
 				Loger.println("[ALICE] " + i + "-ty banknot wyslany :)");
 			}
 		} else {
-			Loger.warr("Nie mam zadnych ukrytych banknotow :( to smutne, wiecie?.");
+			Loger.warr("Nie posiadam zadnych ukrytych banknotow.");
 		}
 	}
 
 	private void respondToHideBanknotesCommand() {
 		if (alice.haveBanknotes()) {
 			if (alice.havePublicKey()) {
-				Loger.mess("Okej, to zaslaniamy te banknoty! :)");
+				Loger.mess("[ALICE] Zaslaniamy banknoty.");
 				alice.hideBanknotes();
 			} else
-				Loger.warr("O kurde! przeciez najpierw trzeba miec klucz publiczny banku! Glupolku :)");
+				Loger.warr("Najpierw trzeba posiadac klucz publiczny banku");
 		} else {
-			Loger.warr("Moze najpierw poukrywamy jakies banknoty? :)");
+			Loger.warr("Najpierw trzeba zaslonic banknoty");
 		}
 	}
 
@@ -194,7 +194,7 @@ public class AliceCommandManager extends CommonCommandManager {
 	}
 
 	private void respondToGenerateBanknotesCommand() {
-		Loger.println("\ttak testowo tworzymy 5 banknotow :)");
+		Loger.println("\tTestowo tworzymy 5 banknotow");
 		for (int i = 0; i < 5; i++) {
 			alice.generateBanknote(10.1);
 		}
@@ -205,7 +205,7 @@ public class AliceCommandManager extends CommonCommandManager {
 	private void respondToTestAliceCommand() {
 		Alice alice = new Alice(5, 10);
 		
-		Loger.println("\nCiagi identyfikacyjne Alice(fajne sa :) ):");
+		Loger.println("\nCiagi identyfikacyjne Alice:");
 		for (int i = 0; i < alice.no_identification_series; i++) {
 			Loger.print("nr. " + i + ".: ");
 			alice.i_series[i].visualizeSeries();
@@ -234,8 +234,7 @@ public class AliceCommandManager extends CommonCommandManager {
 		
 		Loger.println("Format bitowy: #" + example2.getValues().toString() + "#");
 		
-		Loger.println("Uda nam sie je dodac? :).");
+		Loger.println("Probujemy je dodac");
 		Loger.println("Format bitowy dodanych ciagow: #" + (example1.getValues().toString() + example2.getValues().toString()).getBytes() + "#");
-		Loger.println("Udalo sie? :)");
 	}
 }

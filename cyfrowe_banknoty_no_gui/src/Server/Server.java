@@ -43,7 +43,7 @@ public class Server {
 			}
 			
 		} catch (IOException e) {
-			Loger.err("Couldn't create server socket.\n\t" + e.getMessage());
+			Loger.err("Nie mozna stworzyc socketa servera.\n\t" + e.getMessage());
 		}
 		
 		
@@ -69,7 +69,7 @@ public class Server {
 				socket_out = new PrintWriter(this.socket.getOutputStream(), true);
 				io_pair = new Pair<BufferedReader, PrintWriter>(socket_in, socket_out);
 			} catch (IOException e) {
-				Loger.err("Couldn't obtain socket i/o.\n\t" + e.getMessage());
+				Loger.err("Nie mozna uzyskac socket'a i/o.\n\t" + e.getMessage());
 			}
 			
 			
@@ -137,19 +137,15 @@ public class Server {
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_s_series = new Series();
 								tmp_s_series.receiveSeries(socket_in);
-								Loger.debug("Single s_series received.");
 								tmp_s_series.sendSeries(temp_socket);
-								Loger.debug("Single s_series sent.");
 							}
-							
+
 							Loger.mess("[SERVER] Wyslano wszystkie ciagi s.");
 							
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_b_series = new Series();
 								tmp_b_series.receiveSeries(socket_in);
-								Loger.debug("Single b_series received.");
 								tmp_b_series.sendSeries(temp_socket);
-								Loger.debug("Single b_series sent.");
 							}
 							
 							Loger.mess("[SERVER] Wyslano wszystkie ciagi b.");
@@ -157,9 +153,7 @@ public class Server {
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_l_series = new Series();
 								tmp_l_series.receiveSeries(socket_in);
-								Loger.debug("Single l_series received.");
 								tmp_l_series.sendSeries(temp_socket);
-								Loger.debug("Single l_series sent.");
 							}
 							
 							Loger.mess("[SERVER] Wyslano wszystkie ciagi l");
@@ -167,9 +161,7 @@ public class Server {
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_t_series = new Series();
 								tmp_t_series.receiveSeries(socket_in);
-								Loger.debug("Single t_series received.");
 								tmp_t_series.sendSeries(temp_socket);
-								Loger.debug("Single t_series sent.");
 							}
 							
 							Loger.mess("[SERVER] Wyslano wszystkie ciagi t.");
@@ -177,9 +169,7 @@ public class Server {
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_c_series = new Series();
 								tmp_c_series.receiveSeries(socket_in);
-								Loger.debug("Single c_series received.");
 								tmp_c_series.sendSeries(temp_socket);
-								Loger.debug("Single c_series sent.");
 							}
 							
 							Loger.mess("[SERVER] Wyslano wszystkie ciagi w");
@@ -187,9 +177,7 @@ public class Server {
 							for (int i = 0; i < no_id_series; i++) {
 								Series tmp_w_series = new Series();
 								tmp_w_series.receiveSeries(socket_in);
-								Loger.debug("Single w_series received.");
 								tmp_w_series.sendSeries(temp_socket);
-								Loger.debug("Single w_series sent.");
 							}
 							
 							Loger.mess("[SERVER] Wyslano wszystkie ciagi w.");
@@ -204,7 +192,7 @@ public class Server {
 							Loger.mess("[SERVER] Wyslano!");
 							
 						} else {
-							Loger.warr("[SERVER] It seems that Bank has logged out.");
+							Loger.warr("[SERVER] Wyglada na to ze bank sie wylogowal.");
 						}
 						break;
 					default:
@@ -213,11 +201,11 @@ public class Server {
 						break;
 					}
 				} catch (IOException e) {
-					Loger.err("Couldn't read from socket.\n\t" + e.getMessage());
+					Loger.err("Nie mozna odczytac z socket'a.\n\t" + e.getMessage());
                     try {
                         socket.close();
                     } catch (IOException e1) {
-                        Loger.err("Socket closed.\n\t");
+                        Loger.err("Zamknieto socket.\n\t");
                     }
                 }
 			}
@@ -232,7 +220,7 @@ public class Server {
 				temp_socket.println(picked_banknote);
 				
 			} else {
-				Loger.warr("Alice isn't online.");
+				Loger.warr("Alice nie jest online.");
 			}
 		}
 
@@ -247,7 +235,7 @@ public class Server {
 				for (int i = 0; i < no_banknotes; i++) {
 					HiddenBanknote temp_banknote = new HiddenBanknote();
 					temp_banknote.receiveHiddenBanknote(socket_in);
-					Loger.println("Sending " + i + ". hidden banknote to bank.");
+					Loger.println("Wysylanie banknotu numer " + i + ". do banku.");
 					temp_banknote.sendHiddenBanknote(temp_socket);
 				}
 			} else {
@@ -267,7 +255,7 @@ public class Server {
 				temp_socket.println("client_get_key");
 				temp_socket.println(public_key);
 			} catch (IOException e) {
-				Loger.err("Couldn't read from socket_in.");
+				Loger.err("Nie mozna odczytac z socket_in.");
 			}
 			
 		}
@@ -305,12 +293,12 @@ public class Server {
 					temp_socket_out.println("series");
 					series.sendSeries(temp_socket_out);
 				} else {
-					Loger.err("[SERVER] There's no receiver with given name (" + receiver + ");");
+					Loger.err("[SERVER] Nie ma takiego mozliwego odbiorcy jak (" + receiver + ");");
 				}
 
 				//transferSeries(receiver, series);
 			} catch (IOException e) {
-				Loger.err("[SERVER] Couldn't read series receiver from socket_in");
+				Loger.err("[SERVER] Nie mozna odczytac odbiorcy ciagow z socket_in");
 			}
 		}
 
@@ -327,7 +315,7 @@ public class Server {
 				try {
 					socket.close();
 				} catch (IOException e) {
-					Loger.err("[SERVER] Couldn't properly close socket after user exit command.");
+					Loger.err("[SERVER] Nie mozna zamknac socketa po komendzie exit.");
 				}
 			}
 		}
@@ -355,7 +343,7 @@ public class Server {
 					Loger.println("[SERVER] " + user_role + " zalogowany.");
 				}
 			} catch (IOException e) {
-				Loger.err("Coulnd't read role from socket_in.");
+				Loger.err("Nie mozna odczytac roli uzytkownika z socket_in.");
 			}
 		}
 	}

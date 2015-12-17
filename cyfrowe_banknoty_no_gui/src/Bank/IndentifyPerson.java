@@ -19,5 +19,5 @@ public class IndentifyPerson {
 	
 	public void IdentifyPerson() {}
 	
-	public void set
+	public void set(){}
 }
