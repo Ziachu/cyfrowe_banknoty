@@ -3,7 +3,6 @@ package Alice;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.security.PublicKey;
 
 import Client.User;
@@ -91,7 +90,8 @@ public class AliceCommandManager extends CommonCommandManager {
 				case reveal_hidden_banknotes:
 
 					try {
-						alice.revealBanknotes(socket_out);
+						alice.sendSecrets(socket_out);
+						alice.sendIdSeries(socket_out);
 					} catch (UnsupportedEncodingException e) {
 						Loger.err("Problem z encodingiem.");
 					}					

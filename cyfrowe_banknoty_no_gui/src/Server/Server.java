@@ -128,6 +128,7 @@ public class Server {
 							
 							Loger.mess("[SERVER] Bank jest dostepny.");
 							PrintWriter temp_socket = users.get(Role.Bank).getY();
+<<<<<<< HEAD
 
 							int no_id_series = Integer.parseInt(socket_in.readLine());
 							Loger.mess("[SERVER] Nie otrzymano serii identyfikujacych.");
@@ -182,18 +183,32 @@ public class Server {
 							
 							Loger.mess("[SERVER] Wyslano wszystkie ciagi w.");
 							Loger.mess("[SERVER] Wyslano wszystkie ciagi.");
+=======
+							temp_socket.println("reveal_hidden_banknotes");
+>>>>>>> origin/master
 							
 							int no_secrets = Integer.parseInt(socket_in.readLine());
+							temp_socket.println(no_secrets);
 							
 							for (int i = 0; i < no_secrets; i++) {
 								temp_socket.println(socket_in.readLine());
-								Loger.mess("[SERVER] Otrzymano sekret i przeslano dalej.");
+								Loger.debug("Sending " + i + ". secret.");
 							}
-							Loger.mess("[SERVER] Wyslano!");
 							
+							int no_id_series = Integer.parseInt(socket_in.readLine());
+							temp_socket.println(no_id_series);
+							
+							for (int i = 0; i < no_id_series * 6; i++) {
+								Series tmp = new Series();
+								tmp.receiveSeries(socket_in);
+								tmp.visualizeSeries();
+								tmp.sendSeries(temp_socket);
+								Loger.debug("Sending " + i + ". series");
+							}
 						} else {
 							Loger.warr("[SERVER] Wyglada na to ze bank sie wylogowal.");
 						}
+						
 						break;
 					default:
 						

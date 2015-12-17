@@ -18,6 +18,9 @@ public class IndentifyPerson {
 	public Series[] u_series;
 	
 	public void IdentifyPerson() {}
+<<<<<<< HEAD
 	
 	public void set(){}
+=======
+>>>>>>> origin/master
 }

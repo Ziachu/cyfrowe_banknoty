@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.security.PublicKey;
 
 public class HiddenBanknote {
 
@@ -184,4 +185,48 @@ public class HiddenBanknote {
 			Loger.err("Couldn't parse to BigInteger what was found in socket_in");
 		}
 	}
+	
+	public Banknote revealBanknote(PublicKey pub_key, BigInteger secret) {
+    	Banknote banknote = new Banknote();
+    	
+    	int banknote_id = Converter.byteToInt(RSA.revealMessage(getBanknoteId(), pub_key, secret));
+    	banknote.setBanknoteId(banknote_id);
+    	
+    	double amount = Converter.byteToDouble(RSA.revealMessage(getAmount(), pub_key, secret));
+    	banknote.setAmount(amount);
+    	
+    	int no_id_series = this.s_series.length;
+    	
+    	Series[] s_series = new Series[no_id_series];
+    	for (int i = 0; i < no_id_series; i++) {
+    		s_series[i] = new Series(RSA.revealMessage(this.s_series[i], pub_key, secret));
+    		Loger.print("Odkrywanie banknotów: s_series[" + i + "]: ");
+    		s_series[i].visualizeSeries();
+    	}
+    	
+    	banknote.setSseries(s_series);
+    	    	
+    	Series[] u_series = new Series[no_id_series];
+    	for (int i = 0; i < no_id_series; i++) {
+    		u_series[i] = new Series(RSA.revealMessage(this.u_series[i], pub_key, secret));
+    	}
+    	
+    	banknote.setUseries(u_series);
+    	
+    	Series[] t_series = new Series[no_id_series];
+    	for (int i = 0; i < no_id_series; i++) {
+    		t_series[i] = new Series(RSA.revealMessage(this.t_series[i], pub_key, secret));
+    	}
+    	
+    	banknote.setTseries(t_series);
+    	
+    	Series[] w_series = new Series[no_id_series];
+    	for (int i = 0; i < no_id_series; i++) {
+    		w_series[i] = new Series(RSA.revealMessage(this.w_series[i], pub_key, secret));
+    	}
+    	
+    	banknote.setWseries(w_series);
+    	
+    	return banknote;
+    }
 }

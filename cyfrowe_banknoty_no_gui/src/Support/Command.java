@@ -38,5 +38,7 @@ public enum Command {
 	server_banknote_picked,			// Bank   (serwer odbiera wybrane przez Bank "J", banknot, który nie będzie odkryty)
 	picked_banknote,				// Server (serwer przekazuje Alice wybrany przez Bank banknot)
 	reveal_hidden_banknotes,		// Alice  (ujawnia ukryte banknoty Bankowi, poza j-tym)
+	uncover_hidden_banknotes,		// Bank   (odkrywa ukryte banknoty)
+	verify_banknotes,				// Bank   (weryfikuje odkryte banknoty)
 	
 }

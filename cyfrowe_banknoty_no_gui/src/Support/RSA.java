@@ -93,10 +93,8 @@ public class RSA {
     // Zwrócenie N'ki z zadanego klucza (publicznego, lub prywatnego)
 	public static BigInteger getModulus(Key key){
 		try {
-			Loger.mess("[RSA] Proba uzyskania modulusa(N)...");
 			RSAPublicKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(key,RSAPublicKeySpec.class);
 			BigInteger modulus = spec.getModulus();
-			Loger.mess("[RSA] Uzyskano modulus.");
 			return modulus;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
 			Loger.err("[RSA] Proba uzyskania modulusa nieudana.");
@@ -107,10 +105,8 @@ public class RSA {
 	// Zwrócenie E z publicznego klucza
 	public static BigInteger getPublicExponent(PublicKey pub_key){
 		try {
-			Loger.mess("[RSA] Proba uzyskania eksponenta (E)...");
 			RSAPublicKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(pub_key,RSAPublicKeySpec.class);
 			BigInteger pub_exp = spec.getPublicExponent();
-			Loger.mess("[RSA] Uzyskano eskponent.");
 			return pub_exp;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
 			Loger.err("[RSA] Proba uzyskania eksponenta(E) nieudana.");
@@ -121,10 +117,8 @@ public class RSA {
 	// Zwrócenie D z prywatnego klucza
 	public static BigInteger getPrivateExponent(PrivateKey priv_key){
 		try {
-			Loger.mess("[RSA] Proba uzyskania prywatnego eksponenta(D)...");
 			RSAPrivateKeySpec spec = KeyFactory.getInstance("RSA").getKeySpec(priv_key, RSAPrivateKeySpec.class);
 			BigInteger priv_exp = spec.getModulus();
-			Loger.mess("[RSA] Uzyskano eksponent.");
 			return priv_exp;
 		} catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
 			Loger.err("[RSA] Proba uzyskania eksponenta(D) nieudana.");
@@ -135,7 +129,6 @@ public class RSA {
 	// Wylosowanie Z (sekretu) do zakrycia banknotów, używając klucza publicznego
 	public static BigInteger drawRandomSecret(PublicKey pub_key) {
 		try {
-			Loger.mess("[RSA] Proba wylosowania sekretu do zakrycia banknotow...");
 			SecureRandom secure_rand = SecureRandom.getInstance("SHA1PRNG");
 			byte[] random_bytes = new byte[10];
 			BigInteger n = getModulus(pub_key);
@@ -148,7 +141,7 @@ public class RSA {
 				z = new BigInteger(1, random_bytes);
 				gdc = z.gcd(n);
 			} while (!gdc.equals(one) || z.compareTo(n) >= 0 || z.compareTo(one) <= 0);
-			Loger.mess("[RSA] Wygenerowano sekret do zakrycia banknotow.");
+
 			return z;
 
 		} catch (NoSuchAlgorithmException e) {
@@ -163,8 +156,20 @@ public class RSA {
 		BigInteger n = getModulus(pub_key);
 		BigInteger e = getPublicExponent(pub_key);
 		
+		// y = mz^e (mod n) 
         BigInteger y = (secret.modPow(e, n).multiply(m)).mod(n);
         
         return y;
+	}
+	
+	public static byte[] revealMessage(BigInteger hidden_msg, PublicKey pub_key, BigInteger secret) {
+
+		BigInteger n = getModulus(pub_key);
+		BigInteger e = getPublicExponent(pub_key);
+	
+		// m = yz^{-e} (mod n)
+		BigInteger m = (secret.modPow(e.negate(), n).multiply(hidden_msg)).mod(n);
+		
+		return m.toByteArray();
 	}
 }

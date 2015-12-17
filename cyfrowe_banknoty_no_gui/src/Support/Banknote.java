@@ -1,7 +1,6 @@
 package Support;
 
 
-import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.util.Random;
@@ -21,9 +20,9 @@ public class Banknote {
     private Series[] t_series;
     private Series[] w_series;
     
-    private HiddenBanknote hidden_version;
+    public Banknote() {}
 
-    public Banknote (double amount, int banknote_id, 
+    public Banknote(double amount, int banknote_id, 
     				 Series[] s_series, Series[] u_series,
     				 Series[] t_series, Series[] w_series) {
         this.amount = amount;
@@ -142,8 +141,6 @@ public class Banknote {
     	}
     	hidden.setWseries(hidden_w_series);
     	
-    	hidden_version = hidden;
         return hidden;
     }
-
 }
